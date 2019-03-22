@@ -1,0 +1,74 @@
+@font-face {
+  font-family: 'PIXI';
+  src: url(../font/SHPinscher-Regular.otf); }
+
+* {
+  margin: 0;
+  padding: 0; }
+
+.center .name, .center .btnName, .center .cancelName {
+  border: 2px solid black; }
+
+.center .btnName, .center .cancelName {
+  width: 25%;
+  position: absolute;
+  border-radius: 5px;
+  border-color: black; }
+
+canvas, .background-modal .modal-window {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0; }
+
+body {
+  background-image: url("../img/frame_background.png");
+  font-family: 'Pixel', arial; }
+
+canvas {
+  box-shadow: 0 0 15px grey;
+  position: absolute;
+  border: 3px solid black;
+  margin: auto; }
+
+.background-modal {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1; }
+  .background-modal .modal-window {
+    position: absolute;
+    margin: auto;
+    width: 500px;
+    height: 250px;
+    border: 3px solid transparent;
+    box-shadow: 0 0 25px red;
+    border-color: red;
+    background-color: #0e0c35;
+    opacity: 0.8; }
+
+.center {
+  width: 100%;
+  height: 100%;
+  position: relative; }
+  .center .name {
+    position: absolute;
+    width: 50%;
+    margin: auto;
+    border-radius: 5px;
+    text-align: center;
+    left: 25%;
+    top: 35%;
+    font-weight: 600;
+    font-size: 15px; }
+  .center .btnName {
+    font-weight: 600;
+    font-size: 15px;
+    left: 25%;
+    top: 50%; }
+  .center .cancelName {
+    font-weight: 600;
+    font-size: 15px;
+    left: 51%;
+    top: 50%; }
