@@ -22,8 +22,7 @@ canvas, .background-modal .modal-window {
   bottom: 0; }
 
 body {
-  background-image: url("../img/frame_background.png");
-  font-family: 'Pixel', arial; }
+  background-image: url("../img/frame_background.png"); }
 
 canvas {
   box-shadow: 0 0 15px grey;
@@ -42,11 +41,10 @@ canvas {
     margin: auto;
     width: 500px;
     height: 250px;
-    border: 3px solid transparent;
-    box-shadow: 0 0 25px red;
-    border-color: red;
-    background-color: #0e0c35;
-    opacity: 0.8; }
+    border: 30px solid red;
+    border-image: url(../img/box.png) 60 round;
+    background-color: #664400;
+    opacity: 0.9; }
 
 .center {
   width: 100%;
@@ -56,19 +54,28 @@ canvas {
     position: absolute;
     width: 50%;
     margin: auto;
-    border-radius: 5px;
+    border-radius: 8px;
     text-align: center;
+    background: #ffd480;
+    font-weight: 600;
+    font-size: 25px;
+    font-family: 'PIXI';
     left: 25%;
-    top: 35%;
-    font-weight: 600;
-    font-size: 15px; }
+    top: 35%; }
   .center .btnName {
+    background: #ffd480;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 25px;
+    font-family: 'PIXI';
     left: 25%;
     top: 50%; }
+  .center .btnName:hover, .center .cancelName:hover {
+    cursor: pointer;
+    color: red; }
   .center .cancelName {
+    background: #ffd480;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 25px;
+    font-family: 'PIXI';
     left: 51%;
     top: 50%; }

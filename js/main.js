@@ -307,7 +307,7 @@
             file.src = src;
             this.SpriteCache(file);
             console.log('loading file №' + this.loadCount + '(' + file.src + ')');
-            this.i++;
+             this.loadCount++;
         }
 
         if (fileType === 'Audio'){
@@ -1173,15 +1173,15 @@
         }
 
         _that.rating = {
-            TitleGame: [this.settings.width/2.8,50],
-            return: [(this.settings.width/2.8)+35,100],
-            StrokeRectCoords: [this.settings.width/9.4,150],
-            StrokeRectSize: [this.settings.width/1.3,400],
-            RectCoords: [this.settings.width/9.4,150],
-            RectSize: [this.settings.width/1.3,400],
-            TitleName: [this.settings.width/8,180],
-            TitlePoints: [this.settings.width/1.55,180],
-            ratingListX: [this.settings.width/8,550]
+            TitleGame: [this.settings.width/2,50],
+            return: [this.settings.width/2,165],
+            StrokeRectCoords: [this.settings.width/9.4,200],
+            StrokeRectSize: [this.settings.width/1.3,350],
+            RectCoords: [this.settings.width/9.4,200],
+            RectSize: [this.settings.width/1.3,350],
+            TitleName: [this.settings.width/8,235],
+            TitlePoints: [this.settings.width/1.45,235],
+            ratingListX: [this.settings.width/8,this.settings.height-50]
         }
 
         _that.gameOver = {
@@ -1598,27 +1598,29 @@
         let posTxtY = null;  // for records text cycle
         let length = null;  // for records text cycle
 
-        for (let i = 0; i < lengthCut;i++){
-
-            if(typeof load.startRecord[i] !== 'object'){
-
-                load.startRecord.splice(i,1);
-            }
-        }
-
         length = (load.startRecord.length < 9) ? load.startRecord.length : 9; // length records array
-        posTxtY = 215; // start draw position
-        speedText = 30; // i
+        RecordsY = 275; // start draw position
+        speedText = 32; // i
 
-        CTX.drawImage(load.SpriteStorage[1],
-                    this.settings.drawInX,this.settings.drawInY,
-                    this.settings.width,this.settings.height);
+        CTX.restore();
+        CTX.save();
+        CTX.textAlign = "center";
+        CTX.textBaseline = "middle";
 
-        CTX.fillStyle = 'rgb(205, 92, 92)';
-        CTX.shadowOffsetX = 2;
-        CTX.shadowOffsetY = 3;
-        CTX.font = 'bold 50px Arial';
-        CTX.fillText('ARENA',this.rating.TitleGame[0],this.rating.TitleGame[1]);
+        CTX.fillStyle = this.menu.background;
+        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,this.settings.width,this.settings.height);
+
+        CTX.fillStyle = this.menu.background;
+        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,this.settings.width,this.settings.height);
+
+        CTX.fillStyle = 'rgb(255,215,0)';
+        CTX.shadowColor = 'brown';
+        CTX.shadowBlur = 3;
+        CTX.shadowOffsetX = 6;
+        CTX.shadowOffsetY = 7;
+        CTX.font = 'bold 80px PIXI';
+
+        CTX.fillText('THE BEST',this.menu.TitleGame[0],this.menu.TitleGame[1]);
         CTX.shadowOffsetX = 0;
         CTX.shadowOffsetY = 0;
         if (UserInterface.checkFrame(UserInterface.linki[3])) {
@@ -1628,37 +1630,40 @@
             CTX.fillStyle = UserInterface.linki[3].color;
         }
 
-        CTX.font = 'bold 25px Arial';
+        CTX.font = 'bold 50px PIXI';
         CTX.fillText('RETURN',this.rating.return[0],this.rating.return[1]);
         CTX.strokeStyle = 'yellow';
         CTX.strokeRect(this.rating.StrokeRectCoords[0],
-                    this.rating.StrokeRectCoords[1],
-                    this.rating.StrokeRectSize[0],
-                    this.rating.StrokeRectSize[1]);
+                       this.rating.StrokeRectCoords[1],
+                       this.rating.StrokeRectSize[0],
+                       this.rating.StrokeRectSize[1]);
 
         CTX.fillStyle = 'black';
         CTX.fillRect(this.rating.RectCoords[0],this.rating.RectCoords[1],
-                    this.rating.RectSize[0],this.rating.RectSize[1]);
+                     this.rating.RectSize[0],this.rating.RectSize[1]);
 
-        CTX.font = 'bold 35px Arial';
+
+        CTX.textAlign = "left";
+        CTX.font = 'bold 45px PIXI';
         CTX.fillStyle = 'yellow';
         CTX.fillText('NAME',this.rating.TitleName[0],this.rating.TitleName[1]);
 
         CTX.fillStyle = 'yellow';
         CTX.fillText('POINTS',this.rating.TitlePoints[0],this.rating.TitlePoints[1]);
 
-        CTX.font = 'bold 30px Arial';
+
+        CTX.font = 'bold 40px PIXI';
         CTX.fillStyle = 'yellow';
 
         for (let i = 0; i < length; i++){
 
             CTX.fillText(`${i+1}. ` + load.startRecord[load.startRecord.length-(i+1)].name,
-                        this.rating.ratingListX[0],posTxtY);
+                         this.rating.ratingListX[0],RecordsY);
             CTX.fillText(load.startRecord[load.startRecord.length-(i+1)].points,
-                        this.rating.ratingListX[1],posTxtY);
-            posTxtY += speedText;
+                         this.rating.ratingListX[1],RecordsY);
+            RecordsY += speedText;
         }
-
+        CTX.textAlign = "center";
         CTX.fillStyle = 'white';
         CTX.font = 'bold 14px Arial';
         CTX.fillText('© 2019',this.menu.myName[0],this.menu.myName[1]);
@@ -1838,6 +1843,7 @@
 
         div.classList.add('center');
         inputName.setAttribute('type','text');
+        inputName.setAttribute('maxlength','15');
         inputName.placeholder = 'ENTER NAME';
         buttonSave.setAttribute('type','button');
         buttonSave.value = 'SAVE';
@@ -2076,9 +2082,9 @@ function GameController() {
         // canvas.style.transform = 'scale(1.5,1.5)';
         // links
         UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
-        UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85, gamePlayDraw.menu.play[1]-45, 160,80));
-        UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120, gamePlayDraw.menu.rating[1]-40, 250, 60));
-        UserInterface.linki.push(new Links('RETURN', 'rating', 325, 80, 110, 30));
+        UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85, gamePlayDraw.menu.play[1]-45, 200,80));
+        UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120, gamePlayDraw.menu.rating[1]-40, 250, 80));
+        UserInterface.linki.push(new Links('RETURN', 'rating', (gamePlayDraw.settings.width/2)-60,110, 110, 70));
         UserInterface.linki.push(new Links('MENU', 'wait', 350, 430, 110, 30));
         UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760, 570, 50, 50));
 
@@ -2090,6 +2096,7 @@ function GameController() {
         loader.loading('Image','img/menu_800x600.jpg','sprite');
         loader.loading('Image','img/pause.png','sprite');
         loader.loading('Image','img/box_background.png','sprite');
+        loader.loading('Image','img/box.png','sprite');
 
         loader.loading('Audio','audio/main.mp3');
         loader.loading('Audio','audio/shot.mp3');
