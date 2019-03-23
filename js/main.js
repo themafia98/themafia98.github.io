@@ -1,7 +1,5 @@
 
 
-    const Vector = window.libs.Vector;
-
     function DataBase() {
 
         this.MAX_WRITE = 0;
@@ -403,7 +401,7 @@
         };
 
         _thatBullets.useSkill = (load, gamer, ui) => {
-
+            debugger;
             if (Date.now() - _thatBullets.lastFire > 200) { // delay
 
                 gamer.countThrow++; // counter
@@ -592,6 +590,52 @@
             [cordSpriteX, cordsSpriteY], [sizeSpriteX, sizeSpriteY]);
     }
 
+
+    function Vector(x, y) {
+
+        let _that = this;
+
+        /* текущие координаты */
+		this.x = x || 0; 
+        this.y = y || 0;
+
+    }
+
+    Vector.prototype.multiply = function (vector) {
+
+		return new Vector(this.x * vector, this.y * vector);
+    }
+
+    Vector.prototype.add = function (vector)  {
+
+        /* прибавляю найденные координаты к координатам объекта*/
+        return new Vector(this.x + vector.x, this.y + vector.y);
+    }
+
+    Vector.prototype.divide = function (vector)  {
+        return new Vector(this.x / vector, this.y / vector);
+    }
+
+    Vector.prototype.normalize = function (vector)  {
+
+        /*
+        нормализую вектор
+        (преобразование заданного вектора в вектор
+        в том же направлении, но с единичной длиной)
+        */
+        return this.divide(this.length())
+    }
+
+    Vector.prototype.length = function (vector)  {
+
+        /*  длина вектора  */
+        return Math.sqrt(this.dot(this));
+    }
+
+    Vector.prototype.dot = function (vector)  {
+        /* Скалярное произведение векторов в 2D пространстве */
+        return this.x * vector.x + this.y * vector.y;
+    }
 
 
     function update(time, gamer, load, game, link) {
@@ -870,13 +914,15 @@
     function calcBullet(bullet, gamer, time) {
         // преобразуем координаты в объект класса Vector
 
+        debugger;
+
         const pos = new Vector(bullet.pos.x, bullet.pos.y);
 
         // рассчитываем вектор приращения в направлении движения пули для ее скорости
         const vector = bullet.direction.multiply(gamer.stat.bullets.weapons.speed * time);
 
         // добавляем к координатам пули значение вектора с приращениями
-        bullet.pos = pos.add(vector).toLocate();
+        bullet.pos = pos.add(vector);
     }
 
     function getName(buttonName, gamer) {
@@ -1322,9 +1368,13 @@
 
 
         if(game.about.state === 'play-animation' && (game.fade > 0)){
+
         this.drawBuffer.ctxBuffer.fillStyle = 'black';
         this.drawBuffer.ctxBuffer.globalAlpha = game.fade;
-        this.drawBuffer.ctxBuffer.fillRect(0,0,this.settings.width,this.settings.height);
+        this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[1],
+            this.settings.drawInX,this.settings.drawInX,
+            this.settings.width,this.settings.height);
+        // this.drawBuffer.ctxBuffer.fillRect(0,0,this.settings.width,this.settings.height);
         this.drawBuffer.ctxBuffer.font = '100px Aria bold';
         this.drawBuffer.ctxBuffer.fillStyle = 'grey';
         this.drawBuffer.ctxBuffer.fillText('RENDER',this.loading.loadingText[0]+30,
@@ -1423,16 +1473,9 @@
 
         if (game.about.state === 'play-animation'){ // render start animation state
 
-            if (game.fade > 0){
-        this.fadeIn(game,load);
-            }
+        (game.fade > 0) && (this.fadeIn(game,load));
+        (game.fade <= 0) && (this.renderPlayer(gamer,game));
 
-       
-        
-        if (game.fade <= 0){
-            
-        this.renderPlayer(gamer,game);
-        }
         }
 
         this.pauseMenuView(game,gamer,UserInterface,load); // render pause menu
@@ -1464,8 +1507,11 @@
             CTX.save();
             CTX.fillStyle = 'black';
             CTX.globalAlpha = 0.9;
-            CTX.fillRect(this.pause.RectPause[0],this.pause.RectPause[1],
+
+            this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[1],
+                this.pause.RectPause[0],this.pause.RectPause[1],
                         this.pause.RectPauseSize[0],this.pause.RectPauseSize[1]);
+
             CTX.strokeStyle = 'gold';
             CTX.globalAlpha = 0.9;
             CTX.strokeRect(this.pause.RectPause[0]+10,this.pause.RectPause[1]+10,
@@ -1815,8 +1861,10 @@
         return;
     }
     Draw.prototype.loadingRender = function(load){
+
         this.getCtx.ctx.fillRect(this.settings.drawInX,this.settings.drawInY,
                                 this.settings.width,this.settings.height);
+
         this.getCtx.ctx.fillStyle = 'grey';
         this.getCtx.ctx.font = '100px Aria bold';
         this.getCtx.ctx.fillText('LOADING',this.loading.loadingText[0],this.loading.loadingText[1]);

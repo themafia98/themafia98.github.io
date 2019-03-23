@@ -42,8 +42,8 @@ canvas {
     width: 500px;
     height: 250px;
     border: 30px solid red;
-    border-image: url(../img/box.png) 60 round;
-    background-color: #664400;
+    border-image: url("../img/box.png") 60 round;
+    background-image: url("../img/modal_background.jpg");
     opacity: 0.9; }
 
 .center {
