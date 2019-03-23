@@ -9,10 +9,10 @@
     }
 
     DataBase.prototype.getUserData = function(loader){
-        debugger;
+        
         cloudDB.use.collection('users').where('realPlayer', '==', true).get()
         .then(function(snapshot){
-            debugger;
+            
             snapshot.forEach(function(doc){
                 loader.startRecord.push(doc.data());
             });
@@ -68,7 +68,7 @@
         fetch(`https://ipsidekick.com/${this.key()}`)
 
         .then ((response) => response.json())
-        .then ((response) => { debugger; localStorage.IP = response.ip; })
+        .then ((response) => { localStorage.IP = response.ip; })
 
         .catch(function (error){
             console.log(error);
@@ -404,7 +404,7 @@
         };
 
         _thatBullets.useSkill = (load, gamer, ui) => {
-            debugger;
+            
             if (Date.now() - _thatBullets.lastFire > 200) { // delay
 
                 gamer.countThrow++; // counter
@@ -917,7 +917,7 @@
     function calcBullet(bullet, gamer, time) {
         // преобразуем координаты в объект класса Vector
 
-        debugger;
+        
 
         const pos = new Vector(bullet.pos.x, bullet.pos.y);
 
