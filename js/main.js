@@ -1948,7 +1948,7 @@
         buttonSave.setAttribute('type','button');
         buttonSave.value = 'SAVE';
         buttonCancel.setAttribute('type','button');
-        buttonCancel.value = 'CANCEL';
+        buttonCancel.value = 'NO';
 
         div.appendChild(inputName);
         div.appendChild(buttonSave);
