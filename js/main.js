@@ -59,16 +59,16 @@
 
     function Request() {
 
-    this.key = () => '79f7380bd3ac76882a19a37b90c40541';
+    this.key = () => 'json';
 
     }
 
     Request.prototype.getIP = function (){
 
-        fetch(`https://api.ipstack.com/check?access_key=${this.key()}`)
+        fetch(`https://ipsidekick.com/${this.key()}`)
 
         .then ((response) => response.json())
-        .then ((response) => { localStorage.IP = response.ip; })
+        .then ((response) => { debugger; localStorage.IP = response.ip; })
 
         .catch(function (error){
             console.log(error);
