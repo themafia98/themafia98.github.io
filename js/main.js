@@ -1944,7 +1944,7 @@
         div.classList.add('center');
         inputName.setAttribute('type','text');
         inputName.setAttribute('maxlength','11');
-        inputName.placeholder = 'ENTER NAME';
+        inputName.placeholder = 'NAME';
         buttonSave.setAttribute('type','button');
         buttonSave.value = 'SAVE';
         buttonCancel.setAttribute('type','button');
