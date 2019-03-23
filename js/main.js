@@ -1191,12 +1191,13 @@
         this.blink = 1;
         this.frameBlink = true;
         this.view = 'xl';
+        this.viewMode = 'full';
 
         _that.settings = {
             width: _that.width(), // canvas w
             height: _that.height(), // canvas h
-            textureW: 800, // texture weight
-            textureH: 700, // texture weight
+            textureW: _that.width(), // texture weight
+            textureH: _that.height(), // texture weight
             openGate: 0, // end gate possition
             countModal: 0, // counter modal window in game
             drawInX: 0, // position X to draw in main ctx
@@ -1258,8 +1259,9 @@
             spriteTexture: [5,5],
             gamePanelCoords: [0, 542],
             gamePanelSize: [this.settings.width, 80],
+            hpTextPosition: [this.settings.width/3, 588],
             hpBarSize: [375, 588],
-            hpBarBoorderCoords: [300, 570],
+            hpBarBoorderCoords: [this.settings.width/2.7, 570],
             hpBarBoorderSize: [204, 25],
             PointsCoords: [-12, 20],
             PointsSize: [45,45],
@@ -1489,7 +1491,6 @@
 
         (game.fade > 0) && (this.fadeIn(game,load));
         (game.fade <= 0) && (this.renderPlayer(gamer,game));
-
         }
 
         this.pauseMenuView(game,gamer,UserInterface,load); // render pause menu
@@ -1555,8 +1556,7 @@
     
 
             if (UserInterface.checkFrame(UserInterface.linki[0])) { // menu link
-                
-                
+
                 CTX.fillStyle = UserInterface.linki[0].selectColor;
                 } else {
 
@@ -1618,10 +1618,9 @@
         CTX.font = '100px PIXI';
 
         if (UserInterface.checkFrame(UserInterface.linki[1])) {
-            
-                
+
             CTX.fillStyle = UserInterface.linki[1].selectColor;
-            
+
         } else {
             CTX.fillStyle = UserInterface.linki[1].color;
         }
@@ -1678,7 +1677,7 @@
         CTX.shadowOffsetX = 6;
         CTX.shadowOffsetY = 7;
         (this.view != 'mobile') ? CTX.font = 'bold 80px PIXI' : CTX.font = 'bold 60px PIXI';
-        (this.view === 'mobile') && (this.rating.TitleGame[1] = 35);
+        (this.view === 'mobile') && (this.rating.TitleGame[1] = 70);
 
         CTX.fillText('THE BEST',this.rating.TitleGame[0],this.rating.TitleGame[1]);
         CTX.shadowOffsetX = 0;
@@ -1691,16 +1690,18 @@
         }
 
         (this.view != 'mobile') ? CTX.font = 'bold 50px PIXI' : CTX.font = 'bold 40px PIXI';
-        (this.view === 'mobile') && (this.rating.return[1] = 85);
+        (this.view === 'mobile') && (this.rating.return[1] = 120);
 
         CTX.fillText('RETURN',this.rating.return[0],this.rating.return[1]);
         CTX.strokeStyle = 'yellow';
+        (this.view === 'mobile') && (this.rating.StrokeRectCoords[1] = 180);
         CTX.strokeRect(this.rating.StrokeRectCoords[0],
                     this.rating.StrokeRectCoords[1],
                     this.rating.StrokeRectSize[0],
                     this.rating.StrokeRectSize[1]);
 
         CTX.fillStyle = 'black';
+        (this.view === 'mobile') && (this.rating.RectCoords[1] = 180);
         CTX.fillRect(this.rating.RectCoords[0],this.rating.RectCoords[1],
                     this.rating.RectSize[0],this.rating.RectSize[1]);
 
@@ -1732,6 +1733,7 @@
         CTX.textAlign = "center";
         CTX.fillStyle = 'white';
         CTX.font = 'bold 14px Arial';
+
         CTX.fillText('© 2019',this.menu.myName[0],this.menu.myName[1]);
 
         CTX.fillStyle = 'white';
@@ -1787,7 +1789,12 @@
 
         let CTX = this.drawBuffer.ctxBuffer; // short write
 
+        if (this.view === 'mobile' && (this.viewMode === 'demo')){
 
+            CTX.fillStyle = 'rgb(240,230,140)';
+            CTX.fillRect(this.settings.drawInX,this.settings.drawInY,this.settings.width,this.settings.height);
+
+        } else {
         CTX.drawImage(load.TextureStorage[0],
                     this.playGame.spriteTextureBorder[0],this.playGame.spriteTextureBorder[1],
                     this.settings.textureW,this.settings.textureH,
@@ -1799,6 +1806,7 @@
                     this.settings.textureW,this.settings.textureH,
                     this.settings.drawInX,this.settings.drawInY,
                     this.settings.textureW,this.settings.textureH);
+      
 
         //-----GATES----
         // gate 1
@@ -1818,6 +1826,8 @@
         // gate 3
         CTX.drawImage(load.SpriteStorage[0],-14,190, 85, 65, 588, 0, 95, 65);
 
+    }
+
         // Game panel
         let panel = this.drawBuffer.ctxBuffer.createLinearGradient(0, 0, 170, 0);
         panel.addColorStop(0, "rgb(105,105,105)");
@@ -1829,6 +1839,7 @@
 
         CTX.strokeStyle = 'blue';
         CTX.lineWidth = 5;
+        (this.view === 'mobile') && (this.playGame.hpBarBoorderCoords[0] = this.settings.width/4);
         CTX.strokeRect(this.playGame.hpBarBoorderCoords[0],this.playGame.hpBarBoorderCoords[1],
                     this.playGame.hpBarBoorderSize[0],this.playGame.hpBarBoorderSize[1]);
         CTX.fillStyle = 'crimson';
@@ -1841,7 +1852,9 @@
         // HP bar
         CTX.fillStyle = 'white';
         CTX.font = 'bold 15px Arial';
-        CTX.fillText(gamer.stat.health + 'HP',this.playGame.hpBarSize[0],this.playGame.hpBarSize[1]);
+        (this.view != 'mobile') &&
+            CTX.fillText(gamer.stat.health + 'HP',this.playGame.hpBarSize[0],this.playGame.hpBarSize[1]);
+
 
         // Lvl
         CTX.fillStyle = 'red';
@@ -1865,7 +1878,7 @@
             
         CTX.drawImage(load.SpriteStorage[2],this.playGame.pauseButton[0],this.playGame.pauseButton[1],20,20);
 
-        if ((game.about.state === 'play') && (this.settings.countModal === 0)){
+        if ((game.about.state === 'play') && (this.settings.countModal === 0) && (this.viewMode != 'demo')){
         CTX.fillStyle = 'black';
         CTX.globalAlpha = '0.8';
         CTX.fillRect(0,0,this.settings.width, 100);
@@ -1875,6 +1888,25 @@
         CTX.fillStyle = 'lightblue';
         CTX.font = '20px bold Aria';
         CTX.fillText('Press any keys',this.playGame.ModalPress[0],this.playGame.ModalPress[1]);
+        } else if (this.viewMode === 'demo' && (this.settings.countModal === 0)) {
+
+
+            CTX.fillStyle = 'black';
+            CTX.globalAlpha = '0.8';
+            CTX.fillRect(0,0,this.settings.width, 100);
+            CTX.fillStyle = 'white';
+            CTX.font = '30px bold Aria';
+            CTX.fillText('This is a demo game.',
+                        this.settings.width/5,this.playGame.ModalTextWASD[1]);
+            CTX.fillStyle = 'lightblue';
+            CTX.font = '20px bold Aria';
+            CTX.fillText(`Your device doesn\'t support :(`,
+            this.settings.width/5,this.playGame.ModalPress[1]);
+
+           CTX.fillText(`Need width 760px and more.`,
+           this.settings.width/5,this.playGame.ModalPress[1]+20);
+
+
         }
 
         CTX.restore();
@@ -1885,7 +1917,8 @@
         this.getCtx.ctx.fillRect(this.settings.drawInX,this.settings.drawInY,
                                 this.settings.width,this.settings.height);
         this.getCtx.ctx.fillStyle = 'grey';
-        this.getCtx.ctx.font = '100px Aria bold';
+
+        (this.view != 'mobile') ?  this.getCtx.ctx.font = '100px Aria bold' :  this.getCtx.ctx.font = '45px Aria bold';
         this.getCtx.ctx.fillText('My project',this.loading.loadingText[0],this.loading.loadingText[1]);
 
     };
@@ -1946,6 +1979,7 @@
 
     Draw.prototype.width = function() {
         if (window.screen.availWidth < 800){
+            (window.screen.availWidth < 760) && (this.viewMode = 'demo');
             this.view = 'mobile';
         return window.screen.availWidth-10;
         } else {
@@ -2194,7 +2228,7 @@ function GameController() {
                 UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
                 UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85, gamePlayDraw.menu.play[1]-45, 200,80));
                 UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120, gamePlayDraw.menu.rating[1]-40, 250, 80));
-                UserInterface.linki.push(new Links('RETURN', 'rating', gamePlayDraw.rating.return[0]-40,50, 110, 70));
+                UserInterface.linki.push(new Links('RETURN', 'rating', gamePlayDraw.rating.return[0]-40,100, 110, 70));
                 UserInterface.linki.push(new Links('MENU', 'wait', 350, 430, 110, 30));
                 UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760, 570, 50, 50));  
             }
@@ -2224,7 +2258,7 @@ function GameController() {
             loader.loading('Audio','audio/select.wav');
 
             // loading
-            gamePlayDraw.loadingRender(loader);
+            // gamePlayDraw.loadingRender(loader);
             
 
             // enemy and player
@@ -2366,10 +2400,10 @@ function GameController() {
                 gamePlayDraw.buildingGetNameView(document);
             }
 
-            let timer = setTimeout(() => {
+            // let timer = setTimeout(() => {
                 gameLoop = requestAnimationFrame(loop);
-            }, 3000);
-
+            // }, 3000);
+            game.about.state = 'play-animation';
             controller.setEvent(gamePlayDraw, player, loader, game, UserInterface);
             gamePlayDraw.building(loader, player, game);
 
