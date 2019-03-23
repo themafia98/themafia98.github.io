@@ -3,15 +3,16 @@
     function DataBase() {
 
         this.MAX_WRITE = 0;
+        this.currentIP = null;
 
 
     }
 
     DataBase.prototype.getUserData = function(loader){
-
-        cloudDB.use.collection('users').get()
+        debugger;
+        cloudDB.use.collection('users').where('realPlayer', '==', true).get()
         .then(function(snapshot){
-
+            debugger;
             snapshot.forEach(function(doc){
                 loader.startRecord.push(doc.data());
             });
@@ -34,12 +35,14 @@
 
         if (this.MAX_WRITE >= 5) throw new Error('limit');
         this.MAX_WRITE++;
+        this.currentIP = (ip) ? ip : 'no ip detected';
 
         cloudDB.use.collection('users').doc(`user_${(name+id).replace(/\s/g,'').toLowerCase()}`).set({
             name: name,
             points: points,
             id: id.slice(1,id.length),
-            ip: ip
+            ip: ip,
+            realPlayer: true
         })
 
         .then (function(){
