@@ -65,7 +65,7 @@
 
     Request.prototype.getIP = function (){
 
-        fetch(`http://api.ipstack.com/check?access_key=${this.key()}`)
+        fetch(`https://api.ipstack.com/check?access_key=${this.key()}`)
 
         .then ((response) => response.json())
         .then ((response) => { localStorage.IP = response.ip; })
