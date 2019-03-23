@@ -2258,7 +2258,7 @@ function GameController() {
             loader.loading('Audio','audio/select.wav');
 
             // loading
-            // gamePlayDraw.loadingRender(loader);
+            gamePlayDraw.loadingRender(loader);
             
 
             // enemy and player
@@ -2400,10 +2400,10 @@ function GameController() {
                 gamePlayDraw.buildingGetNameView(document);
             }
 
-            // let timer = setTimeout(() => {
+            let timer = setTimeout(() => {
                 gameLoop = requestAnimationFrame(loop);
-            // }, 3000);
-            game.about.state = 'play-animation';
+            }, 3000);
+
             controller.setEvent(gamePlayDraw, player, loader, game, UserInterface);
             gamePlayDraw.building(loader, player, game);
 
