@@ -2095,7 +2095,7 @@ function GameController() {
 
         function clickOnCanvas(e) {
             debugger;
-            (game.about.state === 'loading') && (e.preventDefault());
+           if (game.about.state === 'loading') { e.preventDefault(); return 0; }
             
             command = UserInterface.linki; // short write
 
