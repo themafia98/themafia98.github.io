@@ -117,7 +117,7 @@
 
     function Game() {
         // states
-        this.menu = 'loading';
+        this.menu = 'menu';
         this.death = 'wait';
         this.rating = 'rating';
         this.play = 'play';
@@ -132,7 +132,7 @@
         };
 
         this.about = {
-            state: 'menu',
+            state: 'loading',
             count: 0, // game count for win state
             stageBossCount: 0,
             stageExtraBossCount: 0,
@@ -2094,8 +2094,8 @@ function GameController() {
         };
 
         function clickOnCanvas(e) {
-
-            (game.about.state === 'loading') && (e.preventDefault())
+            debugger;
+            (game.about.state === 'loading') && (e.preventDefault());
             
             command = UserInterface.linki; // short write
 
