@@ -117,7 +117,7 @@
 
     function Game() {
         // states
-        this.menu = 'menu';
+        this.menu = 'loading';
         this.death = 'wait';
         this.rating = 'rating';
         this.play = 'play';
@@ -2094,9 +2094,10 @@ function GameController() {
         };
 
         function clickOnCanvas(e) {
+
+            (game.about.state === 'loading') && (e.preventDefault())
             
             command = UserInterface.linki; // short write
-
 
             for (let i = 0; i < command.length; i++) {
 
@@ -2401,6 +2402,7 @@ function GameController() {
             }
 
             let timer = setTimeout(() => {
+                game.about.state = 'menu';
                 gameLoop = requestAnimationFrame(loop);
             }, 3000);
 
