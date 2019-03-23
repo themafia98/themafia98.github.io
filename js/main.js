@@ -41,7 +41,7 @@
             name: name,
             points: points,
             id: id.slice(1,id.length),
-            ip: ip,
+            ip: this.currentIP,
             realPlayer: true
         })
 
