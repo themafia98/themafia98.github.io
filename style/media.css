@@ -1,7 +1,16 @@
-@media screen and (max-width: 850px) {
-    /* canvas {
+    @media all and (max-width: 740px) {
 
-    width: calc(100% - 40px);
-    height: 60%;
-    } */
-}
+        .background-modal .modal-window {
+            width: 55%;
+        }
+
+        .center .name,.center .btnName,.center .cancelName {
+            font-size: 22px;
+        }
+    }
+
+    @media all and (max-width: 400px) {
+        .center .name,.center .btnName,.center .cancelName {
+            font-size: 18px;
+        }
+    }
