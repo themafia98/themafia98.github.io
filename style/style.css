@@ -25,10 +25,14 @@ body {
   background-image: url("../img/frame_background.png"); }
 
 canvas {
+  display: none;
   box-shadow: 0 0 15px grey;
   position: absolute;
   border: 3px solid black;
   margin: auto; }
+
+.canvasInit {
+  display: block; }
 
 .background-modal {
   width: 100%;

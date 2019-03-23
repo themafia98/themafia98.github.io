@@ -20,16 +20,6 @@
             loader.startRecord.sort(compare); // Bubble sort
             console.log(loader.startRecord);
         });
-
-        cloudDB.use.collection('users').where('realPlayer', '==', true)
-        .onSnapshot(function(snapshot){
-            loader.startRecord = [];
-            snapshot.forEach(function(doc){
-                loader.startRecord.push(doc.data());
-            });
-            debugger;
-            loader.startRecord.sort(compare);
-        });
     }
 
     DataBase.prototype.updateLimit = function () {
@@ -63,6 +53,15 @@
 
         .catch(function (error) {
             console.log(error);
+        });
+
+                cloudDB.use.collection('users').where('realPlayer', '==', true)
+        .onSnapshot(function(snapshot){
+            loader.startRecord = [];
+            snapshot.forEach(function(doc){
+                loader.startRecord.push(doc.data());
+            });
+            loader.startRecord.sort(compare);
         });
 
     }
@@ -1191,10 +1190,11 @@
 
         this.blink = 1;
         this.frameBlink = true;
+        this.view = 'xl';
 
         _that.settings = {
-            width: 800, // canvas w
-            height: 620, // canvas h
+            width: _that.width(), // canvas w
+            height: _that.height(), // canvas h
             textureW: 800, // texture weight
             textureH: 700, // texture weight
             openGate: 0, // end gate possition
@@ -1240,7 +1240,8 @@
             RectSize: [this.settings.width/1.3,350],
             TitleName: [this.settings.width/8,235],
             TitlePoints: [this.settings.width/1.45,235],
-            ratingListX: [this.settings.width/8,this.settings.height-50]
+            ratingListX: [this.settings.width/8,this.settings.height-50],
+            ratingListPointsX: [this.settings.width/8,this.settings.height-50]
         }
 
         _that.gameOver = {
@@ -1522,7 +1523,7 @@
             CTX.globalAlpha = 0.9;
 
             this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[1],
-                this.pause.RectPause[0],this.pause.RectPause[1],
+                        this.pause.RectPause[0],this.pause.RectPause[1],
                         this.pause.RectPauseSize[0],this.pause.RectPauseSize[1]);
 
             CTX.strokeStyle = 'gold';
@@ -1607,7 +1608,6 @@
 
         //   ((this.blink === 0.5) && (this.frameBlink)) && (this.blink -= 0.01);
 
-
         CTX.fillText('ARENA',this.menu.TitleGame[0],this.menu.TitleGame[1]);
         // --reset shadow--
         CTX.shadowOffsetX = 0;
@@ -1625,7 +1625,6 @@
         } else {
             CTX.fillStyle = UserInterface.linki[1].color;
         }
-
 
 
         CTX.fillText('PLAY',this.menu.play[0],this.menu.play[1]);
@@ -1677,9 +1676,10 @@
         CTX.shadowBlur = 3;
         CTX.shadowOffsetX = 6;
         CTX.shadowOffsetY = 7;
-        CTX.font = 'bold 80px PIXI';
+        (this.view != 'mobile') ? CTX.font = 'bold 80px PIXI' : CTX.font = 'bold 60px PIXI';
+        (this.view === 'mobile') && (this.rating.TitleGame[1] = 35);
 
-        CTX.fillText('THE BEST',this.menu.TitleGame[0],this.menu.TitleGame[1]);
+        CTX.fillText('THE BEST',this.rating.TitleGame[0],this.rating.TitleGame[1]);
         CTX.shadowOffsetX = 0;
         CTX.shadowOffsetY = 0;
         if (UserInterface.checkFrame(UserInterface.linki[3])) {
@@ -1689,17 +1689,19 @@
             CTX.fillStyle = UserInterface.linki[3].color;
         }
 
-        CTX.font = 'bold 50px PIXI';
+        (this.view != 'mobile') ? CTX.font = 'bold 50px PIXI' : CTX.font = 'bold 40px PIXI';
+        (this.view === 'mobile') && (this.rating.return[1] = 85);
+
         CTX.fillText('RETURN',this.rating.return[0],this.rating.return[1]);
         CTX.strokeStyle = 'yellow';
         CTX.strokeRect(this.rating.StrokeRectCoords[0],
-                       this.rating.StrokeRectCoords[1],
-                       this.rating.StrokeRectSize[0],
-                       this.rating.StrokeRectSize[1]);
+                    this.rating.StrokeRectCoords[1],
+                    this.rating.StrokeRectSize[0],
+                    this.rating.StrokeRectSize[1]);
 
         CTX.fillStyle = 'black';
         CTX.fillRect(this.rating.RectCoords[0],this.rating.RectCoords[1],
-                     this.rating.RectSize[0],this.rating.RectSize[1]);
+                    this.rating.RectSize[0],this.rating.RectSize[1]);
 
 
         CTX.textAlign = "left";
@@ -1708,7 +1710,7 @@
         CTX.fillText('NAME',this.rating.TitleName[0],this.rating.TitleName[1]);
 
         CTX.fillStyle = 'yellow';
-        CTX.fillText('POINTS',this.rating.TitlePoints[0],this.rating.TitlePoints[1]);
+        CTX.fillText('POINTS',this.rating.RectSize[0]-70,this.rating.TitlePoints[1]);
 
 
         CTX.font = 'bold 40px PIXI';
@@ -1717,9 +1719,9 @@
         for (let i = 0; i < length; i++){
 
             CTX.fillText(`${i+1}. ` + load.startRecord[load.startRecord.length-(i+1)].name,
-                         this.rating.ratingListX[0],RecordsY);
+                        this.rating.ratingListX[0],RecordsY);
             CTX.fillText(load.startRecord[load.startRecord.length-(i+1)].points,
-                         this.rating.ratingListX[1],RecordsY);
+                        this.rating.RectSize[0]-50,RecordsY);
             RecordsY += speedText;
         }
         CTX.textAlign = "center";
@@ -1877,10 +1879,9 @@
 
         this.getCtx.ctx.fillRect(this.settings.drawInX,this.settings.drawInY,
                                 this.settings.width,this.settings.height);
-
         this.getCtx.ctx.fillStyle = 'grey';
         this.getCtx.ctx.font = '100px Aria bold';
-        this.getCtx.ctx.fillText('LOADING',this.loading.loadingText[0],this.loading.loadingText[1]);
+        this.getCtx.ctx.fillText('My project',this.loading.loadingText[0],this.loading.loadingText[1]);
 
     };
 
@@ -1904,7 +1905,7 @@
 
         div.classList.add('center');
         inputName.setAttribute('type','text');
-        inputName.setAttribute('maxlength','15');
+        inputName.setAttribute('maxlength','11');
         inputName.placeholder = 'ENTER NAME';
         buttonSave.setAttribute('type','button');
         buttonSave.value = 'SAVE';
@@ -1925,6 +1926,26 @@
 
         const modal = type.querySelector('.background-modal');
         modal.remove();
+    }
+
+
+    Draw.prototype.height = function() {
+
+        if (window.screen.availHeight < 620){
+            this.view = 'mobile';
+        return window.screen.availHeight-10;
+        } else {
+            return 620;
+        }
+    }
+
+    Draw.prototype.width = function() {
+        if (window.screen.availWidth < 800){
+            this.view = 'mobile';
+        return window.screen.availWidth-10;
+        } else {
+            return 800;
+        }
     }
 
 function GameController() {
@@ -2101,262 +2122,277 @@ function GameController() {
             return _that.inputState[key];
         }
     };
+
+//     window.addEventListener('DOMContentLoaded', () => {
+//         debugger;
+//         let canvas = document.getElementById('arena');
+
+//         if (window.screen.availWidth <= 735){
+
+
+//         } else if (window.screen.availWidth <= 825){
+
+//             canvas.getContext('2d').scale(0.7,0.8);
+//         }
+// });
 };
 
 
-// GameController.prototype.dataBaseListen = function(loader){
-
-//     cloudDB.use.collection('users').where('realPlayer', '==', true)
-//         .onSnapshot(function(snapshot){
-//             snapshot.forEach(function(doc){
-//                 loader.startRecord.push(doc.data());
-//             });
-//         });
-// }
 //--------INIT--------//
 
-(function () {
+    (function () {
     function main() {
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (window.screen.availWidth <= 850){
-                // 
-                // let canvas = document.getElementById('arena').style.transform = 'scale(0.8,0.8)';
-                // canvas.getContext('2d').scale(0.7,0.8);
-                
-        }});
 
-        let canvas = document.getElementById('arena');
-        const statistic = null;
-        let gameLoop = null;
-        let lastTime = null;
-        let now = null;
-        let time = null;
+            let canvas = document.getElementById('arena');
+            canvas.classList.add('canvasInit');
+            const statistic = null;
+            let gameLoop = null;
+            let lastTime = null;
+            let now = null;
+            let time = null;
 
-        // Object init
-        const game = new Game();
-        const gamePlayDraw = new Draw();
-        const controller = new GameController();
-        const UserInterface = new UI();
-        const loader = new Loader();
-        const request = new Request();
+            // Object init
+            const game = new Game();
+            const gamePlayDraw = new Draw();
+            const controller = new GameController();
+            const UserInterface = new UI();
+            const loader = new Loader();
+            const request = new Request();
 
-        !(localStorage.IP) && (request.getIP());
+            !(localStorage.IP) && (request.getIP());
 
-        mainDB = new DataBase();
-        mainDB.updateLimit();
+            mainDB = new DataBase();
+            mainDB.updateLimit();
 
+            gamePlayDraw.getCanvas.canvas.setAttribute('width', gamePlayDraw.settings.width);
+            gamePlayDraw.getCanvas.canvas.setAttribute('height', gamePlayDraw.settings.height);
 
-        // set w and h on main canvas
-        gamePlayDraw.getCanvas.canvas.setAttribute('width', gamePlayDraw.settings.width);
-        gamePlayDraw.getCanvas.canvas.setAttribute('height', gamePlayDraw.settings.height);
-        // canvas.style.transform = 'scale(0.6,0.6)';
-        // canvas.style.transform = 'scale(1.5,1.5)';
-        // links
-        UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
-        UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85, gamePlayDraw.menu.play[1]-45, 200,80));
-        UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120, gamePlayDraw.menu.rating[1]-40, 250, 80));
-        UserInterface.linki.push(new Links('RETURN', 'rating', (gamePlayDraw.settings.width/2)-60,110, 110, 70));
-        UserInterface.linki.push(new Links('MENU', 'wait', 350, 430, 110, 30));
-        UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760, 570, 50, 50));
+            // if (window.screen.availWidth <= 735){
+            //     debugger;
+            //     canvas.style.transform = 'scale(0.6,0.6)';
+            // }
 
-        // loading
-        gamePlayDraw.loadingRender(loader);
+            // set w and h on main canvas
+            // canvas.style.transform = 'scale(0.6,0.6)';
+            // canvas.style.transform = 'scale(1.5,1.5)';
+            // links
 
-        loader.loading('Image','img/texture.png','texture');
-        loader.loading('Image','img/sheet_objects_heroes.png','sprite');
-        loader.loading('Image','img/menu_800x600.jpg','sprite');
-        loader.loading('Image','img/pause.png','sprite');
-        loader.loading('Image','img/box_background.png','sprite');
-        loader.loading('Image','img/box.png','sprite');
-
-        loader.loading('Audio','audio/main.mp3');
-        loader.loading('Audio','audio/shot.mp3');
-        loader.loading('Audio','audio/Fly_A_Kite.mp3');
-        loader.loading('Audio','audio/money.wav');
-        loader.loading('Audio','audio/eat.wav');
-        loader.loading('Audio','audio/damage.wav');
-        loader.loading('Audio','audio/death_boss.wav');
-        loader.loading('Audio','audio/death-bat.mp3');
-        loader.loading('Audio','audio/death-bossExtra.wav');
-        loader.loading('Audio','audio/gameOver.wav');
-        loader.loading('Audio','audio/lvl.mp3');
-        loader.loading('Audio','audio/lvlUP.wav');
-        loader.loading('Audio','audio/lvlUP.wav');
-        loader.loading('Audio','audio/select.wav');
-        
-
-        // enemy and player
-        let enemy = new Enemy();
-        let player = new Player(loader, gamePlayDraw);
+            if (gamePlayDraw.view != 'mobile'){
+            UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
+            UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85, gamePlayDraw.menu.play[1]-45, 200,80));
+            UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120, gamePlayDraw.menu.rating[1]-40, 250, 80));
+            UserInterface.linki.push(new Links('RETURN', 'rating', (gamePlayDraw.settings.width/2)-60,110, 110, 70));
+            UserInterface.linki.push(new Links('MENU', 'wait', 350, 430, 110, 30));
+            UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760, 570, 50, 50));
+            } else {
+                UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
+                UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85, gamePlayDraw.menu.play[1]-45, 200,80));
+                UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120, gamePlayDraw.menu.rating[1]-40, 250, 80));
+                UserInterface.linki.push(new Links('RETURN', 'rating', gamePlayDraw.rating.return[0]-40,50, 110, 70));
+                UserInterface.linki.push(new Links('MENU', 'wait', 350, 430, 110, 30));
+                UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760, 570, 50, 50));  
+            }
 
 
-            loader.enemy.forEach(() => {
-                // -----start move-----
-                loader.enemy[i].bull.pos[0] = loader.enemy[i].move.pos[0];
-                loader.enemy[i].bull.pos[1] = loader.enemy[i].move.pos[1];
-                loader.enemy[i].enemySpeed *= getRandomPull();
-            });
+            loader.loading('Image','img/texture.png','texture');
+            loader.loading('Image','img/sheet_objects_heroes.png','sprite');
+            loader.loading('Image','img/menu_800x600.jpg','sprite');
+            loader.loading('Image','img/pause.png','sprite');
+            loader.loading('Image','img/box_background.png','sprite');
+            loader.loading('Image','img/box.png','sprite');
+            loader.loading('Image','img/globe.png','sprite');
 
+            loader.loading('Audio','audio/main.mp3');
+            loader.loading('Audio','audio/shot.mp3');
+            loader.loading('Audio','audio/Fly_A_Kite.mp3');
+            loader.loading('Audio','audio/money.wav');
+            loader.loading('Audio','audio/eat.wav');
+            loader.loading('Audio','audio/damage.wav');
+            loader.loading('Audio','audio/death_boss.wav');
+            loader.loading('Audio','audio/death-bat.mp3');
+            loader.loading('Audio','audio/death-bossExtra.wav');
+            loader.loading('Audio','audio/gameOver.wav');
+            loader.loading('Audio','audio/lvl.mp3');
+            loader.loading('Audio','audio/lvlUP.wav');
+            loader.loading('Audio','audio/lvlUP.wav');
+            loader.loading('Audio','audio/select.wav');
 
-        function linkers(loader, player) {
+            // loading
+            gamePlayDraw.loadingRender(loader);
             
-           if (UserInterface.linki[1].selectName){
 
-            loader.SoundsStorage[13].play();
-            game.startGameAnimation(loader, player,UserInterface.linki[1]);
-           }
-            if (UserInterface.linki[2].selectName){
+            // enemy and player
+            let enemy = new Enemy();
+            let player = new Player(loader, gamePlayDraw);
 
-                loader.SoundsStorage[13].play();
-                game.ratingGame(UserInterface.linki[2]);
-            }
 
-            if (UserInterface.linki[3].selectName){
+                loader.enemy.forEach(() => {
+                    // -----start move-----
+                    loader.enemy[i].bull.pos[0] = loader.enemy[i].move.pos[0];
+                    loader.enemy[i].bull.pos[1] = loader.enemy[i].move.pos[1];
+                    loader.enemy[i].enemySpeed *= getRandomPull();
+                });
+
+
+            function linkers(loader, player) {
                 
-                loader.SoundsStorage[13].play();
-                game.mainMenu(UserInterface.linki[3]);
-            }
-
-            if (UserInterface.linki[4].selectName){
-                
-                loader.SoundsStorage[13].play();
-                game.mainMenu(UserInterface.linki[4]);
-            }
-
-            if (UserInterface.linki[5].selectName) {
+            if (UserInterface.linki[1].selectName){
 
                 loader.SoundsStorage[13].play();
-                game.pause(UserInterface.linki[5]);
+                game.startGameAnimation(loader, player,UserInterface.linki[1]);
             }
-            }
+                if (UserInterface.linki[2].selectName){
 
-
-        function menu(loader, player) {
-
-            if (game.about.state === 'menu') {
-
-                player.setHealth(200);
-                game.setRequstCount(0);
-                loader.SoundsStorage[2].pause();
-                loader.SoundsStorage[2].currentTime = 0;
-            }
-        }
-
-        function gameplay(loader, player, game) {
-            if (game.about.state === 'play-animation') {
-
-                gamePlayDraw.building(loader, player, game);
-            }
-            if ((game.about.state === 'play') && !(loader.enemy.length)) {
-
-                loader.SoundsStorage[10].currentTime = 0;
-                loader.SoundsStorage[10].play();
-
-                (game.about.stageNumber >= 20) && (player.setHealth(0));
-
-                (game.about.stageNumber < 7) && (game.about.stageNumber++);
-
-                if (game.about.stageNumber >= 10) {
-
-                    game.about.stageNumber++;
-                    game.about.stageBossCount++;
-                    game.about.stageExtraBossCount++;
-
-                } else if (game.about.stageNumber >= 7) {
-
-                    game.about.stageNumber++;
-                    game.about.stageBossCount++;
+                    loader.SoundsStorage[13].play();
+                    game.ratingGame(UserInterface.linki[2]);
                 }
 
-                game.spawnAndLvling(game, loader, enemy, game.about.stageNumber);
-            };
-        }
+                if (UserInterface.linki[3].selectName){
+                    
+                    loader.SoundsStorage[13].play();
+                    game.mainMenu(UserInterface.linki[3]);
+                }
 
-        function buildTexture(game, loader, player) {
+                if (UserInterface.linki[4].selectName){
+                    
+                    loader.SoundsStorage[13].play();
+                    game.mainMenu(UserInterface.linki[4]);
+                }
 
-            if ((game.about.state === 'play') ||
-                (game.about.state === 'wait')) {
+                if (UserInterface.linki[5].selectName) {
 
-                (game.about.state === 'play') && (calculate( player, game));
-                gamePlayDraw.building(loader, player, game);
+                    loader.SoundsStorage[13].play();
+                    game.pause(UserInterface.linki[5]);
+                }
+                }
+
+
+            function menu(loader, player) {
+
+                if (game.about.state === 'menu') {
+
+                    player.setHealth(200);
+                    game.setRequstCount(0);
+                    loader.SoundsStorage[2].pause();
+                    loader.SoundsStorage[2].currentTime = 0;
+                }
             }
-        }
 
-        function pauseCheck(game,controller){ 
-            if ((game.about.state === 'pause') && !(input.isDown('ESCAPE'))){
-                
-                controller.inputState.ESCAPE = true;
-        }
-        }
+            function gameplay(loader, player, game) {
+                if (game.about.state === 'play-animation') {
 
-        function death(game, player,loader) {
+                    gamePlayDraw.building(loader, player, game);
+                }
+                if ((game.about.state === 'play') && !(loader.enemy.length)) {
 
-            if ((game.about.state === 'wait') &&
-                (game.about.requstCount === 0) &&
-                (player.stat.health <= 0)) {
+                    loader.SoundsStorage[10].currentTime = 0;
+                    loader.SoundsStorage[10].play();
 
-                (localStorage.name) && (player.stat.gamerName = localStorage.name);
+                    (game.about.stageNumber >= 20) && (player.setHealth(0));
 
-                !(localStorage.name) && (player.stat.gamerName = 'player' +
-                                        (Math.random().toFixed(3)).toString());
+                    (game.about.stageNumber < 7) && (game.about.stageNumber++);
 
-                let id = '_id'+loader.startRecord.length;
+                    if (game.about.stageNumber >= 10) {
 
-                const statistic = {
+                        game.about.stageNumber++;
+                        game.about.stageBossCount++;
+                        game.about.stageExtraBossCount++;
 
-                    result: {
-                        name: player.stat.gamerName,
-                        points: player.stat.points,
-                        id: id.slice(1,id.length),
-                        ip: localStorage.IP,
+                    } else if (game.about.stageNumber >= 7) {
+
+                        game.about.stageNumber++;
+                        game.about.stageBossCount++;
                     }
-                }
 
-                localStorage.setItem("result", JSON.stringify(statistic));
-                
-                mainDB.updateUserData(localStorage.IP,id,player.stat.gamerName,player.stat.points,loader);
-                game.about.requstCount++;
+                    game.spawnAndLvling(game, loader, enemy, game.about.stageNumber);
+                };
             }
+
+            function buildTexture(game, loader, player) {
+
+                if ((game.about.state === 'play') ||
+                    (game.about.state === 'wait')) {
+
+                    (game.about.state === 'play') && (calculate( player, game));
+                    gamePlayDraw.building(loader, player, game);
+                }
+            }
+
+            function pauseCheck(game,controller){ 
+                if ((game.about.state === 'pause') && !(input.isDown('ESCAPE'))){
+                    
+                    controller.inputState.ESCAPE = true;
+            }
+            }
+
+            function death(game, player,loader) {
+
+                if ((game.about.state === 'wait') &&
+                    (game.about.requstCount === 0) &&
+                    (player.stat.health <= 0)) {
+
+                    (localStorage.name) && (player.stat.gamerName = localStorage.name);
+
+                    !(localStorage.name) && (player.stat.gamerName = 'player' +
+                                            (Math.random().toFixed(3)).toString());
+
+                    let id = '_id'+loader.startRecord.length;
+
+                    const statistic = {
+
+                        result: {
+                            name: player.stat.gamerName,
+                            points: player.stat.points,
+                            id: id.slice(1,id.length),
+                            ip: localStorage.IP,
+                        }
+                    }
+
+                    localStorage.setItem("result", JSON.stringify(statistic));
+                    
+                    mainDB.updateUserData(localStorage.IP,id,player.stat.gamerName,player.stat.points,loader);
+                    game.about.requstCount++;
+                }
+            }
+
+            if (!localStorage.name) {
+
+                gamePlayDraw.buildingGetNameView(document);
+            }
+
+            let timer = setTimeout(() => {
+                gameLoop = requestAnimationFrame(loop);
+            }, 3000);
+
+            controller.setEvent(gamePlayDraw, player, loader, game, UserInterface);
+            gamePlayDraw.building(loader, player, game);
+
+            mainDB.getUserData(loader);
+
+            function loop() {
+
+                now = Date.now();
+                time = (now - lastTime) / 1000.0;
+
+
+
+                linkers(loader, player, time);
+                menu(loader, player);
+                gameplay(loader, player, game);
+                update(time, player, loader, game, UserInterface.linki);
+                pauseCheck(game,controller);
+                buildTexture(game, loader, player);
+                gamePlayDraw.renders(player, loader, game, UserInterface);
+                death(game,player,loader);  //, request
+
+                lastTime = now;
+                requestAnimationFrame(loop);
+            }
+        } // main()
+        return application = {
+            init: main
         }
+    })();
 
-        if (!localStorage.name) {
-
-            gamePlayDraw.buildingGetNameView(document);
-        }
-
-        // let timer = setTimeout(() => {
-            gameLoop = requestAnimationFrame(loop);
-        // }, 3000);
-
-        controller.setEvent(gamePlayDraw, player, loader, game, UserInterface);
-        gamePlayDraw.building(loader, player, game);
-
-        mainDB.getUserData(loader);
-
-        function loop() {
-
-            now = Date.now();
-            time = (now - lastTime) / 1000.0;
-
-
-
-            linkers(loader, player, time);
-            menu(loader, player);
-            gameplay(loader, player, game);
-            update(time, player, loader, game, UserInterface.linki);
-            pauseCheck(game,controller);
-            buildTexture(game, loader, player);
-            gamePlayDraw.renders(player, loader, game, UserInterface);
-            death(game,player,loader);  //, request
-
-            lastTime = now;
-            requestAnimationFrame(loop);
-        }
-    } // main()
-    return application = {
-        init: main
-    }
-})();
-
-application.init();
+    application.init();
