@@ -1656,7 +1656,8 @@
         let posTxtY = null;  // for records text cycle
         let length = null;  // for records text cycle
 
-        length = (load.startRecord.length < 9) ? load.startRecord.length : 9; // length records array
+        (this.view != 'mobile') && (length = (load.startRecord.length < 9) ? load.startRecord.length : 9 ); // length records array
+        (this.view === 'mobile') && (length = (load.startRecord.length < 7) ? load.startRecord.length : 7 );
         RecordsY = 275; // start draw position
         speedText = 32; // i
 
@@ -1709,8 +1710,10 @@
         CTX.fillStyle = 'yellow';
         CTX.fillText('NAME',this.rating.TitleName[0],this.rating.TitleName[1]);
 
+        if (this.view != 'mobile') {
         CTX.fillStyle = 'yellow';
         CTX.fillText('POINTS',this.rating.RectSize[0]-70,this.rating.TitlePoints[1]);
+        }
 
 
         CTX.font = 'bold 40px PIXI';
@@ -1720,8 +1723,10 @@
 
             CTX.fillText(`${i+1}. ` + load.startRecord[load.startRecord.length-(i+1)].name,
                         this.rating.ratingListX[0],RecordsY);
+            if (this.view != 'mobile'){
             CTX.fillText(load.startRecord[load.startRecord.length-(i+1)].points,
                         this.rating.RectSize[0]-50,RecordsY);
+            }
             RecordsY += speedText;
         }
         CTX.textAlign = "center";
