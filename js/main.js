@@ -20,6 +20,16 @@
             loader.startRecord.sort(compare); // Bubble sort
             console.log(loader.startRecord);
         });
+
+        cloudDB.use.collection('users').where('realPlayer', '==', true)
+        .onSnapshot(function(snapshot){
+            loader.startRecord = [];
+            snapshot.forEach(function(doc){
+                loader.startRecord.push(doc.data());
+            });
+            debugger;
+            loader.startRecord.sort(compare);
+        });
     }
 
     DataBase.prototype.updateLimit = function () {
@@ -32,7 +42,7 @@
     }
 
     DataBase.prototype.updateUserData = function(ip,id,name,points,loader){
-
+        debugger;
         if (this.MAX_WRITE >= 5) throw new Error('limit');
         this.MAX_WRITE++;
         this.currentIP = (ip) ? ip : 'no ip detected';
@@ -45,11 +55,11 @@
             realPlayer: true
         })
 
-        .then (function(){
-            let newResult = {name: name, points: points, id: id.slice(1,id.length)};
-            loader.startRecord.push(newResult);
-            loader.startRecord.sort(compare);
-        })
+        // .then (function(){
+        //     let newResult = {name: name, points: points, id: id.slice(1,id.length)};
+        //     loader.startRecord.push(newResult);
+        //     loader.startRecord.sort(compare);
+        // })
 
         .catch(function (error) {
             console.log(error);
@@ -68,7 +78,7 @@
         fetch(`https://ipsidekick.com/${this.key()}`)
 
         .then ((response) => response.json())
-        .then ((response) => { localStorage.IP = response.ip; })
+        .then ((response) => { (response.ip) ? localStorage.IP = response.ip : localStorage.IP = 'no detected' })
 
         .catch(function (error){
             console.log(error);
@@ -2092,6 +2102,17 @@ function GameController() {
         }
     };
 };
+
+
+// GameController.prototype.dataBaseListen = function(loader){
+
+//     cloudDB.use.collection('users').where('realPlayer', '==', true)
+//         .onSnapshot(function(snapshot){
+//             snapshot.forEach(function(doc){
+//                 loader.startRecord.push(doc.data());
+//             });
+//         });
+// }
 //--------INIT--------//
 
 (function () {
