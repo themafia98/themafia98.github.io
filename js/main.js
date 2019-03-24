@@ -1,5 +1,6 @@
 
 
+
     function DataBase() {
 
         this.MAX_WRITE = 0;
@@ -459,6 +460,7 @@
 
         _that.enemySpeedX = 1 * getRandomPull(); // start random position X
         _that.enemySpeedY = 1 * getRandomPull(); // start random position X
+        _that.DeathTimer = null;
 
         _that.stat = {
             name: '',
@@ -468,7 +470,8 @@
             health: null,
             damage: null,
             sprite: null, // for sprite
-            sizes: [32, 20] // sprite size
+            sizes: [32, 20], // sprite size
+            onDeath: false,
         };
 
         _that.bull = {
@@ -524,6 +527,7 @@
 
     function Sprite(name, url, pos, size, speed, frames, dir, once) {
 
+        this.Saveframes = null;
         this.name = name;
         this.pos = pos;
         this.size = size; // size one frame
@@ -694,15 +698,38 @@
         let resetSprite; // timer for splice items
 
         load.enemy.forEach((itemEnemy,i,arrayEnemy) => { // check all enemys
-
+      
             if (itemEnemy.stat.health <= 0) {
+               
 
+                if ( (itemEnemy.stat.onDeath === false)){
+                itemEnemy.stat.onDeath = true;
                 gamer.stat.whatDrop = Math.random() < 0.5;
                 gamer.stat.upgradeRate = Math.random() < 0.05;
 
+               
+                if(itemEnemy.stat.type === 'common'){
+
                 itemEnemy.stat.sprite.pos[0] = 960;
                 itemEnemy.stat.sprite.pos[1] = 102;
+                }
 
+                if(itemEnemy.stat.type === 'boss'){
+
+                    itemEnemy.stat.sprite.pos[0] = 1540;
+                    itemEnemy.stat.sprite.pos[1] = 232;
+                }
+
+                if(itemEnemy.stat.type === 'bossExtra'){
+
+                    itemEnemy.stat.sprite.pos[0] = 1542;
+                    itemEnemy.stat.sprite.pos[1] = 298;
+                }
+
+                itemEnemy.enemySpeedX = 0;
+                itemEnemy.enemySpeedY = 0;
+                itemEnemy.bull.on = false;
+                itemEnemy.bull.bullStorage = [];
 
                 if (gamer.stat.whatDrop) { // drops
 
@@ -759,9 +786,25 @@
                 gamer.killCount++;
                 itemEnemy.sound.currentTime = 0;
                 itemEnemy.sound.play();
-                itemEnemy.stat.sprite.pos[0] = 958;
+               
+            
+
+               itemEnemy.DeathTimer = setTimeout( () => {
+
+                itemEnemy.DeathTimer = null;
                 arrayEnemy.splice(i, 1);
                 gamer.stat.points += 25;
+                },300);
+            } else {
+               if ((itemEnemy.stat.health <= 0) && (itemEnemy.stat.onDeath === true) && 
+               itemEnemy.DeathTimer === null) {
+                   debugger;
+                arrayEnemy.splice(i, 1);
+                gamer.stat.points += 25;
+                
+
+               }
+            }
             }
 
             if ((itemEnemy) &&(boxCollides([itemEnemy.move.pos[0], itemEnemy.move.pos[1]],
@@ -785,6 +828,7 @@
                 }
             }
         });
+        console.log(load.enemy);
     }
 
     function updateCreeps(time, gamer, load, game) {
@@ -849,7 +893,6 @@
                 if ((boxCollides([bulPosX, bulPosY], [30, 30],
                                 [gamerPosX, gamerPosY], [32, 32]))) {
 
-                    gamer.stat.sprite.pos[0] = 956;
                     load.SoundsStorage[5].currentTime = 0;
                     load.SoundsStorage[5].play();
                     gamer.stat.health--;
@@ -1002,18 +1045,19 @@
                     enemyPos[0] = itemEnemy.move.pos[0];
                     enemyPos[1] = itemEnemy.move.pos[1];
 
-                    if (boxCollides(enemyPos, [35, 35], posBull, [35, 35])) {
-                        if (itemEnemy.stat.type === 'common') {
+                    if (boxCollides(enemyPos, [35, 35], posBull, [35, 35]) && 
+                    (itemEnemy.stat.health >= 0)) {
+                        // if (itemEnemy.stat.type === 'common') {
 
-                            prewFrameSprite = itemEnemy.stat.sprite.pos[0];
-                            prewFrameCount = itemEnemy.stat.sprite.frames;
-                            itemEnemy.stat.sprite.pos[0] = 960;
-                            itemEnemy.stat.sprite.frames = [0];
-                            resetTimeout = setTimeout(()=>{
-                                itemEnemy.stat.sprite.pos[0] = prewFrameSprite;
-                                itemEnemy.stat.sprite.frames = prewFrameCount;
-                            },50);
-                            }
+                        //     prewFrameSprite = itemEnemy.stat.sprite.pos[0];
+                        //     prewFrameCount = itemEnemy.stat.sprite.frames;
+                        //     itemEnemy.stat.sprite.pos[0] = 960;
+                        //     itemEnemy.stat.sprite.Saveframes = 0;
+                        //     resetTimeout = setTimeout(()=>{
+                        //         itemEnemy.stat.sprite.pos[0] = prewFrameSprite;
+                        //         itemEnemy.stat.sprite.frames = prewFrameCount;
+                        //     },50);
+                        //     }
 
                         itemEnemy.stat.health -= gamer.stat.damage;
                         load.bullets.splice(i, 1);
@@ -2411,7 +2455,7 @@
                     gamePlayDraw.building(loader, player, game);
                 }
                 if ((game.about.state === 'play') && !(loader.enemy.length)) {
-                    debugger;
+                   
                     loader.SoundsStorage[10].currentTime = 0;
                     loader.SoundsStorage[10].play();
 
