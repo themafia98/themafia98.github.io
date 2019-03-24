@@ -318,7 +318,7 @@
             file.src = src;
             this.SpriteCache(file);
             console.log('loading file №' + this.loadCount + '(' + file.src + ')');
-             this.loadCount++;
+            this.loadCount++;
         }
 
         if (fileType === 'Audio'){
@@ -359,7 +359,6 @@
             pos: [location.settings.width / 2, location.settings.height / 2],
             startPos: [385, -120], // position for start animation
             animationPos: [location.settings.width / 2, location.settings.height / 2],
-            prewBullet: null,
         };
 
         _that.setHealth = function (count) {
@@ -505,7 +504,7 @@
         spriteEnemy.move.pos[1] = posY * getRandom();
         spriteEnemy.sound = music;
 
-            
+
         if ((spriteEnemy.stat.type === 'boss' || spriteEnemy.stat.type === 'bossExtra') &&
             (spriteEnemy.enemySpeedX < 0 || spriteEnemy.enemySpeedY < 0)) {
 
@@ -604,7 +603,7 @@
     }
 
     Items.prototype.setSprite = function (load, cordSpriteX, cordsSpriteY,
-        sizeSpriteX, sizeSpriteY) {
+        sizeSpriteX, sizeSpriteY){
 
         return this.sprite = new Sprite(this.name, load.SpriteStorage[0],
             [cordSpriteX, cordsSpriteY], [sizeSpriteX, sizeSpriteY]);
@@ -861,7 +860,7 @@
                 // ------pushing and set sprite frames away from the walls------
 
                 // ---change dir moving---
-                
+
                 dirMovingEnemy(item);
 
                 item.move.pos[0] += item.enemySpeedX; // moving enemy x
@@ -938,8 +937,6 @@
 
     function calcBullet(bullet, gamer, time) {
         // преобразуем координаты в объект класса Vector
-
-        
 
         const pos = new Vector(bullet.pos.x, bullet.pos.y);
 
@@ -2073,6 +2070,9 @@
         let _that = this;
         _that.count = 0;
 
+        _that.canvasLeft = null;
+        _that.canvasTop = null;
+
         _that.inputState = {
             UP: false,
             DOWN: false,
@@ -2133,15 +2133,14 @@
 
             function movingMouse(e) {
 
-                // For debugging links
-
+                // For links and bullets
                 if (e.target === canvas) {
 
-                    let canvasLeft = canvas.offsetLeft;
-                    let canvasTop = canvas.offsetTop;
+                    _that.canvasLeft = canvas.offsetLeft;
+                    _that.canvasTop = canvas.offsetTop;
 
-                    UserInterface.coordsMouseX = e.pageX - canvasLeft;
-                    UserInterface.coordsMouseY = e.pageY - canvasTop;
+                    UserInterface.coordsMouseX = e.pageX - _that.canvasLeft;
+                    UserInterface.coordsMouseY = e.pageY - _that.canvasTop;
 
                     UserInterface.coorddX = UserInterface.coordsMouseX - gamer.move.pos[0];
                     UserInterface.coorddY = UserInterface.coordsMouseY - gamer.move.pos[1];
@@ -2477,7 +2476,7 @@
             function loop() {
 
                 now = Date.now();
-                time = (now - lastTime) / 1000.0;
+                time = Math.min(0.05,(now - lastTime) / 1000.0);
 
                 linkers(loader, player, time);
                 menu(loader, player);
