@@ -236,6 +236,7 @@
     };
 
     Game.prototype.updateGameStatus = function (gamer, load) { // new game
+
         this.about.stageNumber = -1;
         this.about.BossCount = -1;
         this.about.count = -1;
@@ -350,7 +351,7 @@
                 whatDrop: false,
                 upgradeRate: false,
                 sprite: new Sprite('player', type.SpriteStorage[0],
-                    [703, 0], [31, 34], 2, [0, 1]),
+                        [703, 0], [31, 34], 2, [0, 1]),
                 bullets: new Bullets(),
             };
         _that.move = {
@@ -503,6 +504,13 @@
         spriteEnemy.move.pos[0] = posX * getRandom();
         spriteEnemy.move.pos[1] = posY * getRandom();
         spriteEnemy.sound = music;
+
+            debugger;
+        if ((spriteEnemy.stat.type === 'boss' || spriteEnemy.stat.type === 'bossExtra') &&
+            (spriteEnemy.enemySpeedX < 0 || spriteEnemy.enemySpeedY < 0)) {
+
+            spriteX = 452;
+        };
 
         spriteEnemy.stat.sprite = new Sprite('enemy', load.SpriteStorage[0],
             [spriteX, spriteY], [spriteW, spriteH],
@@ -853,52 +861,57 @@
                 // ------pushing and set sprite frames away from the walls------
 
                 // ---change dir moving---
-                if ((item) && (item.move.pos[0] > 700)) {
-
-                    item.enemySpeedX *= -1;
-
-                    // ---set sprite frames---
-                    (item.stat.type === `boss` || item.stat.type === 'bossExtra') &&
-                                                    (item.stat.sprite.pos[0] = 1226);
-
-                }
-
-                // ---change dir moving---
-                if ((item) && (item.move.pos[0] < 70)){
-
-                    item.enemySpeedX *= -1;
-
-                    // ---set sprite frames---
-                    (item.stat.type === `boss` || item.stat.type === 'bossExtra') &&
-                                                    (item.stat.sprite.pos[0] = 712);
-                }
-
-                // ---change dir moving---
-                if ((item) && (item.move.pos[1] < 80)) {
-
-                    item.enemySpeedY *= -1; // change dir moving
-
-                    // ---set sprite frames---
-                    (item.stat.type === `boss`) || (item.stat.type === 'bossExtra') &&
-                                                    (item.stat.sprite.pos[0] = 964);
-                }
-
-                // ---change dir moving---
-                if ((item) && (item.move.pos[1] > 400)) {
-
-                    item.enemySpeedY *= -1; // change dir moving
-
-                    // ---set sprite frames---
-                    ((item.stat.type === `boss`) || (item.stat.type === 'bossExtra')) &&
-                                                        (item.stat.sprite.pos[0] = 452);
-
-                }
+                
+                dirMovingEnemy(item);
 
                 item.move.pos[0] += item.enemySpeedX; // moving enemy x
                 item.move.pos[1] += item.enemySpeedY; // moving enemy y
             });
 
             game.about.lastTimeBull = Date.now(); // delay
+        }
+    }
+
+    function dirMovingEnemy(item){
+        if ((item) && (item.move.pos[0] > 700)) {
+
+            item.enemySpeedX *= -1;
+
+            // ---set sprite frames---
+            (item.stat.type === `boss` || item.stat.type === 'bossExtra') &&
+                                            (item.stat.sprite.pos[0] = 1226);
+
+        }
+
+        // ---change dir moving---
+        if ((item) && (item.move.pos[0] < 70)){
+
+            item.enemySpeedX *= -1;
+
+            // ---set sprite frames---
+            (item.stat.type === `boss` || item.stat.type === 'bossExtra') &&
+                                            (item.stat.sprite.pos[0] = 712);
+        }
+
+        // ---change dir moving---
+        if ((item) && (item.move.pos[1] < 80)) {
+
+            item.enemySpeedY *= -1; // change dir moving
+
+            // ---set sprite frames---
+            (item.stat.type === `boss`) || (item.stat.type === 'bossExtra') &&
+                                            (item.stat.sprite.pos[0] = 964);
+        }
+
+        // ---change dir moving---
+        if ((item) && (item.move.pos[1] > 400)) {
+
+            item.enemySpeedY *= -1; // change dir moving
+
+            // ---set sprite frames---
+            ((item.stat.type === `boss`) || (item.stat.type === 'bossExtra')) &&
+                                                (item.stat.sprite.pos[0] = 452);
+
         }
     }
 
@@ -1328,10 +1341,11 @@
                     item.sprite.x = item.sprite.render(); // render sprite coins
                 // render coins
                     this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
-                        item.sprite.x, item.sprite.pos[1],
-                        item.sprite.size[0], item.sprite.size[1],
-                        item.pos[0],item.pos[1],
-                                            this.items.spriteItemSize[0],this.items.spriteItemSize[1]);
+                                                        item.sprite.x, item.sprite.pos[1],
+                                                        item.sprite.size[0], item.sprite.size[1],
+                                                        item.pos[0],item.pos[1],
+                                                        this.items.spriteItemSize[0],
+                                                        this.items.spriteItemSize[1]);
                 }
             });
 
@@ -1341,10 +1355,11 @@
 
                     item.sprite.x = item.sprite.render(); // render sprite eat
                     this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
-                        item.sprite.x, item.sprite.pos[1],
-                        item.sprite.size[0], item.sprite.size[1],
-                        item.pos[0],  item.pos[1],
-                        this.items.spriteItemSize[0],this.items.spriteItemSize[1]);
+                                                        item.sprite.x, item.sprite.pos[1],
+                                                        item.sprite.size[0], item.sprite.size[1],
+                                                        item.pos[0],  item.pos[1],
+                                                        this.items.spriteItemSize[0],
+                                                        this.items.spriteItemSize[1]);
                 }
         });
 
@@ -1354,10 +1369,11 @@
 
                     item.sprite.x = item.sprite.render(); // render sprite eat
                     this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
-                        item.sprite.x, item.sprite.pos[1],
-                        item.sprite.size[0], item.sprite.size[1],
-                        item.pos[0],  item.pos[1],
-                        this.items.spriteItemSize[0],this.items.spriteItemSize[1]);
+                                                        item.sprite.x, item.sprite.pos[1],
+                                                        item.sprite.size[0], item.sprite.size[1],
+                                                        item.pos[0],  item.pos[1],
+                                                        this.items.spriteItemSize[0],
+                                                        this.items.spriteItemSize[1]);
                 }
         });
 
@@ -1388,9 +1404,9 @@
         this.drawBuffer.ctxBuffer.fillStyle = 'black';
         this.drawBuffer.ctxBuffer.globalAlpha = game.fade;
         this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[1],
-            this.settings.drawInX,this.settings.drawInX,
-            this.settings.width,this.settings.height);
-        // this.drawBuffer.ctxBuffer.fillRect(0,0,this.settings.width,this.settings.height);
+                                            this.settings.drawInX,this.settings.drawInX,
+                                            this.settings.width,this.settings.height);
+
         this.drawBuffer.ctxBuffer.font = '100px Aria bold';
         this.drawBuffer.ctxBuffer.fillStyle = 'grey';
         this.drawBuffer.ctxBuffer.fillText('RENDER',this.loading.loadingText[0]+30,
@@ -1445,7 +1461,6 @@
                                             this.settings.drawInX,this.settings.drawInY,
                                             25,27);
             bull.degree++;
-
 
             this.drawBuffer.ctxBuffer.restore();
 
@@ -1524,8 +1539,8 @@
             CTX.globalAlpha = 0.9;
 
             this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[1],
-                        this.pause.RectPause[0],this.pause.RectPause[1],
-                        this.pause.RectPauseSize[0],this.pause.RectPauseSize[1]);
+                                                this.pause.RectPause[0],this.pause.RectPause[1],
+                                                this.pause.RectPauseSize[0],this.pause.RectPauseSize[1]);
 
             CTX.strokeStyle = 'gold';
             CTX.globalAlpha = 0.9;
@@ -1544,15 +1559,18 @@
             CTX.shadowOffsetX = 2;
             CTX.shadowOffsetY = 3;
             CTX.font = 'bold 20px Arial';
-            CTX.fillText('If you leave the game, all saves will be lost.',this.pause.Notification[0],this.pause.Notification[1]);
+            CTX.fillText('If you leave the game, all saves will be lost.',this.pause.Notification[0],
+                        this.pause.Notification[1]);
 
             CTX.fillStyle = 'yellow';
             CTX.shadowColor = 'brown';
             CTX.font = 'bold 25px Arial';
             CTX.shadowOffsetX = 0;
             CTX.shadowOffsetY = 0;
-            CTX.fillText('Count throw: ' + gamer.countThrow,this.gameOver.Throw[0]-20,this.gameOver.Throw[1]);
-            CTX.fillText('Count kills: ' + gamer.killCount,this.gameOver.killCount[0]-20,this.gameOver.killCount[1]);
+            CTX.fillText('Count throw: ' + gamer.countThrow,this.gameOver.Throw[0]-20,
+                        this.gameOver.Throw[1]);
+            CTX.fillText('Count kills: ' + gamer.killCount,this.gameOver.killCount[0]-20,
+                        this.gameOver.killCount[1]);
     
 
             if (UserInterface.checkFrame(UserInterface.linki[0])) { // menu link
@@ -1580,10 +1598,13 @@
         let CTX = this.drawBuffer.ctxBuffer; // short write
 
         this.menu.background = CTX.createPattern(load.SpriteStorage[3],'repeat');
-        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,this.settings.width,this.settings.height);
+        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,
+                     this.settings.width,this.settings.height);
 
         CTX.fillStyle = this.menu.background;
-        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,this.settings.width,this.settings.height);
+
+        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,
+                     this.settings.width,this.settings.height);
 
         CTX.fillStyle = 'rgb(255,215,0)';
         CTX.shadowColor = 'brown';
@@ -1595,18 +1616,19 @@
         CTX.font = 'bold 100px PIXI';
 
         CTX.globalAlpha = this.blink;
-        
+
         if ((this.frameBlink) && (this.blink > 0.5)) {
-              this.blink -= 0.01;
+
+            this.blink -= 0.01;
+
         } else if (!(this.frameBlink) && (this.blink != 1)){
+
         this.blink += 0.01;
+
         }
 
-         (this.blink <= 0.5) && (this.frameBlink = false);
-         (this.blink >= 1) && (this.frameBlink = true);
-
-
-        //   ((this.blink === 0.5) && (this.frameBlink)) && (this.blink -= 0.01);
+        (this.blink <= 0.5) && (this.frameBlink = false);
+        (this.blink >= 1) && (this.frameBlink = true);
 
         CTX.fillText('ARENA',this.menu.TitleGame[0],this.menu.TitleGame[1]);
         // --reset shadow--
@@ -1625,7 +1647,6 @@
             CTX.fillStyle = UserInterface.linki[1].color;
         }
 
-
         CTX.fillText('PLAY',this.menu.play[0],this.menu.play[1]);
 
         if (UserInterface.checkFrame(UserInterface.linki[2])) {
@@ -1635,7 +1656,6 @@
 
             CTX.fillStyle = UserInterface.linki[2].color;
             }
-
 
         CTX.fillText('RATING',this.menu.rating[0],this.menu.rating[1]);
 
@@ -1655,8 +1675,12 @@
         let posTxtY = null;  // for records text cycle
         let length = null;  // for records text cycle
 
-        (this.view != 'mobile') && (length = (load.startRecord.length < 9) ? load.startRecord.length : 9 ); // length records array
-        (this.view === 'mobile') && (length = (load.startRecord.length < 7) ? load.startRecord.length : 7 );
+        (this.view != 'mobile') && (length = (load.startRecord.length < 9) ?
+                                    load.startRecord.length : 9 ); // length records array
+
+        (this.view === 'mobile') && (length = (load.startRecord.length < 7) ?
+                                    load.startRecord.length : 7 );
+
         RecordsY = 275; // start draw position
         speedText = 32; // i
 
@@ -1666,10 +1690,12 @@
         CTX.textBaseline = "middle";
 
         CTX.fillStyle = this.menu.background;
-        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,this.settings.width,this.settings.height);
+        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,
+                    this.settings.width,this.settings.height);
 
         CTX.fillStyle = this.menu.background;
-        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,this.settings.width,this.settings.height);
+        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,
+                    this.settings.width,this.settings.height);
 
         CTX.fillStyle = 'rgb(255,215,0)';
         CTX.shadowColor = 'brown';
@@ -1682,8 +1708,11 @@
         CTX.fillText('THE BEST',this.rating.TitleGame[0],this.rating.TitleGame[1]);
         CTX.shadowOffsetX = 0;
         CTX.shadowOffsetY = 0;
+
         if (UserInterface.checkFrame(UserInterface.linki[3])) {
+
             CTX.fillStyle = UserInterface.linki[3].selectColor;
+
         } else {
 
             CTX.fillStyle = UserInterface.linki[3].color;
@@ -1695,10 +1724,11 @@
         CTX.fillText('RETURN',this.rating.return[0],this.rating.return[1]);
         CTX.strokeStyle = 'yellow';
         (this.view === 'mobile') && (this.rating.StrokeRectCoords[1] = 180);
+
         CTX.strokeRect(this.rating.StrokeRectCoords[0],
-                    this.rating.StrokeRectCoords[1],
-                    this.rating.StrokeRectSize[0],
-                    this.rating.StrokeRectSize[1]);
+                       this.rating.StrokeRectCoords[1],
+                       this.rating.StrokeRectSize[0],
+                       this.rating.StrokeRectSize[1]);
 
         CTX.fillStyle = 'black';
         (this.view === 'mobile') && (this.rating.RectCoords[1] = 180);
@@ -1712,8 +1742,10 @@
         CTX.fillText('NAME',this.rating.TitleName[0],this.rating.TitleName[1]);
 
         if (this.view != 'mobile') {
+
         CTX.fillStyle = 'yellow';
         CTX.fillText('POINTS',this.rating.RectSize[0]-70,this.rating.TitlePoints[1]);
+
         }
 
 
@@ -1724,12 +1756,16 @@
 
             CTX.fillText(`${i+1}. ` + load.startRecord[load.startRecord.length-(i+1)].name,
                         this.rating.ratingListX[0],RecordsY);
+
             if (this.view != 'mobile'){
+
             CTX.fillText(load.startRecord[load.startRecord.length-(i+1)].points,
                         this.rating.RectSize[0]-50,RecordsY);
             }
+
             RecordsY += speedText;
         }
+
         CTX.textAlign = "center";
         CTX.fillStyle = 'white';
         CTX.font = 'bold 14px Arial';
@@ -1753,7 +1789,9 @@
         CTX.font = ' bold 70px SEGOE SCRIPT';
         if(game.about.stageNumber >=20){
         CTX.fillText('W I N',this.gameOver.win[0],this.gameOver.win[1]);
+
         } else {
+
         CTX.fillText('GAME OVER',this.gameOver.TitleCoords[0],this.gameOver.TitleCoords[1]);
         }
 
@@ -1764,14 +1802,21 @@
         CTX.fillStyle = 'yellow';
         CTX.shadowColor = 'brown';
         CTX.font = 'bold 25px Arial';
-        CTX.fillText('Points: ' + gamer.stat.points, this.gameOver.Points[0],this.gameOver.Points[1]);
-        CTX.fillText('Count throw: ' + gamer.countThrow,this.gameOver.Throw[0],this.gameOver.Throw[1]);
-        CTX.fillText('Count kills: ' + gamer.killCount,this.gameOver.killCount[0],this.gameOver.killCount[1]);
+        CTX.fillText('Points: ' + gamer.stat.points, this.gameOver.Points[0],
+                    this.gameOver.Points[1]);
+
+        CTX.fillText('Count throw: ' + gamer.countThrow,this.gameOver.Throw[0],
+                    this.gameOver.Throw[1]);
+
+        CTX.fillText('Count kills: ' + gamer.killCount,this.gameOver.killCount[0],
+                    this.gameOver.killCount[1]);
 
         if (UserInterface.checkFrame(UserInterface.linki[0])) {
 
             CTX.fillStyle = UserInterface.linki[4].selectColor;
+
             } else {
+
             CTX.fillStyle = UserInterface.linki[4].color;
             }
 
@@ -1792,9 +1837,12 @@
         if (this.view === 'mobile' && (this.viewMode === 'demo')){
 
             CTX.fillStyle = 'rgb(240,230,140)';
-            CTX.fillRect(this.settings.drawInX,this.settings.drawInY,this.settings.width,this.settings.height);
+
+            CTX.fillRect(this.settings.drawInX,this.settings.drawInY,
+                         this.settings.width,this.settings.height);
 
         } else {
+
         CTX.drawImage(load.TextureStorage[0],
                     this.playGame.spriteTextureBorder[0],this.playGame.spriteTextureBorder[1],
                     this.settings.textureW,this.settings.textureH,
@@ -1806,7 +1854,7 @@
                     this.settings.textureW,this.settings.textureH,
                     this.settings.drawInX,this.settings.drawInY,
                     this.settings.textureW,this.settings.textureH);
-      
+
 
         //-----GATES----
         // gate 1
@@ -1840,20 +1888,27 @@
         CTX.strokeStyle = 'blue';
         CTX.lineWidth = 5;
         (this.view === 'mobile') && (this.playGame.hpBarBoorderCoords[0] = this.settings.width/4);
+
         CTX.strokeRect(this.playGame.hpBarBoorderCoords[0],this.playGame.hpBarBoorderCoords[1],
                     this.playGame.hpBarBoorderSize[0],this.playGame.hpBarBoorderSize[1]);
         CTX.fillStyle = 'crimson';
+
         if (gamer.stat.health <= 0){
-        CTX.fillRect(this.playGame.hpBarBoorderCoords[0]+2,this.playGame.hpBarBoorderCoords[1]+2,0, 20);
+
+        CTX.fillRect(this.playGame.hpBarBoorderCoords[0]+2,this.playGame.hpBarBoorderCoords[1]+2,
+                     0, 20);
+
         } else {
-        CTX.fillRect(this.playGame.hpBarBoorderCoords[0]+2,this.playGame.hpBarBoorderCoords[1]+2, gamer.stat.health, 20);
+        CTX.fillRect(this.playGame.hpBarBoorderCoords[0]+2,this.playGame.hpBarBoorderCoords[1]+2,
+                     gamer.stat.health, 20);
         }
 
         // HP bar
         CTX.fillStyle = 'white';
         CTX.font = 'bold 15px Arial';
         (this.view != 'mobile') &&
-            CTX.fillText(gamer.stat.health + 'HP',this.playGame.hpBarSize[0],this.playGame.hpBarSize[1]);
+            CTX.fillText(gamer.stat.health + 'HP',this.playGame.hpBarSize[0],
+                         this.playGame.hpBarSize[1]);
 
 
         // Lvl
@@ -1874,37 +1929,49 @@
 
         CTX.fillStyle = 'gold';
         CTX.font = 'bold 27px Arial';
-        CTX.fillText(gamer.stat.points,this.playGame.PointsTextCoords[0],this.playGame.PointsTextCoords[1]);
+        CTX.fillText(gamer.stat.points,this.playGame.PointsTextCoords[0],
+                     this.playGame.PointsTextCoords[1]);
             
-        CTX.drawImage(load.SpriteStorage[2],this.playGame.pauseButton[0],this.playGame.pauseButton[1],20,20);
+        CTX.drawImage(load.SpriteStorage[2],this.playGame.pauseButton[0],
+                      this.playGame.pauseButton[1],20,20);
 
-        if ((game.about.state === 'play') && (this.settings.countModal === 0) && (this.viewMode != 'demo')){
+        if ((game.about.state === 'play') && (this.settings.countModal === 0) &&
+            (this.viewMode != 'demo')){
+
         CTX.fillStyle = 'black';
         CTX.globalAlpha = '0.8';
         CTX.fillRect(0,0,this.settings.width, 100);
         CTX.fillStyle = 'white';
         CTX.font = '30px bold Aria';
-        CTX.fillText('Move with the WASD keys',this.playGame.ModalTextWASD[0],this.playGame.ModalTextWASD[1]);
+        CTX.fillText('Move with the WASD keys',this.playGame.ModalTextWASD[0],
+                     this.playGame.ModalTextWASD[1]);
         CTX.fillStyle = 'lightblue';
         CTX.font = '20px bold Aria';
-        CTX.fillText('Press any keys',this.playGame.ModalPress[0],this.playGame.ModalPress[1]);
-        } else if (this.viewMode === 'demo' && (this.settings.countModal === 0)) {
+        CTX.fillText('Press any keys',this.playGame.ModalPress[0],
+                     this.playGame.ModalPress[1]);
 
+        } else if (this.viewMode === 'demo' && (this.settings.countModal === 0)) {
 
             CTX.fillStyle = 'black';
             CTX.globalAlpha = '0.8';
+
             CTX.fillRect(0,0,this.settings.width, 100);
+
             CTX.fillStyle = 'white';
             CTX.font = '30px bold Aria';
+
             CTX.fillText('This is a demo game.',
                         this.settings.width/5,this.playGame.ModalTextWASD[1]);
+
             CTX.fillStyle = 'lightblue';
             CTX.font = '20px bold Aria';
+
             CTX.fillText(`Your device doesn\'t support :(`,
-            this.settings.width/5,this.playGame.ModalPress[1]);
+                        this.settings.width/5,this.playGame.ModalPress[1]);
+
 
            CTX.fillText(`Need width 760px and more.`,
-           this.settings.width/5,this.playGame.ModalPress[1]+20);
+                        this.settings.width/5,this.playGame.ModalPress[1]+20);
 
 
         }
@@ -1918,8 +1985,10 @@
                                 this.settings.width,this.settings.height);
         this.getCtx.ctx.fillStyle = 'grey';
 
-        (this.view != 'mobile') ?  this.getCtx.ctx.font = '100px Aria bold' :  this.getCtx.ctx.font = '45px Aria bold';
-        this.getCtx.ctx.fillText('My project',this.loading.loadingText[0],this.loading.loadingText[1]);
+        (this.view != 'mobile') ?  this.getCtx.ctx.font = '100px Aria bold' : this.getCtx.ctx.font = '45px Aria bold';
+
+        this.getCtx.ctx.fillText('My project',this.loading.loadingText[0],
+                                 this.loading.loadingText[1]);
 
     };
 
@@ -1970,212 +2039,181 @@
     Draw.prototype.height = function() {
 
         if (window.screen.availHeight < 620){
+
             this.view = 'mobile';
+
         return window.screen.availHeight-10;
         } else {
+
             return 620;
         }
     }
 
     Draw.prototype.width = function() {
+
         if (window.screen.availWidth < 800){
+
             (window.screen.availWidth < 760) && (this.viewMode = 'demo');
             this.view = 'mobile';
+
         return window.screen.availWidth-10;
+
         } else {
+
             return 800;
         }
     }
 
-function GameController() {
-    let _that = this;
-    _that.count = 0;
+    function GameController() {
+        let _that = this;
+        _that.count = 0;
 
-    _that.inputState = {
-        UP: false,
-        DOWN: false,
-        LEFT: false,
-        RIGHT: false,
-        ESCAPE: false,
-    };
-
-    _that.setEvent = (location, gamer, load, game, UserInterface) => {
-
-        let canvas = document.getElementById('arena');
-        let inputName = document.getElementsByClassName('name')[0];
-
-        document.addEventListener('keydown', moveTrue,false);
-        document.addEventListener('keyup', moveFalse,false);
-        document.addEventListener('mousemove', movingMouse);
-        document.addEventListener('click', clickOnDOM,false);
-        location.getCanvas.canvas.addEventListener('click', clickOnCanvas,false);
-
-        window.addEventListener('resize', function responsiveCanvas(e){
-            console.log(' X:' + location.getCtx.ctx.offsetLeft);
-            if (window.screen.availWidth <= 850 && _that.count === 0){
-                // 
-                // location.getCtx.ctx.scale(0.9,0.9);
-                // location.settings.width = window.screen.availWidth*0.8;
-                // location.settings.height = window.screen.availWidth*0.8;
-                // location.getCanvas.canvas.setAttribute('width', window.screen.availWidth);
-                // location.getCanvas.canvas.setAttribute('height', window.screen.availHeight);
-                console.log('adaptive X:' + location.getCtx.ctx.offsetLeft);
-                // location.getCanvas.canvas.style = 'transform: scale(0.9);'
-                _that.count++;
-
-                // console.log('location.settings.width:' + location.settings.width);
-                // location.settings.width = window.screen.availWidth;
-                // location.settings.textureW = window.screen.availWidth;
-                // location.getCanvas.canvas.setAttribute('width', window.screen.availWidth);
-            }
-        });
-
-        function moveTrue(e) {
-
-            if (e.target.className === 'name') return 0;
-
-            if ((location.settings.countModal === 0) && (game.about.state === 'play')) {
-
-                location.settings.countModal++;
-
-            } else if (!(game.about.state === 'play' || game.about.state === 'pause')) {
-
-                e.preventDefault();
-            } else {
-
-                // else if ( !(input.isDown("ESCAPE"))){
-                //     && (UserInterface.linki[5].selectName) 
-                //     UserInterface.linki[5].selectName = false;
-                //     game.about.state = 'play';
-                // }
-                if (input.isDown("ESCAPE") === true) {
-
-                    game.about.state = 'play';
-
-                    return _that.setKeyState(e.which, false);
-                }  else {
-                    return _that.setKeyState(e.which, true);
-                }
-            }
+        _that.inputState = {
+            UP: false,
+            DOWN: false,
+            LEFT: false,
+            RIGHT: false,
+            ESCAPE: false,
         };
 
-        function moveFalse(e) {
-           
-            if  (!(game.about.state === 'play' || game.about.state === 'pause')){
+        _that.setEvent = (location, gamer, load, game, UserInterface) => {
 
-                e.preventDefault();
-            } else {
+            let canvas = document.getElementById('arena');
+            let inputName = document.getElementsByClassName('name')[0];
 
-                if (input.isDown("ESCAPE") === true) return;
-                else {
+            document.addEventListener('keydown', moveTrue,false);
+            document.addEventListener('keyup', moveFalse,false);
+            document.addEventListener('mousemove', movingMouse);
+            document.addEventListener('click', clickOnDOM,false);
+            location.getCanvas.canvas.addEventListener('click', clickOnCanvas,false);
 
-                    return _that.setKeyState(e.which, false);
-                }
-            }
-        };
+            function moveTrue(e) {
 
-        function movingMouse(e) {
+                if (e.target.className === 'name') return 0;
 
-            // For debugging links
+                if ((location.settings.countModal === 0) && (game.about.state === 'play')) {
 
-            if (e.target === canvas) {
+                    location.settings.countModal++;
 
-                let canvasLeft = canvas.offsetLeft;
-                let canvasTop = canvas.offsetTop;
+                } else if (!(game.about.state === 'play' || game.about.state === 'pause')) {
 
-                UserInterface.coordsMouseX = e.pageX - canvasLeft;
-                UserInterface.coordsMouseY = e.pageY - canvasTop;
-
-                UserInterface.coorddX = UserInterface.coordsMouseX - gamer.move.pos[0];
-                UserInterface.coorddY = UserInterface.coordsMouseY - gamer.move.pos[1];
-                // console.log('X: ' + (UserInterface.coordsMouseX-gamer.move.pos[0]));
-                // console.log('Y: ' + (UserInterface.coordsMouseY+gamer.move.pos[1]));
-            }
-        };
-
-        function clickOnCanvas(e) {
-            debugger;
-           if (game.about.state === 'loading') { e.preventDefault(); return 0; }
-            
-            command = UserInterface.linki; // short write
-
-            for (let i = 0; i < command.length; i++) {
-
-                if ((UserInterface.checkFrame(command[i])) &&
-                    (command[i].Name === game.about.state)) {
-                    command[i].selectName = true;
-                    
-                } else  command[i].selectName = false;
-            }
-
-            if (game.about.state === 'menu' ||
-                game.about.state === 'rating' ||
-                game.about.state === 'wait') {
-
-                for (let elem in _that.inputState) {
-
-                    _that.inputState[elem] = false;
-                }
-            } else {
-                
-                if ((input.isDown("ESCAPE") === true) || (UserInterface.linki[5].selectName)) {
-
-                    return 0;
+                    e.preventDefault();
                 } else {
 
-                    gamer.stat.bullets.useSkill(load, gamer, UserInterface, e);
+                    if (input.isDown("ESCAPE") === true) {
+
+                        game.about.state = 'play';
+
+                        return _that.setKeyState(e.which, false);
+                    }  else {
+                        return _that.setKeyState(e.which, true);
+                    }
+                }
+            };
+
+            function moveFalse(e) {
+
+                if  (!(game.about.state === 'play' || game.about.state === 'pause')){
+
+                    e.preventDefault();
+                } else {
+
+                    if (input.isDown("ESCAPE") === true) return;
+                    else {
+
+                        return _that.setKeyState(e.which, false);
+                    }
+                }
+            };
+
+            function movingMouse(e) {
+
+                // For debugging links
+
+                if (e.target === canvas) {
+
+                    let canvasLeft = canvas.offsetLeft;
+                    let canvasTop = canvas.offsetTop;
+
+                    UserInterface.coordsMouseX = e.pageX - canvasLeft;
+                    UserInterface.coordsMouseY = e.pageY - canvasTop;
+
+                    UserInterface.coorddX = UserInterface.coordsMouseX - gamer.move.pos[0];
+                    UserInterface.coorddY = UserInterface.coordsMouseY - gamer.move.pos[1];
+                }
+            };
+
+            function clickOnCanvas(e) {
+
+                if (game.about.state === 'loading') { e.preventDefault(); return 0; }
+
+                command = UserInterface.linki; // short write
+
+                for (let i = 0; i < command.length; i++) {
+
+                    if ((UserInterface.checkFrame(command[i])) &&
+                        (command[i].Name === game.about.state)) {
+                        command[i].selectName = true;
+
+                    } else  command[i].selectName = false;
                 }
 
-            }
+                if (game.about.state === 'menu' ||
+                    game.about.state === 'rating' ||
+                    game.about.state === 'wait') {
 
+                    for (let elem in _that.inputState) {
+
+                        _that.inputState[elem] = false;
+                    }
+                } else {
+
+                    if ((input.isDown("ESCAPE") === true) || (UserInterface.linki[5].selectName)) {
+
+                        return 0;
+                    } else {
+
+                        gamer.stat.bullets.useSkill(load, gamer, UserInterface, e);
+                    }
+
+                }
+
+            };
+
+            function clickOnDOM(e) {
+
+                if (e.target.className === 'btnName' && inputName.value !== '') {
+
+                    getName(inputName.value, gamer);
+                    location.deleteGetNameView(document, e.target);
+                } else if (e.target.className === 'cancelName') {
+                    location.deleteGetNameView(document, e.target);
+                }
+
+            };
         };
 
-        function clickOnDOM(e) {
+        _that.setKeyState = function (keyCode, isPressed) {
 
-            if (e.target.className === 'btnName' && inputName.value !== '') {
-
-                getName(inputName.value, gamer);
-                location.deleteGetNameView(document, e.target);
-            } else if (e.target.className === 'cancelName') {
-                location.deleteGetNameView(document, e.target);
+            switch (keyCode) {
+                case 65: _that.inputState.LEFT = isPressed; break;
+                case 87: _that.inputState.UP = isPressed; break;
+                case 68: _that.inputState.RIGHT = isPressed; break;
+                case 83: _that.inputState.DOWN = isPressed; break;
+                case 27: _that.inputState.ESCAPE = isPressed; break;
+                case 8: _that.inputState.SHOOT = isPressed; break;
             }
-
         };
+
+        window.input = {
+
+            isDown: (key) => {
+
+                return _that.inputState[key];
+            }
+        };
+
     };
-
-    _that.setKeyState = function (keyCode, isPressed) {
-
-        switch (keyCode) {
-            case 65: _that.inputState.LEFT = isPressed; break;
-            case 87: _that.inputState.UP = isPressed; break;
-            case 68: _that.inputState.RIGHT = isPressed; break;
-            case 83: _that.inputState.DOWN = isPressed; break;
-            case 27: _that.inputState.ESCAPE = isPressed; break;
-            case 8: _that.inputState.SHOOT = isPressed; break;
-        }
-    };
-
-    window.input = {
-
-        isDown: (key) => {
-
-            return _that.inputState[key];
-        }
-    };
-
-//     window.addEventListener('DOMContentLoaded', () => {
-//         debugger;
-//         let canvas = document.getElementById('arena');
-
-//         if (window.screen.availWidth <= 735){
-
-
-//         } else if (window.screen.availWidth <= 825){
-
-//             canvas.getContext('2d').scale(0.7,0.8);
-//         }
-// });
-};
 
 
 //--------INIT--------//
@@ -2208,30 +2246,42 @@ function GameController() {
             gamePlayDraw.getCanvas.canvas.setAttribute('width', gamePlayDraw.settings.width);
             gamePlayDraw.getCanvas.canvas.setAttribute('height', gamePlayDraw.settings.height);
 
-            // if (window.screen.availWidth <= 735){
-            //     debugger;
-            //     canvas.style.transform = 'scale(0.6,0.6)';
-            // }
 
-            // set w and h on main canvas
-            // canvas.style.transform = 'scale(0.6,0.6)';
-            // canvas.style.transform = 'scale(1.5,1.5)';
             // links
 
             if (gamePlayDraw.view != 'mobile'){
+
             UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
-            UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85, gamePlayDraw.menu.play[1]-45, 200,80));
-            UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120, gamePlayDraw.menu.rating[1]-40, 250, 80));
-            UserInterface.linki.push(new Links('RETURN', 'rating', (gamePlayDraw.settings.width/2)-60,110, 110, 70));
-            UserInterface.linki.push(new Links('MENU', 'wait', 350, 430, 110, 30));
-            UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760, 570, 50, 50));
+            UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85,
+                                                gamePlayDraw.menu.play[1]-45, 200,80));
+
+            UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120,
+                                                gamePlayDraw.menu.rating[1]-40, 250, 80));
+
+            UserInterface.linki.push(new Links('RETURN', 'rating', (gamePlayDraw.settings.width/2)-60,
+                                                110, 110, 70));
+
+            UserInterface.linki.push(new Links('MENU', 'wait', 350,
+                                                430, 110, 30));
+
+            UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760, 
+                                                570, 50, 50));
             } else {
                 UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
-                UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85, gamePlayDraw.menu.play[1]-45, 200,80));
-                UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120, gamePlayDraw.menu.rating[1]-40, 250, 80));
-                UserInterface.linki.push(new Links('RETURN', 'rating', gamePlayDraw.rating.return[0]-40,100, 110, 70));
-                UserInterface.linki.push(new Links('MENU', 'wait', 350, 430, 110, 30));
-                UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760, 570, 50, 50));  
+                UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85,
+                                                    gamePlayDraw.menu.play[1]-45, 200,80));
+
+                UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120, 
+                                                    gamePlayDraw.menu.rating[1]-40, 250, 80));
+
+                UserInterface.linki.push(new Links('RETURN', 'rating', gamePlayDraw.rating.return[0]-40,
+                                                    100, 110, 70));
+
+                UserInterface.linki.push(new Links('MENU', 'wait', 350,
+                                                    430, 110, 30));
+
+                UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760,
+                                                    570, 50, 50));
             }
 
 
@@ -2260,7 +2310,7 @@ function GameController() {
 
             // loading
             gamePlayDraw.loadingRender(loader);
-            
+
 
             // enemy and player
             let enemy = new Enemy();
@@ -2276,7 +2326,7 @@ function GameController() {
 
 
             function linkers(loader, player) {
-                
+
             if (UserInterface.linki[1].selectName){
 
                 loader.SoundsStorage[13].play();
@@ -2289,13 +2339,13 @@ function GameController() {
                 }
 
                 if (UserInterface.linki[3].selectName){
-                    
+
                     loader.SoundsStorage[13].play();
                     game.mainMenu(UserInterface.linki[3]);
                 }
 
                 if (UserInterface.linki[4].selectName){
-                    
+
                     loader.SoundsStorage[13].play();
                     game.mainMenu(UserInterface.linki[4]);
                 }
@@ -2361,7 +2411,7 @@ function GameController() {
 
             function pauseCheck(game,controller){ 
                 if ((game.about.state === 'pause') && !(input.isDown('ESCAPE'))){
-                    
+
                     controller.inputState.ESCAPE = true;
             }
             }
@@ -2390,16 +2440,17 @@ function GameController() {
                     }
 
                     localStorage.setItem("result", JSON.stringify(statistic));
-                    
-                    mainDB.updateUserData(localStorage.IP,id,player.stat.gamerName,player.stat.points,loader);
+
+                    mainDB.updateUserData(localStorage.IP,id,player.stat.gamerName,
+                                          player.stat.points,loader);
+
                     game.about.requstCount++;
                 }
             }
 
-            if (!localStorage.name) {
-
+            if (!localStorage.name)
                 gamePlayDraw.buildingGetNameView(document);
-            }
+
 
             let timer = setTimeout(() => {
                 game.about.state = 'menu';
@@ -2415,8 +2466,6 @@ function GameController() {
 
                 now = Date.now();
                 time = (now - lastTime) / 1000.0;
-
-
 
                 linkers(loader, player, time);
                 menu(loader, player);
@@ -2437,3 +2486,4 @@ function GameController() {
     })();
 
     application.init();
+//# sourceMappingURL=main.js.map
