@@ -1666,17 +1666,20 @@
         CTX.fillStyle = 'lightblue';
         CTX.font = '20px bold Aria';
 
+        // CTX.fillText(`Change orientation on landscape`,
+        // this.menu.TitleGame[0],25);
+
         CTX.fillText('This is a demo game.',
-        this.settings.width/2,this.settings.height-100);
+        this.settings.width/2,this.settings.height-120);
 
         CTX.fillText(`Your device doesn\'t support :(`,
+                this.settings.width/2,this.settings.height-100);
+
+
+        CTX.fillText(`Need width 760px and more for full.`,
                 this.settings.width/2,this.settings.height-80);
 
-
-        CTX.fillText(`Need width 760px and more.`,
-                this.settings.width/2,this.settings.height-60);
         }
-
 
         CTX.fillStyle = 'white';
         CTX.font = 'bold 14px Arial';
@@ -1688,6 +1691,7 @@
     }
 
     Draw.prototype.drawRatingList = function(load,game,UserInterface){
+
         let CTX = this.drawBuffer.ctxBuffer; // short write
         let lengthCut = load.startRecord.length; // length array records
         let speedText = null; // for records text cycle
@@ -1697,8 +1701,8 @@
         (this.view != 'mobile') && (length = (load.startRecord.length < 9) ?
                                     load.startRecord.length : 9 ); // length records array
 
-        (this.view === 'mobile') && (length = (load.startRecord.length < 7) ?
-                                    load.startRecord.length : 7 );
+        (this.view === 'mobile') && (length = (load.startRecord.length < 6) ?
+                                    load.startRecord.length : 6 );
 
         RecordsY = 275; // start draw position
         speedText = 32; // i
@@ -1742,7 +1746,7 @@
 
         CTX.fillText('RETURN',this.rating.return[0],this.rating.return[1]);
         CTX.strokeStyle = 'yellow';
-        (this.view === 'mobile') && (this.rating.StrokeRectCoords[1] = 180);
+        (this.view === 'mobile') && (this.rating.StrokeRectCoords[1] = 140);
 
         CTX.strokeRect(this.rating.StrokeRectCoords[0],
                        this.rating.StrokeRectCoords[1],
@@ -1750,7 +1754,7 @@
                        this.rating.StrokeRectSize[1]);
 
         CTX.fillStyle = 'black';
-        (this.view === 'mobile') && (this.rating.RectCoords[1] = 180);
+        (this.view === 'mobile') && (this.rating.RectCoords[1] = 140);
         CTX.fillRect(this.rating.RectCoords[0],this.rating.RectCoords[1],
                     this.rating.RectSize[0],this.rating.RectSize[1]);
 
@@ -1758,7 +1762,13 @@
         CTX.textAlign = "left";
         CTX.font = 'bold 45px PIXI';
         CTX.fillStyle = 'yellow';
-        CTX.fillText('NAME',this.rating.TitleName[0],this.rating.TitleName[1]);
+
+        (this.view != 'mobile') && (CTX.fillText('NAME',this.rating.TitleName[0],
+                                    this.rating.TitleName[1]));
+
+        (this.view === 'mobile') && (CTX.fillText('NAME',this.settings.width/4,
+                                    this.rating.TitleName[1]));
+
 
         if (this.view != 'mobile') {
 
