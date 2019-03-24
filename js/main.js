@@ -32,7 +32,7 @@
     }
 
     DataBase.prototype.updateUserData = function(ip,id,name,points,loader){
-        debugger;
+        
         if (this.MAX_WRITE >= 5) throw new Error('limit');
         this.MAX_WRITE++;
         this.currentIP = (ip) ? ip : 'no ip detected';
@@ -178,7 +178,7 @@
 
     Game.prototype.pause = function (activeLink) {
 
-        if ( (input.isDown("ESCAPE")) || (activeLink.selectName) ) {
+        if ( (input.isDown("ESCAPE")) || ( (activeLink) && (activeLink.selectName))) {
 
             activeLink.selectName = false;
             this.about.state = this.pauseGame;
@@ -505,7 +505,7 @@
         spriteEnemy.move.pos[1] = posY * getRandom();
         spriteEnemy.sound = music;
 
-            debugger;
+            
         if ((spriteEnemy.stat.type === 'boss' || spriteEnemy.stat.type === 'bossExtra') &&
             (spriteEnemy.enemySpeedX < 0 || spriteEnemy.enemySpeedY < 0)) {
 
@@ -1659,6 +1659,25 @@
 
         CTX.fillText('RATING',this.menu.rating[0],this.menu.rating[1]);
 
+
+
+        if (this.viewMode === 'demo'){
+
+        CTX.fillStyle = 'lightblue';
+        CTX.font = '20px bold Aria';
+
+        CTX.fillText('This is a demo game.',
+        this.settings.width/2,this.settings.height-100);
+
+        CTX.fillText(`Your device doesn\'t support :(`,
+                this.settings.width/2,this.settings.height-80);
+
+
+        CTX.fillText(`Need width 760px and more.`,
+                this.settings.width/2,this.settings.height-60);
+        }
+
+
         CTX.fillStyle = 'white';
         CTX.font = 'bold 14px Arial';
         CTX.fillText('© 2019',this.menu.myName[0],this.menu.myName[1]);
@@ -1950,30 +1969,6 @@
         CTX.fillText('Press any keys',this.playGame.ModalPress[0],
                      this.playGame.ModalPress[1]);
 
-        } else if (this.viewMode === 'demo' && (this.settings.countModal === 0)) {
-
-            CTX.fillStyle = 'black';
-            CTX.globalAlpha = '0.8';
-
-            CTX.fillRect(0,0,this.settings.width, 100);
-
-            CTX.fillStyle = 'white';
-            CTX.font = '30px bold Aria';
-
-            CTX.fillText('This is a demo game.',
-                        this.settings.width/5,this.playGame.ModalTextWASD[1]);
-
-            CTX.fillStyle = 'lightblue';
-            CTX.font = '20px bold Aria';
-
-            CTX.fillText(`Your device doesn\'t support :(`,
-                        this.settings.width/5,this.playGame.ModalPress[1]);
-
-
-           CTX.fillText(`Need width 760px and more.`,
-                        this.settings.width/5,this.playGame.ModalPress[1]+20);
-
-
         }
 
         CTX.restore();
@@ -1984,11 +1979,11 @@
         this.getCtx.ctx.fillRect(this.settings.drawInX,this.settings.drawInY,
                                 this.settings.width,this.settings.height);
         this.getCtx.ctx.fillStyle = 'grey';
-
+        this.getCtx.ctx.textAlign = "center";
         (this.view != 'mobile') ?  this.getCtx.ctx.font = '100px Aria bold' : this.getCtx.ctx.font = '45px Aria bold';
 
-        this.getCtx.ctx.fillText('My project',this.loading.loadingText[0],
-                                 this.loading.loadingText[1]);
+        this.getCtx.ctx.fillText('My project',this.settings.width/2,
+        this.settings.height/2);
 
     };
 
@@ -2042,7 +2037,7 @@
 
             this.view = 'mobile';
 
-        return window.screen.availHeight-10;
+        return window.screen.availHeight-40;
         } else {
 
             return 620;
@@ -2113,7 +2108,7 @@
 
             function moveFalse(e) {
 
-                if  (!(game.about.state === 'play' || game.about.state === 'pause')){
+                if  (!(game.about.state === 'play' || game.about.state === 'pause' )){
 
                     e.preventDefault();
                 } else {
@@ -2147,6 +2142,7 @@
 
                 if (game.about.state === 'loading') { e.preventDefault(); return 0; }
 
+
                 command = UserInterface.linki; // short write
 
                 for (let i = 0; i < command.length; i++) {
@@ -2157,6 +2153,8 @@
 
                     } else  command[i].selectName = false;
                 }
+                
+                (location.viewMode === 'demo') && (UserInterface.linki[1].selectName = false);
 
                 if (game.about.state === 'menu' ||
                     game.about.state === 'rating' ||
@@ -2268,8 +2266,9 @@
                                                 570, 50, 50));
             } else {
                 UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
+
                 UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0]-85,
-                                                    gamePlayDraw.menu.play[1]-45, 200,80));
+                                        gamePlayDraw.menu.play[1]-45, 200,80));
 
                 UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0]-120, 
                                                     gamePlayDraw.menu.rating[1]-40, 250, 80));
@@ -2327,6 +2326,8 @@
 
             function linkers(loader, player) {
 
+
+
             if (UserInterface.linki[1].selectName){
 
                 loader.SoundsStorage[13].play();
@@ -2349,12 +2350,13 @@
                     loader.SoundsStorage[13].play();
                     game.mainMenu(UserInterface.linki[4]);
                 }
-
-                if (UserInterface.linki[5].selectName) {
+                
+                if ((gamePlayDraw.viewMode != 'demo') && UserInterface.linki[5].selectName) {
 
                     loader.SoundsStorage[13].play();
                     game.pause(UserInterface.linki[5]);
                 }
+                
                 }
 
 
