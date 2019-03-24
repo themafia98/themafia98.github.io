@@ -508,7 +508,12 @@
             (spriteEnemy.enemySpeedX < 0 || spriteEnemy.enemySpeedY < 0)) {
 
             spriteX = 452;
-        };
+        } else
+        if ((spriteEnemy.stat.type === 'boss' || spriteEnemy.stat.type === 'bossExtra') &&
+        (spriteEnemy.enemySpeedX > 0 || spriteEnemy.enemySpeedY > 0)) {
+
+            spriteX = 964;
+        }
 
         spriteEnemy.stat.sprite = new Sprite('enemy', load.SpriteStorage[0],
             [spriteX, spriteY], [spriteW, spriteH],
@@ -876,7 +881,7 @@
             item.enemySpeedX *= -1;
 
             // ---set sprite frames---
-            (item.stat.type === `boss` || item.stat.type === 'bossExtra') &&
+            (item.stat.type === 'boss' || item.stat.type === 'bossExtra') &&
                                             (item.stat.sprite.pos[0] = 1226);
 
         }
@@ -887,18 +892,20 @@
             item.enemySpeedX *= -1;
 
             // ---set sprite frames---
-            (item.stat.type === `boss` || item.stat.type === 'bossExtra') &&
+            (item.stat.type === 'boss' || item.stat.type === 'bossExtra') &&
                                             (item.stat.sprite.pos[0] = 712);
         }
 
         // ---change dir moving---
-        if ((item) && (item.move.pos[1] < 80)) {
+        if ((item) && (item.move.pos[1] < 70)) {
 
             item.enemySpeedY *= -1; // change dir moving
 
             // ---set sprite frames---
-            (item.stat.type === `boss`) || (item.stat.type === 'bossExtra') &&
-                                            (item.stat.sprite.pos[0] = 964);
+            if((item.stat.type === 'boss') || (item.stat.type === 'bossExtra')){
+                
+                item.stat.sprite.pos[0] = 964;
+            }
         }
 
         // ---change dir moving---
@@ -907,8 +914,10 @@
             item.enemySpeedY *= -1; // change dir moving
 
             // ---set sprite frames---
-            ((item.stat.type === `boss`) || (item.stat.type === 'bossExtra')) &&
-                                                (item.stat.sprite.pos[0] = 452);
+            if ((item.stat.type === 'boss') || (item.stat.type === 'bossExtra')){
+                
+                item.stat.sprite.pos[0] = 452;
+            }
 
         }
     }
@@ -1201,6 +1210,7 @@
         this.frameBlink = true;
         this.view = 'xl';
         this.viewMode = 'full';
+        this.viewDesktop = 'none';
 
         _that.settings = {
             width: _that.width(), // canvas w
@@ -1766,7 +1776,7 @@
                                     this.rating.TitleName[1]));
 
 
-        if (this.view != 'mobile') {
+        if (this.view != 'mobile' || this.viewDesktop === 'half-half') {
 
         CTX.fillStyle = 'yellow';
         CTX.fillText('POINTS',this.rating.RectSize[0]-70,this.rating.TitlePoints[1]);
@@ -1782,7 +1792,7 @@
             CTX.fillText(`${i+1}. ` + load.startRecord[load.startRecord.length-(i+1)].name,
                         this.rating.ratingListX[0],RecordsY);
 
-            if (this.view != 'mobile'){
+            if (this.view != 'mobile'  || this.viewDesktop === 'half-half'){
 
             CTX.fillText(load.startRecord[load.startRecord.length-(i+1)].points,
                         this.rating.RectSize[0]-50,RecordsY);
@@ -2054,6 +2064,8 @@
 
         if (window.screen.availWidth < 800){
 
+            ( (760 < window.screen.availWidth) && (window.screen.availWidth < 800)) &&
+            (this.viewDesktop ='half-half');
             (window.screen.availWidth < 760) && (this.viewMode = 'demo');
             this.view = 'mobile';
 
