@@ -2053,7 +2053,7 @@
 
             this.view = 'mobile';
 
-        return window.screen.availHeight-55;
+        return window.screen.availHeight-70;
         } else {
 
             return 620;
