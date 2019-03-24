@@ -903,7 +903,7 @@
 
             // ---set sprite frames---
             if((item.stat.type === 'boss') || (item.stat.type === 'bossExtra')){
-                
+                debugger;
                 item.stat.sprite.pos[0] = 964;
             }
         }
@@ -915,7 +915,7 @@
 
             // ---set sprite frames---
             if ((item.stat.type === 'boss') || (item.stat.type === 'bossExtra')){
-                
+                debugger;
                 item.stat.sprite.pos[0] = 452;
             }
 
@@ -1203,9 +1203,6 @@
     function Draw() {
         let _that = this;
 
-
-        
-
         this.blink = 1;
         this.frameBlink = true;
         this.view = 'xl';
@@ -1221,6 +1218,7 @@
             countModal: 0, // counter modal window in game
             drawInX: 0, // position X to draw in main ctx
             drawInY: 0,  // position Y to draw in main ctx
+            mouse: 0
         };
 
         _that.bullets = {
@@ -1306,6 +1304,8 @@
 
     Draw.prototype.render =  function ()  {
     // -----All render-----
+
+    
 
         this.getCtx.ctx.drawImage(this.drawBuffer.canvasBuffer,
                                 this.settings.drawInX,this.settings.drawInY,
@@ -1482,6 +1482,11 @@
 
             gamer.GameOver(gamer,game,load);
         }
+
+        (game.about.state === 'play' || game.about.state === 'play-animation') &&
+                                            this.renderMouse(load,UserInterface);
+
+
         // ---render pause menu---
         ((game.about.state === 'wait') && (this.gameOverView(gamer,UserInterface,game)));
         // --render rating---
@@ -1512,6 +1517,7 @@
 
         (game.fade > 0) && (this.fadeIn(game,load));
         (game.fade <= 0) && (this.renderPlayer(gamer,game));
+
         }
 
         this.pauseMenuView(game,gamer,UserInterface,load); // render pause menu
@@ -1521,8 +1527,9 @@
 
             if(UserInterface.linki[0].selectName){ // link menu
 
-                game.about.state = 'menu'; // set state menu
+            game.about.state = 'menu'; // set state menu
             this.DrawMenu(load,game,UserInterface); // render menu
+
             } else
             if (game.about.state === 'menu'){
 
@@ -2002,6 +2009,12 @@
         this.settings.height/2);
 
     };
+
+    Draw.prototype.renderMouse = function(load,ul){
+        debugger;
+        this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[0],255,192,
+                                            65,65,ul.coordsMouseX-32.5,ul.coordsMouseY-32.5,65,65);
+        }
 
     Draw.prototype.buildingGetNameView = function(type){
 
