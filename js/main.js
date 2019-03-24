@@ -759,6 +759,7 @@
                 gamer.killCount++;
                 itemEnemy.sound.currentTime = 0;
                 itemEnemy.sound.play();
+                itemEnemy.stat.sprite.pos[0] = 958;
                 arrayEnemy.splice(i, 1);
                 gamer.stat.points += 25;
             }
@@ -903,7 +904,7 @@
 
             // ---set sprite frames---
             if((item.stat.type === 'boss') || (item.stat.type === 'bossExtra')){
-                debugger;
+                
                 item.stat.sprite.pos[0] = 964;
             }
         }
@@ -915,7 +916,7 @@
 
             // ---set sprite frames---
             if ((item.stat.type === 'boss') || (item.stat.type === 'bossExtra')){
-                debugger;
+                
                 item.stat.sprite.pos[0] = 452;
             }
 
@@ -1484,7 +1485,7 @@
         }
 
         (game.about.state === 'play' || game.about.state === 'play-animation') &&
-                                            this.renderMouse(load,UserInterface);
+                                this.renderMouse(load,UserInterface);
 
 
         // ---render pause menu---
@@ -2011,7 +2012,7 @@
     };
 
     Draw.prototype.renderMouse = function(load,ul){
-        debugger;
+ 
         this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[0],255,192,
                                             65,65,ul.coordsMouseX-32.5,ul.coordsMouseY-32.5,65,65);
         }
@@ -2410,7 +2411,7 @@
                     gamePlayDraw.building(loader, player, game);
                 }
                 if ((game.about.state === 'play') && !(loader.enemy.length)) {
-
+                    debugger;
                     loader.SoundsStorage[10].currentTime = 0;
                     loader.SoundsStorage[10].play();
 
