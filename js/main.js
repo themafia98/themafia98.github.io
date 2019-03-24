@@ -18,7 +18,6 @@
             });
 
             loader.startRecord.sort(compare); // Bubble sort
-            console.log(loader.startRecord);
         });
     }
 
@@ -2044,7 +2043,7 @@
 
             this.view = 'mobile';
 
-        return window.screen.availHeight-40;
+        return window.screen.availHeight-55;
         } else {
 
             return 620;
