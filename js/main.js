@@ -3,6 +3,7 @@
 
     function DataBase(){
         // * firebase
+        let _that = this;
         this.MAX_WRITE = 0;
         this.currentIP = null;
     }
@@ -25,8 +26,8 @@
     DataBase.prototype.updateLimit = function (){
         // * Limit on updata data
         this.timer = setTimeout( function limit(){
-            debugger;
-            this.MAX_WRITE = 0;
+            
+            _that.MAX_WRITE = 0;
             this.timer = setTimeout( limit,60000);
             },60000);
     }
@@ -50,10 +51,11 @@
         .catch(function (error){
             console.log(error);
         });
+        
         // * Update data when db data change
         cloudDB.use.collection('users').where('realPlayer', '==', true)
         .onSnapshot(function(snapshot){
-
+            
             loader.startRecord = [];
             snapshot.forEach(function(doc){
 
@@ -2262,7 +2264,7 @@
 
                         return 0;
                     } else{
-                        debugger;
+                        
                         gamer.stat.bullets.useSkill(load, gamer, UserInterface);
                     }
 
@@ -2563,13 +2565,13 @@
                 time = Math.min(0.05,(now - lastTime) / 1000.0);
 
                 linkers(loader, player, time);
-                (game.about.state != 'play') && (menu(loader, player));
+                menu(loader, player);
                 gameplay(loader, player, game);
                 update(time, player, loader, game, UserInterface.linki);
                 pauseCheck(game,controller);
                 buildTexture(game, loader, player);
                 gamePlayDraw.renders(player, loader, game, UserInterface);
-                (game.about.state === 'play') && (death(game,player,loader));  //, request
+                death(game,player,loader);  //, request
 
                 lastTime = now;
                 requestAnimationFrame(loop);
