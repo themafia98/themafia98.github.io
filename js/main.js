@@ -3,7 +3,7 @@
 
     function DataBase(){
         // * firebase
-        let _that = this;
+
         this.MAX_WRITE = 0;
         this.currentIP = null;
     }
@@ -25,8 +25,9 @@
 
     DataBase.prototype.updateLimit = function (){
         // * Limit on updata data
-        this.timer = setTimeout( function limit(){
-            
+        let _that = this;
+        this.timer = setTimeout(function limit(){
+
             _that.MAX_WRITE = 0;
             this.timer = setTimeout( limit,60000);
             },60000);
@@ -34,7 +35,8 @@
 
     DataBase.prototype.updateUserData = function(ip,id,name,points,loader){
         // * Update data
-        if (this.MAX_WRITE >= 5) throw new Error('limit');
+
+        if (this.MAX_WRITE > 3) throw new Error ('limit');
 
         this.MAX_WRITE++;
         this.currentIP = (ip) ? ip : 'no ip detected';
@@ -49,7 +51,8 @@
         })
 
         .catch(function (error){
-            console.log(error);
+
+            console.log(error.message);
         });
         
         // * Update data when db data change
@@ -1309,9 +1312,9 @@
             TitleGame: [this.settings.width/2,50],
             return: [this.settings.width/2,165],
             StrokeRectCoords: [this.settings.width/9.4,200],
-            StrokeRectSize: [this.settings.width/1.3,350],
+            StrokeRectSize: [this.settings.width/1.3,this.settings.height/1.8],
             RectCoords: [this.settings.width/9.4,200],
-            RectSize: [this.settings.width/1.3,350],
+            RectSize: [this.settings.width/1.3,this.settings.height/1.8],
             TitleName: [this.settings.width/8,235],
             TitlePoints: [this.settings.width/1.45,235],
             ratingListX: [this.settings.width/8,this.settings.height-50],
@@ -1769,15 +1772,17 @@
         let lengthCut = load.startRecord.length; // length array records
         let speedText = null; // for records text cycle
         let posTxtY = null;  // for records text cycle
+        let RecordsY = null;
         let length = null;  // for records text cycle
 
-        (this.view != 'mobile') && (length = (load.startRecord.length < 9) ?
-                                    load.startRecord.length : 9 ); // length records array
+        (this.view != 'mobile') && (length = (load.startRecord.length < 8) ?
+                                    load.startRecord.length : 8); // length records array
 
-        (this.view === 'mobile') && (length = (load.startRecord.length < 6) ?
-                                    load.startRecord.length : 6 );
-
-        RecordsY = 275; // start draw position
+        (this.view === 'mobile') && (length = (load.startRecord.length < 5) ?
+                                    load.startRecord.length : 5 );
+        
+        (this.view != 'mobile') && (RecordsY = 275); // start draw position
+        (this.view === 'mobile') && (RecordsY = Math.floor(350/1.5));
         speedText = 32; // i
 
         CTX.restore();
@@ -1799,9 +1804,17 @@
         CTX.shadowOffsetX = 6;
         CTX.shadowOffsetY = 7;
         (this.view != 'mobile') ? CTX.font = 'bold 80px PIXI' : CTX.font = 'bold 60px PIXI';
-        (this.view === 'mobile') && (this.rating.TitleGame[1] = 70);
+
+        if (this.view === 'mobile') {
+
+            this.rating.TitleGame[1] = 40;
+            CTX.fillText('THE BEST',this.rating.TitleGame[0],this.rating.TitleGame[1]);
+
+        } else {
 
         CTX.fillText('THE BEST',this.rating.TitleGame[0],this.menu.TitleGame[1]);
+
+        }
         CTX.shadowOffsetX = 0;
         CTX.shadowOffsetY = 0;
 
@@ -1839,8 +1852,10 @@
         (this.view != 'mobile') && (CTX.fillText('NAME',this.rating.TitleName[0],
                                     this.rating.TitleName[1]));
 
-        (this.view === 'mobile') && (CTX.fillText('NAME',this.settings.width/4,
-                                    this.rating.TitleName[1]));
+        if (this.view === 'mobile'){
+        CTX.textAlign = 'center';
+        CTX.fillText('NAME',this.settings.width/2.1,this.rating.TitleName[1]/1.3);
+        }
 
 
         if (this.view != 'mobile' || this.viewDesktop === 'half-half'){
@@ -1856,11 +1871,14 @@
 
         for (let i = 0; i < length; i++){
 
+            if (this.view === 'mobile') {
+                CTX.textAlign = 'left';
+            this.rating.ratingListX[0] = this.rating.RectCoords[0]+10;
+            }
             CTX.fillText(`${i+1}. ` + load.startRecord[load.startRecord.length-(i+1)].name,
                         this.rating.ratingListX[0],RecordsY);
 
             if (this.view != 'mobile'  || this.viewDesktop === 'half-half'){
-
             CTX.fillText(load.startRecord[load.startRecord.length-(i+1)].points,
                         this.rating.RectSize[0]-50,RecordsY);
             }
@@ -2127,7 +2145,7 @@
 
             this.view = 'mobile';
 
-        return window.screen.availHeight-100;
+        return (window.screen.availHeight);
         } else{
 
             return 620;
@@ -2336,6 +2354,8 @@
 
             gamePlayDraw.getCanvas.canvas.setAttribute('width', gamePlayDraw.settings.width);
             gamePlayDraw.getCanvas.canvas.setAttribute('height', gamePlayDraw.settings.height);
+            debugger;
+            (gamePlayDraw.view === 'mobile') && (gamePlayDraw.getCanvas.canvas.classList.add('scale'));
 
 
             // links
