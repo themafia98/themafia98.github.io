@@ -237,9 +237,9 @@
 
     Game.prototype.updateGameStatus = function (gamer, load) { // new game
 
-        this.about.stageNumber = -1;
-        this.about.BossCount = -1;
-        this.about.count = -1;
+        this.about.stageNumber = 7;
+        this.about.BossCount = 1;
+        this.about.count = 7;
         this.fade = 2;
 
         // update game statistic
@@ -508,12 +508,13 @@
 
 
         if ((spriteEnemy.stat.type === 'boss' || spriteEnemy.stat.type === 'bossExtra') &&
-            (spriteEnemy.enemySpeedX < 0 || spriteEnemy.enemySpeedY < 0)) {
+            (spriteEnemy.enemySpeedY < 0)) {
 
             spriteX = 452;
-        } else
+        }
+
         if ((spriteEnemy.stat.type === 'boss' || spriteEnemy.stat.type === 'bossExtra') &&
-        (spriteEnemy.enemySpeedX > 0 || spriteEnemy.enemySpeedY > 0)) {
+        (spriteEnemy.enemySpeedY > 0)) {
 
             spriteX = 964;
         }
@@ -547,14 +548,13 @@
     };
 
     Sprite.prototype.render = function () {
-
         let frame;
 
         if (this.speed > 0) {
 
             let max = this.frames.length;
             let idx;
-
+            
             if (this.index) {
 
                 idx = Math.floor(this.index);
@@ -574,6 +574,8 @@
 
         this.x = this.pos[0];
         this.y = this.pos[1];
+        this.Saveframes = frame;
+        
 
         if (this.dir === 'vertical') {
 
@@ -700,14 +702,16 @@
         load.enemy.forEach((itemEnemy,i,arrayEnemy) => { // check all enemys
       
             if (itemEnemy.stat.health <= 0) {
-               
 
+                
                 if ( (itemEnemy.stat.onDeath === false)){
+
                 itemEnemy.stat.onDeath = true;
                 gamer.stat.whatDrop = Math.random() < 0.5;
                 gamer.stat.upgradeRate = Math.random() < 0.05;
 
-               
+                deathEnemyUpdate(itemEnemy);
+
                 if(itemEnemy.stat.type === 'common'){
 
                 itemEnemy.stat.sprite.pos[0] = 960;
@@ -715,21 +719,18 @@
                 }
 
                 if(itemEnemy.stat.type === 'boss'){
-
+                    
                     itemEnemy.stat.sprite.pos[0] = 1540;
                     itemEnemy.stat.sprite.pos[1] = 232;
+                    itemEnemy.stat.sprite.frames = [0,1,2];
                 }
 
                 if(itemEnemy.stat.type === 'bossExtra'){
 
                     itemEnemy.stat.sprite.pos[0] = 1542;
                     itemEnemy.stat.sprite.pos[1] = 298;
+                    itemEnemy.stat.sprite.frames = [0,1,2];
                 }
-
-                itemEnemy.enemySpeedX = 0;
-                itemEnemy.enemySpeedY = 0;
-                itemEnemy.bull.on = false;
-                itemEnemy.bull.bullStorage = [];
 
                 if (gamer.stat.whatDrop) { // drops
 
@@ -786,49 +787,56 @@
                 gamer.killCount++;
                 itemEnemy.sound.currentTime = 0;
                 itemEnemy.sound.play();
-               
-            
 
-               itemEnemy.DeathTimer = setTimeout( () => {
+            } 
 
+            if(itemEnemy.stat.sprite.index >= itemEnemy.stat.sprite.frames.length) {
                 itemEnemy.DeathTimer = null;
                 arrayEnemy.splice(i, 1);
                 gamer.stat.points += 25;
-                },300);
-            } else {
-               if ((itemEnemy.stat.health <= 0) && (itemEnemy.stat.onDeath === true) && 
-               itemEnemy.DeathTimer === null) {
-                   debugger;
-                arrayEnemy.splice(i, 1);
-                gamer.stat.points += 25;
-                
-
-               }
             }
             }
 
-            if ((itemEnemy) &&(boxCollides([itemEnemy.move.pos[0], itemEnemy.move.pos[1]],
-                            [30, 30],[gamer.move.pos[0], gamer.move.pos[1]], [32, 32]))){
+            checkPlayerDmg(itemEnemy,gamer,load);
 
-                if (gamer.stat.health > -1) {
-
-                    gamer.stat.sprite.pos[0] = 956; // damage player sprite
-                    load.SoundsStorage[5].play();
-                    gamer.stat.health--; // get damage
-
-                    gamer.move.pos[0, 1]++; // repulsion
-
-                    resetSprite = setTimeout(() => {
-                        // start animation player frame
-                        gamer.stat.sprite.pos[0] = 700;
-                    }, 0);
-                } else {
-
-                    gamer.stat.health = 0;
-                }
-            }
         });
-        console.log(load.enemy);
+    }
+
+    function checkPlayerDmg(itemEnemy,gamer,load) {
+        if ((itemEnemy) &&(boxCollides([itemEnemy.move.pos[0], itemEnemy.move.pos[1]],
+            [30, 30],[gamer.move.pos[0], gamer.move.pos[1]], [32, 32]))){
+
+        if (gamer.stat.health > -1) {
+
+            gamer.stat.sprite.pos[0] = 956; // damage player sprite
+            load.SoundsStorage[5].play();
+            gamer.stat.health--; // get damage
+
+            gamer.move.pos[0, 1]++; // repulsion
+
+            resetSprite = setTimeout(() => {
+                // start animation player frame
+                gamer.stat.sprite.pos[0] = 700;
+            }, 0);
+        } else {
+
+            gamer.stat.health = 0;
+        }
+        }
+    }
+
+    function deathEnemyUpdate(itemEnemy){
+
+        itemEnemy.stat.sprite.once = true;
+        itemEnemy.stat.sprite.speed = 10;
+        itemEnemy.stat.sprite.index = 0;
+        itemEnemy.stat.sprite.Saveframes = 0;
+
+        itemEnemy.enemySpeedX = 0;
+        itemEnemy.enemySpeedY = 0;
+
+        itemEnemy.bull.on = false;
+        itemEnemy.bull.bullStorage = [];
     }
 
     function updateCreeps(time, gamer, load, game) {
@@ -920,6 +928,7 @@
     }
 
     function dirMovingEnemy(item){
+
         if ((item) && (item.move.pos[0] > 700)) {
 
             item.enemySpeedX *= -1;
