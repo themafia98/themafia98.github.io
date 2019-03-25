@@ -237,9 +237,9 @@
 
     Game.prototype.updateGameStatus = function (gamer, load) { // new game
 
-        this.about.stageNumber = 7;
-        this.about.BossCount = 1;
-        this.about.count = 7;
+        this.about.stageNumber = -1;
+        this.about.BossCount = -1;
+        this.about.count = -1;
         this.fade = 2;
 
         // update game statistic
@@ -405,12 +405,7 @@
             speed: 320,
             active: false,
         };
-        _thatBullets.shotState = {
-            UP: false,
-            DOWN: false,
-            LEFT: false,
-            RIGHT: false
-        };
+
 
         _thatBullets.useSkill = (load, gamer, ui) => {
             
@@ -1287,11 +1282,11 @@
         };
 
         _that.pause = {
-            RectPause: [100,40],
-            RectPauseSize: [600,438],
-            TextStageName: [310,100],
-            Notification: [200,135],
-            Menu: [350,450]
+            RectPause: [this.settings.width/6,40],
+            RectPauseSize: [this.settings.width/1.5,this.settings.height/1.4],
+            TextStageName: [this.settings.width/2.1,100],
+            Notification: [this.settings.width/2,135],
+            Menu: [this.settings.width/2.1,450]
         }
 
         _that.menu = {
@@ -1317,12 +1312,12 @@
         }
 
         _that.gameOver = {
-            TitleCoords: [165,100],
-            win: [295,100],
-            Points: [322,155],
-            Throw: [322,185],
-            killCount: [322,210],
-            menu: [350,450]
+            TitleCoords: [this.settings.width/2,100],
+            win: [this.settings.width/2,100],
+            Points: [this.settings.width/2,150],
+            Throw: [this.settings.width/2,200],
+            killCount: [this.settings.width/2,250],
+            menu: [this.settings.width/2.02,450]
         }
 
         _that.playGame = {
@@ -1339,8 +1334,8 @@
             PointsGetCoords: [0, 560],
             PointsGetSize: [35, 35],
             PointsTextCoords: [40, 592],
-            ModalTextWASD: [this.settings.width/3.8,35],
-            ModalPress: [this.settings.width/2.6,65],
+            ModalTextWASD: [this.settings.width/2,35],
+            ModalPress: [this.settings.width/2,65],
             Audio: [this.settings.width,460],
             pauseButton: [this.settings.width-40,this.settings.height-48],
         }
@@ -1615,29 +1610,32 @@
                             this.pause.RectPauseSize[0]-20,this.pause.RectPauseSize[1]-20);
 
             CTX.fillStyle = 'yellow';
+            CTX.textAlign = 'center';
             CTX.shadowColor = 'rgb(50,50,50)';
             CTX.shadowOffsetX = 2;
             CTX.shadowOffsetY = 3;
-            CTX.font = 'bold 50px Arial';
+            CTX.font = '50px PIXI';
             CTX.fillText('PAUSE',this.pause.TextStageName[0],this.pause.TextStageName[1]);
 
             CTX.fillStyle = 'gold';
             CTX.shadowColor = 'rgb(50,80,50)';
+            CTX.textAlign = 'center';
             CTX.shadowOffsetX = 2;
             CTX.shadowOffsetY = 3;
-            CTX.font = 'bold 20px Arial';
+            CTX.font = '25px PIXI';
             CTX.fillText('If you leave the game, all saves will be lost.',this.pause.Notification[0],
                         this.pause.Notification[1]);
 
             CTX.fillStyle = 'yellow';
             CTX.shadowColor = 'brown';
-            CTX.font = 'bold 25px Arial';
+            CTX.textAlign = 'center';
+            CTX.font = '35px PIXI';
             CTX.shadowOffsetX = 0;
             CTX.shadowOffsetY = 0;
-            CTX.fillText('Count throw: ' + gamer.countThrow,this.gameOver.Throw[0]-20,
+            CTX.fillText('Throws: ' + gamer.countThrow,this.gameOver.Throw[0]-20,
                         this.gameOver.Throw[1]);
-            CTX.fillText('Count kills: ' + gamer.killCount,this.gameOver.killCount[0]-20,
-                        this.gameOver.killCount[1]);
+            CTX.fillText('Kills: ' + gamer.killCount,this.gameOver.killCount[0]-20,
+                        this.gameOver.killCount[1]+10);
     
 
             if (UserInterface.checkFrame(UserInterface.linki[0])) { // menu link
@@ -1650,7 +1648,8 @@
 
                 CTX.shadowOffsetX = 2;
                 CTX.shadowOffsetY = 3;
-                CTX.font = 'bold 30px Arial';
+                CTX.textAlign = 'center';
+                CTX.font = '40px PIXI';
                 CTX.fillText('MENU',this.pause.Menu[0],this.pause.Menu[1]);
                 this.render(); // all render
             } else {
@@ -1795,7 +1794,7 @@
         (this.view != 'mobile') ? CTX.font = 'bold 80px PIXI' : CTX.font = 'bold 60px PIXI';
         (this.view === 'mobile') && (this.rating.TitleGame[1] = 70);
 
-        CTX.fillText('THE BEST',this.rating.TitleGame[0],this.rating.TitleGame[1]);
+        CTX.fillText('THE BEST',this.rating.TitleGame[0],this.menu.TitleGame[1]);
         CTX.shadowOffsetX = 0;
         CTX.shadowOffsetY = 0;
 
@@ -1882,7 +1881,8 @@
         CTX.fillRect(0, 0, this.settings.width, this.settings.height-75);
 
         CTX.fillStyle = 'red';
-        CTX.font = ' bold 70px SEGOE SCRIPT';
+        CTX.textAlign = 'center';
+        CTX.font = '100px PIXI';
         if(game.about.stageNumber >=20){
         CTX.fillText('W I N',this.gameOver.win[0],this.gameOver.win[1]);
 
@@ -1894,17 +1894,16 @@
         CTX.shadowColor = 'brown';
         CTX.shadowOffsetX = 2;
         CTX.shadowOffsetY = 3;
-        CTX.font = 'bold 30px Arial';
+        CTX.font = '40px PIXI';
         CTX.fillStyle = 'yellow';
         CTX.shadowColor = 'brown';
-        CTX.font = 'bold 25px Arial';
         CTX.fillText('Points: ' + gamer.stat.points, this.gameOver.Points[0],
                     this.gameOver.Points[1]);
 
-        CTX.fillText('Count throw: ' + gamer.countThrow,this.gameOver.Throw[0],
+        CTX.fillText('Throws: ' + gamer.countThrow,this.gameOver.Throw[0],
                     this.gameOver.Throw[1]);
 
-        CTX.fillText('Count kills: ' + gamer.killCount,this.gameOver.killCount[0],
+        CTX.fillText('Kills: ' + gamer.killCount,this.gameOver.killCount[0],
                     this.gameOver.killCount[1]);
 
         if (UserInterface.checkFrame(UserInterface.linki[0])) {
@@ -1916,7 +1915,7 @@
             CTX.fillStyle = UserInterface.linki[4].color;
             }
 
-        CTX.font = 'bold 30px Arial';
+        CTX.font = '50px PIXI';
         CTX.fillText('MENU',this.gameOver.menu[0],this.gameOver.menu[1]);
         this.render(); // render game over
     }
@@ -2001,7 +2000,7 @@
 
         // HP bar
         CTX.fillStyle = 'white';
-        CTX.font = 'bold 15px Arial';
+        CTX.font = 'bold 15px PIXI';
         (this.view != 'mobile') &&
             CTX.fillText(gamer.stat.health + 'HP',this.playGame.hpBarSize[0],
                          this.playGame.hpBarSize[1]);
@@ -2012,7 +2011,7 @@
         CTX.shadowColor = 'rgb(255,255,25)';
         CTX.shadowOffsetX = 2;
         CTX.shadowOffsetY = 3;
-        CTX.font = 'bold 30px Arial';
+        CTX.font = 'bold 30px PIXI';
         CTX.fillText(game.about.stageNumber + ' LVL', 10, 30);
         CTX.shadowOffsetX = 0;
         CTX.shadowOffsetY = 0;
@@ -2024,27 +2023,28 @@
                     this.playGame.PointsGetSize[0],this.playGame.PointsGetSize[1]);
 
         CTX.fillStyle = 'gold';
-        CTX.font = 'bold 27px Arial';
+        CTX.font = 'bold 27px PIXI';
         CTX.fillText(gamer.stat.points,this.playGame.PointsTextCoords[0],
                      this.playGame.PointsTextCoords[1]);
             
         CTX.drawImage(load.SpriteStorage[2],this.playGame.pauseButton[0],
                       this.playGame.pauseButton[1],20,20);
 
-        if ((game.about.state === 'play') && (this.settings.countModal === 0) &&
-            (this.viewMode != 'demo')){
+        if ((game.about.state === 'play') && (this.settings.countModal === 0)){
 
         CTX.fillStyle = 'black';
         CTX.globalAlpha = '0.8';
         CTX.fillRect(0,0,this.settings.width, 100);
+        CTX.textAlign = 'center';
         CTX.fillStyle = 'white';
-        CTX.font = '30px bold Aria';
+        CTX.font = 'PIXI 30px bold';
         CTX.fillText('Move with the WASD keys',this.playGame.ModalTextWASD[0],
-                     this.playGame.ModalTextWASD[1]);
+                    this.playGame.ModalTextWASD[1]);
+        CTX.textAlign = 'center';
         CTX.fillStyle = 'lightblue';
-        CTX.font = '20px bold Aria';
+        CTX.font = 'PIXI 20px bold';
         CTX.fillText('Press any keys',this.playGame.ModalPress[0],
-                     this.playGame.ModalPress[1]);
+                    this.playGame.ModalPress[1]);
 
         }
 
@@ -2286,7 +2286,6 @@
                 case 68: _that.inputState.RIGHT = isPressed; break;
                 case 83: _that.inputState.DOWN = isPressed; break;
                 case 27: _that.inputState.ESCAPE = isPressed; break;
-                case 8: _that.inputState.SHOOT = isPressed; break;
             }
         };
 
@@ -2459,12 +2458,13 @@
             }
 
             function gameplay(loader, player, game) {
+
                 if (game.about.state === 'play-animation') {
 
                     gamePlayDraw.building(loader, player, game);
                 }
                 if ((game.about.state === 'play') && !(loader.enemy.length)) {
-                   
+
                     loader.SoundsStorage[10].currentTime = 0;
                     loader.SoundsStorage[10].play();
 
@@ -2557,13 +2557,13 @@
                 time = Math.min(0.05,(now - lastTime) / 1000.0);
 
                 linkers(loader, player, time);
-                menu(loader, player);
+                (game.about.state != 'play') && (menu(loader, player));
                 gameplay(loader, player, game);
                 update(time, player, loader, game, UserInterface.linki);
                 pauseCheck(game,controller);
                 buildTexture(game, loader, player);
                 gamePlayDraw.renders(player, loader, game, UserInterface);
-                death(game,player,loader);  //, request
+                (game.about.state === 'play') && (death(game,player,loader));  //, request
 
                 lastTime = now;
                 requestAnimationFrame(loop);
