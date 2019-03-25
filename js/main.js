@@ -79,15 +79,18 @@
 
     Request.prototype.getIP = function (){
         // * Check users IP
+        
         fetch(`https://ipsidekick.com/${this.key()}`)
 
         .then ((response) => response.json())
         .then ((response) =>{
-            (response.ip) ? localStorage.IP = response.ip : localStorage.IP = 'no detected' 
+            
+            (response.ip) ? localStorage.IP = response.ip : localStorage.IP = 'no detected';
         })
 
         .catch(function (error){
-            console.log(error);
+            
+            console.log(error.message);
         });
     }
 
@@ -1170,8 +1173,8 @@
     }
 
     function animationMoving(gamer, game,time){
-        // -----start game animation-----
 
+        // -----start game animation-----
         if (gamer.move.animationPos[1] >= gamer.move.pos[1]){
 
             gamer.move.pos[1] += gamer.move.speeds*time;
@@ -1180,8 +1183,8 @@
     }
 
     function inputs(time, gamer){
-        // -----player moving-----
 
+        // -----player moving-----
         if (input.isDown('RIGHT') === true){
 
             gamer.stat.sprite.size[0] = 34;
@@ -1233,6 +1236,7 @@
     }
 
     function getRandom(){
+
         // -----get random enemy position-----
         let arr = [0.3, 0.6, 0.8, 0.9, 1.2];
         let rand = Math.floor(Math.random() * arr.length);
@@ -1240,6 +1244,7 @@
     }
 
     function getRandomPull(){
+
         // -----get random bullets dir-----
         let arr = [-1.2, -1, 1, 1.2];
         let rand = Math.floor(Math.random() * arr.length);
@@ -1247,6 +1252,7 @@
     }
 
     function compare(a, b){
+
         // bubble sort records list
         if (a.points < b.points){
 
@@ -1263,6 +1269,7 @@
         let _that = this;
 
         this.blink = 1;
+        this.scaleValue = 1;
         this.frameBlink = true;
         this.view = 'xl';
         this.viewMode = 'full';
@@ -1295,7 +1302,7 @@
             RectPause: [this.settings.width/6,40],
             RectPauseSize: [this.settings.width/1.5,this.settings.height/1.4],
             TextStageName: [this.settings.width/2.1,100],
-            Notification: [this.settings.width/2,135],
+            Notification: [this.settings.width/2 - 5,135],
             Menu: [this.settings.width/2.1,450]
         }
 
@@ -1908,7 +1915,7 @@
         CTX.fillStyle = 'red';
         CTX.textAlign = 'center';
         CTX.font = '100px PIXI';
-        if(game.about.stageNumber >=20){
+        if( (game.about.stageNumber >= 20) && (gamer.stat.health > 0) ){
         CTX.fillText('W I N',this.gameOver.win[0],this.gameOver.win[1]);
 
         } else{
@@ -2095,9 +2102,7 @@
                                             65,65,ul.coordsMouseX-32.5,ul.coordsMouseY-32.5,65,65);
         }
 
-    Draw.prototype.buildingGetNameView = function(type){
-
-        const canvas = type.getElementById('arena');
+    Draw.prototype.buildingGetNameView = function(type,canvas){
 
         const inputName = type.createElement('input');
         const buttonCancel = type.createElement('input');
@@ -2168,6 +2173,35 @@
             return 800;
         }
     }
+
+    // Draw.prototype.buildScale = function(type,canvas){
+
+    //     const wrapper = type.createElement('div');
+    //     const scaleUp = type.createElement('input');
+    //     const scaleDown = type.createElement('input');
+        
+    //     scaleUp.setAttribute('type','button');
+    //     scaleUp.setAttribute('value','Zoom+');
+    //     scaleDown.setAttribute('type','button');
+    //     scaleDown.setAttribute('value','Zoom-');
+
+    //     scaleUp.classList.add('ZoomUP');
+    //     scaleDown.classList.add('ZoomDown');
+    //     wrapper.classList.add('wrapperScale');
+
+    //     wrapper.appendChild(scaleUp);
+    //     wrapper.appendChild(scaleDown);
+    //     type.body.appendChild(wrapper);
+
+
+    // };
+
+    // Draw.prototype.transformCanvasViewUp = function(canvas){
+
+    //     debugger;
+    //     this.scaleValue += 0.1;
+    //     canvas.style.transform = `scale(${this.scaleValue})`;
+    // }
 
     function GameController(){
         let _that = this;
@@ -2300,6 +2334,10 @@
                     location.deleteGetNameView(document, e.target);
                 }
 
+                if (e.target.className === 'ZoomUP'){
+                    location.transformCanvasViewUp(canvas);
+                }
+
             };
         };
 
@@ -2354,9 +2392,9 @@
 
             gamePlayDraw.getCanvas.canvas.setAttribute('width', gamePlayDraw.settings.width);
             gamePlayDraw.getCanvas.canvas.setAttribute('height', gamePlayDraw.settings.height);
-            debugger;
+            
             (gamePlayDraw.view === 'mobile') && (gamePlayDraw.getCanvas.canvas.classList.add('scale'));
-
+            // (gamePlayDraw.view != 'mobile') && (gamePlayDraw.buildScale(document,gamePlayDraw.getCanvas.canvas));
 
             // links
 
@@ -2566,7 +2604,7 @@
             }
 
             if (!localStorage.name)
-                gamePlayDraw.buildingGetNameView(document);
+                gamePlayDraw.buildingGetNameView(document,gamePlayDraw.getCanvas.canvas);
 
 
             let timer = setTimeout(() =>{
