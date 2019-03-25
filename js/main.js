@@ -2120,7 +2120,7 @@
 
             this.view = 'mobile';
 
-        return window.screen.availHeight-70;
+        return window.screen.availHeight-100;
         } else {
 
             return 620;
