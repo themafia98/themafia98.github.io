@@ -193,6 +193,8 @@
     Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber) {
         let CreateEnemy = enemy.createEnemy;
         game.about.stageNumber = stageNumber;
+        if((game.about.stageNumber === 7)) {debugger};
+        if((game.about.stageNumber === 8)) {debugger};
         if ((game.about.stageNumber) &&
             (game.about.stageNumber === game.about.stageNumber)) {
 
@@ -238,6 +240,7 @@
     Game.prototype.updateGameStatus = function (gamer, load) { // new game
 
         this.about.stageNumber = -1;
+        this.about,stageExtraBossCount = 1;
         this.about.BossCount = -1;
         this.about.count = -1;
         this.fade = 2;
@@ -2470,7 +2473,6 @@
 
                     (game.about.stageNumber >= 20) && (player.setHealth(0));
 
-                    (game.about.stageNumber < 7) && (game.about.stageNumber++);
 
                     if (game.about.stageNumber >= 10) {
 
@@ -2483,6 +2485,8 @@
                         game.about.stageNumber++;
                         game.about.stageBossCount++;
                     }
+
+                    (game.about.stageNumber < 7) && (game.about.stageNumber++);
 
                     game.spawnAndLvling(game, loader, enemy, game.about.stageNumber);
                 };
