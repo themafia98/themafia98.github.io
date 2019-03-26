@@ -1,4 +1,4 @@
-    (() => {
+    (() =>{
         firebase.initializeApp({
             apiKey: "AIzaSyDbccidJ1gkbHlOarCaPQxLZB663DuEkoM",
             authDomain: "game-e444e.firebaseapp.com",
@@ -8,7 +8,7 @@
             messagingSenderId: "1087306837571"
         });
 
-        return cloudDB = {
+        return cloudDB ={
             use: firebase.firestore()
         };
     })();

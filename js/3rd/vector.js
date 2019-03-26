@@ -1,4 +1,4 @@
-function Vector(x, y) {
+function Vector(x, y){
 
     let _that = this;
 
@@ -8,22 +8,22 @@ function Vector(x, y) {
 
 }
 
-Vector.prototype.multiply = function (vector) {
+Vector.prototype.multiply = function (vector){
 
     return new Vector(this.x * vector, this.y * vector);
 }
 
-Vector.prototype.add = function (vector) {
+Vector.prototype.add = function (vector){
 
     /* прибавляю найденные координаты к координатам объекта*/
     return new Vector(this.x + vector.x, this.y + vector.y);
 }
 
-Vector.prototype.divide = function (vector) {
+Vector.prototype.divide = function (vector){
     return new Vector(this.x / vector, this.y / vector);
 }
 
-Vector.prototype.normalize = function (vector) {
+Vector.prototype.normalize = function (vector){
 
     /*
      * нормализую вектор.
@@ -34,13 +34,13 @@ Vector.prototype.normalize = function (vector) {
     return this.divide(this.length())
 }
 
-Vector.prototype.length = function (vector) {
+Vector.prototype.length = function (vector){
 
     /*  длина вектора  */
     return Math.sqrt(this.dot(this));
 }
 
-Vector.prototype.dot = function (vector) {
+Vector.prototype.dot = function (vector){
 
     /* Скалярное произведение векторов в 2D пространстве */
     return this.x * vector.x + this.y * vector.y;

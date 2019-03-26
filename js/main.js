@@ -1,16 +1,16 @@
-function DataBase() {
+function DataBase(){
     // * firebase
 
     this.MAX_WRITE = 0;
     this.currentIP = null;
 }
 
-DataBase.prototype.getUserData = function (loader) {
+DataBase.prototype.getUserData = function (loader){
     // * Get data from db
     cloudDB.use.collection('users').where('realPlayer', '==', true).get()
-        .then(function (snapshot) {
+        .then(function (snapshot){
 
-            snapshot.forEach(function (doc) {
+            snapshot.forEach(function (doc){
 
                 loader.startRecord.push(doc.data());
 
@@ -20,17 +20,17 @@ DataBase.prototype.getUserData = function (loader) {
         });
 }
 
-DataBase.prototype.updateLimit = function () {
+DataBase.prototype.updateLimit = function (){
     // * Limit on updata data
     let _that = this;
-    this.timer = setTimeout(function limit() {
+    this.timer = setTimeout(function limit(){
 
         _that.MAX_WRITE = 0;
         this.timer = setTimeout(limit, 60000);
     }, 60000);
 }
 
-DataBase.prototype.updateUserData = function (ip, id, name, points, loader) {
+DataBase.prototype.updateUserData = function (ip, id, name, points, loader){
     // * Update data
 
     if (this.MAX_WRITE > 3) throw new Error('limit');
@@ -47,17 +47,17 @@ DataBase.prototype.updateUserData = function (ip, id, name, points, loader) {
             realPlayer: true
         })
 
-        .catch(function (error) {
+        .catch(function (error){
 
             console.log(error.message);
         });
 
     // * Update data when db data change
     cloudDB.use.collection('users').where('realPlayer', '==', true)
-        .onSnapshot(function (snapshot) {
+        .onSnapshot(function (snapshot){
 
             loader.startRecord = [];
-            snapshot.forEach(function (doc) {
+            snapshot.forEach(function (doc){
 
                 loader.startRecord.push(doc.data());
 
@@ -68,24 +68,24 @@ DataBase.prototype.updateUserData = function (ip, id, name, points, loader) {
 
 }
 
-function Request() {
+function Request(){
     // * API
     this.key = () => 'json';
 
 }
 
-Request.prototype.getIP = function () {
+Request.prototype.getIP = function (){
     // * Check users IP
 
     fetch(`https://ipsidekick.com/${this.key()}`)
 
         .then((response) => response.json())
-        .then((response) => {
+        .then((response) =>{
 
             (response.ip) ? localStorage.IP = response.ip: localStorage.IP = 'no detected';
         })
 
-        .catch(function (error) {
+        .catch(function (error){
 
             console.log(error.message);
         });
@@ -93,13 +93,13 @@ Request.prototype.getIP = function () {
 
 
 
-function UI() {
+function UI(){
     this.linki = []; // save links
     this.coordsMouseX = null;
     this.coordsMouseY = null;
 }
 
-function Links(url, name, coordsX, coordsY, lengthX, lengthY) {
+function Links(url, name, coordsX, coordsY, lengthX, lengthY){
 
     this.url = url;
     this.Name = name;
@@ -110,19 +110,19 @@ function Links(url, name, coordsX, coordsY, lengthX, lengthY) {
     this.selectName = false;
 }
 
-UI.prototype.checkFrame = function (frame) { // check selected links
+UI.prototype.checkFrame = function (frame){ // check selected links
 
     if ((this.coordsMouseX > frame.pos[0]) &&
         (this.coordsMouseX < frame.pos[0] + frame.length[0]) &&
         (this.coordsMouseY > frame.pos[1]) &&
-        (this.coordsMouseY < frame.pos[1] + frame.length[1])) {
+        (this.coordsMouseY < frame.pos[1] + frame.length[1])){
 
         return true;
     }
     return false;
 };
 
-function Game() {
+function Game(){
     // states
     this.menu = 'menu';
     this.death = 'wait';
@@ -134,12 +134,12 @@ function Game() {
     this.fade = 1;
     this.loadingPercent = 0;
 
-    this.setRequstCount = function (i) {
+    this.setRequstCount = function (i){
 
         return this.about.requstCount = i;
     };
 
-    this.about = {
+    this.about ={
         state: 'loading',
         count: 0, // game count for win state
         stageBossCount: 0,
@@ -148,17 +148,66 @@ function Game() {
         lastTimeBull: 0, // time bullets
         requstCount: 0,
     };
+
+    this.essence ={
+
+        enemyStartPosition:{
+            x: 330,
+            y: 300
+        },
+
+        essenceSettings:{
+            birds:{
+                type: 'common',
+                name: 'bird_0',
+                dmg: 15,
+                health: 75,
+                x: 446,
+                y: 100,
+                sizeX: 32,
+                sizeY: 20,
+                frameCount: 5,
+                frameArray: [0,1,2,3,4,5]
+            },
+            boss:{
+                type: 'boss',
+                name: 'boss_0',
+                dmg: 35,
+                health: 175,
+                x: 964,
+                y: 226,
+                sizeX: 60,
+                sizeY: 60,
+                frameCount: 2,
+                frameArray: [0, 1]
+            },
+            bossExtra:{
+                type: 'bossExtra',
+                name: 'bossExtra_0',
+                dmg: 50,
+                health: 225,
+                x: 964,
+                y: 288,
+                sizeX: 60,
+                sizeY: 60,
+                frameCount: 2,
+                frameArray: [0, 1]
+            }
+
+        }
+    }
 }
+
 
 // ----------------switch states---------------
 
-Game.prototype.startGame = function () {
+Game.prototype.startGame = function (){
 
     return this.about.state = this.play;
 };
 
-Game.prototype.startGameAnimation = function (load, gamer, activeLink) {
-    // 
+Game.prototype.startGameAnimation = function (load, gamer, activeLink){
+
     activeLink.selectName = false;
     this.music(load); // music
     this.updateGameStatus(gamer, load); // game state
@@ -167,26 +216,27 @@ Game.prototype.startGameAnimation = function (load, gamer, activeLink) {
     return this.about.state = this.startPlay;
 };
 
-Game.prototype.stopGame = function () {
+Game.prototype.stopGame = function (){
 
     return this.about.state = this.death;
 };
 
-Game.prototype.ratingGame = function (activeLink) {
+Game.prototype.ratingGame = function (activeLink){
 
     activeLink.selectName = false;
     return this.about.state = this.rating;
 };
 
-Game.prototype.mainMenu = function (activeLink) {
+Game.prototype.mainMenu = function (activeLink){
 
     activeLink.selectName = false;
     return this.about.state = this.menu;
 };
 
-Game.prototype.pause = function (activeLink) {
-
-    if ((input.isDown("ESCAPE")) || ((activeLink) && (activeLink.selectName))) {
+Game.prototype.pause = function (activeLink,escape){
+    
+    if ((escape) || ((activeLink) &&
+        (activeLink.selectName))){
 
         activeLink.selectName = false;
         this.about.state = this.pauseGame;
@@ -195,61 +245,125 @@ Game.prototype.pause = function (activeLink) {
     } else return false;
 };
 
-Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber) {
+Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
 
     let CreateEnemy = enemy.createEnemy; // short
     game.about.stageNumber = stageNumber; // get stageNumber
 
     if ((game.about.stageNumber) &&
-        (game.about.stageNumber === game.about.stageNumber)) {
+        (game.about.stageNumber === game.about.stageNumber)){
 
-        if (game.about.stageNumber < 7) {
+        if (game.about.stageNumber < 7){
+            
+            for (let i = 0; i < game.about.stageNumber; i++){
 
-            for (let i = 0; i < game.about.stageNumber; i++) {
-
-                CreateEnemy(load, 75, 15, `bird_0${i}`, 'common',
-                    446, 100, 32, 20, 5, [0, 1, 2, 3, 4, 5], 330, 300, load.SoundsStorage[7]);
-
+                CreateEnemy(
+                    load,
+                    game.essence.essenceSettings.birds.health,
+                    game.essence.essenceSettings.birds.dmg,
+                    game.essence.essenceSettings.birds.name + i,
+                    game.essence.essenceSettings.birds.type,
+                    game.essence.essenceSettings.birds.x,
+                    game.essence.essenceSettings.birds.y,
+                    game.essence.essenceSettings.birds.sizeX,
+                    game.essence.essenceSettings.birds.sizeY,
+                    game.essence.essenceSettings.birds.frameCount,
+                    game.essence.essenceSettings.birds.frameArray,
+                    game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
+                    load.SoundsStorage[7]
+                    );
             }
 
-        } else if (game.about.stageNumber >= 10) {
+        } else if (game.about.stageNumber >= 10){
 
-            for (let j = 0; j < game.about.stageExtraBossCount; j++) {
+            for (let j = 0; j < game.about.stageExtraBossCount; j++){
 
-                CreateEnemy(load, 225, 50, `bossExtra_0${j}`, 'bossExtra',
-                    964, 288, 60, 60, 2, [0, 1], 330, 300, load.SoundsStorage[8]);
+                CreateEnemy(
+                    load,
+                    game.essence.essenceSettings.bossExtra.health,
+                    game.essence.essenceSettings.bossExtra.dmg,
+                    game.essence.essenceSettings.bossExtra.name + j,
+                    game.essence.essenceSettings.bossExtra.type,
+                    game.essence.essenceSettings.bossExtra.x,
+                    game.essence.essenceSettings.bossExtra.y,
+                    game.essence.essenceSettings.bossExtra.sizeX,
+                    game.essence.essenceSettings.bossExtra.sizeY,
+                    game.essence.essenceSettings.bossExtra.frameCount,
+                    game.essence.essenceSettings.bossExtra.frameArray,
+                    game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
+                    load.SoundsStorage[8]
+                );
 
             }
         }
 
-        if ((game.about.stageNumber >= 7) && (game.about.stageNumber <= 15)) {
+        if ((game.about.stageNumber >= 7) && (game.about.stageNumber <= 15)){
 
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 5; i++){
 
-                CreateEnemy(load, 75, 15, `bird_0${i}`, 'common',
-                    446, 100, 32, 20, 5, [0, 1, 2, 3, 4, 5], 330, 300, load.SoundsStorage[7]);
+                CreateEnemy(
+                    load,
+                    game.essence.essenceSettings.birds.health,
+                    game.essence.essenceSettings.birds.dmg,
+                    game.essence.essenceSettings.birds.name + i,
+                    game.essence.essenceSettings.birds.type,
+                    game.essence.essenceSettings.birds.x,
+                    game.essence.essenceSettings.birds.y,
+                    game.essence.essenceSettings.birds.sizeX,
+                    game.essence.essenceSettings.birds.sizeY,
+                    game.essence.essenceSettings.birds.frameCount,
+                    game.essence.essenceSettings.birds.frameArray,
+                    game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
+                    load.SoundsStorage[7]
+                );
 
             }
 
-            for (let j = 0; j < game.about.stageBossCount; j++) {
+            for (let j = 0; j < game.about.stageBossCount; j++){
 
-                CreateEnemy(load, 175, 35, `boss_0${j}`, 'boss',
-                    964, 226, 60, 60, 2, [0, 1], 330, 300, load.SoundsStorage[6]);
+                CreateEnemy(
+                    load,
+                    game.essence.essenceSettings.boss.health,
+                    game.essence.essenceSettings.boss.dmg,
+                    game.essence.essenceSettings.boss.name + j,
+                    game.essence.essenceSettings.boss.type,
+                    game.essence.essenceSettings.boss.x,
+                    game.essence.essenceSettings.boss.y,
+                    game.essence.essenceSettings.boss.sizeX,
+                    game.essence.essenceSettings.boss.sizeY,
+                    game.essence.essenceSettings.boss.frameCount,
+                    game.essence.essenceSettings.boss.frameArray,
+                    game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
+                    load.SoundsStorage[6]
+                );
 
             }
-        } else if (game.about.stageNumber > 15) {
+        } else if (game.about.stageNumber > 15){
 
-            for (let i = 0; i < game.about.stageNumber - 5; i++) {
+            for (let i = 0; i < game.about.stageNumber - 5; i++){
 
-                CreateEnemy(load, 225, 50, `bossExtra_0${i}`, 'bossExtra',
-                    964, 288, 60, 60, 2, [0, 1], 330, 300, load.SoundsStorage[8]);
+                CreateEnemy(
+                    load,
+                    game.essence.essenceSettings.bossExtra.health,
+                    game.essence.essenceSettings.bossExtra.dmg,
+                    game.essence.essenceSettings.bossExtra.name + j,
+                    game.essence.essenceSettings.bossExtra.type,
+                    game.essence.essenceSettings.bossExtra.x,
+                    game.essence.essenceSettings.bossExtra.y,
+                    game.essence.essenceSettings.bossExtra.sizeX,
+                    game.essence.essenceSettings.bossExtra.sizeY,
+                    game.essence.essenceSettings.bossExtra.frameCount,
+                    game.essence.essenceSettings.bossExtra.frameArray,
+                    game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
+                    load.SoundsStorage[8]
+                );
 
             }
         }
     }
 };
 
-Game.prototype.updateGameStatus = function (gamer, load) { // new game
+Game.prototype.updateGameStatus = function (gamer, load){ // new game
 
     this.about.stageNumber = -1;
     this.about.stageExtraBossCount = 1;
@@ -281,14 +395,17 @@ Game.prototype.updateGameStatus = function (gamer, load) { // new game
 
 };
 
-Game.prototype.music = function (load) {
+Game.prototype.music = function (load){
+
+    let delayForLoading = setTimeout( () => {
     load.SoundsStorage[2].currentTime = 0;
     load.SoundsStorage[2].loop = true;
     load.SoundsStorage[2].play();
+    },2500);
 };
 
 
-function Loader() { // for storage and loading files and datas
+function Loader(){ // for storage and loading files and datas
 
     this.loadCount = 1; // load counter
 
@@ -311,29 +428,29 @@ function Loader() { // for storage and loading files and datas
 };
 
 // ---loading method---
-Loader.prototype.textureCache = function (src) {
+Loader.prototype.textureCache = function (src){
 
     return this.TextureStorage.push(src);
 };
-Loader.prototype.SpriteCache = function (src) {
+Loader.prototype.SpriteCache = function (src){
 
     return this.SpriteStorage.push(src);
 };
-Loader.prototype.SoundCache = function (src) {
+Loader.prototype.SoundCache = function (src){
 
     return this.SoundsStorage.push(src);
 };
 
-Loader.prototype.loading = function (fileType, src, imageType) {
+Loader.prototype.loading = function (fileType, src, imageType){
 
-    if ((fileType === 'Image') && (imageType === 'texture')) {
+    if ((fileType === 'Image') && (imageType === 'texture')){
 
         const file = new Image();
         file.src = src;
         this.textureCache(file);
         console.log('loading file №' + this.loadCount + '(' + file.src + ')');
         this.loadCount++;
-    } else if ((fileType === 'Image') && (imageType === 'sprite')) {
+    } else if ((fileType === 'Image') && (imageType === 'sprite')){
 
         const file = new Image();
         file.src = src;
@@ -342,7 +459,7 @@ Loader.prototype.loading = function (fileType, src, imageType) {
         this.loadCount++;
     }
 
-    if (fileType === 'Audio') {
+    if (fileType === 'Audio'){
 
         const file = new Audio(); // main game music 1
         file.src = src;
@@ -355,7 +472,7 @@ Loader.prototype.loading = function (fileType, src, imageType) {
 
 
 
-function Player(type, location) {
+function Player(type, location){
 
     let _that = this;
 
@@ -365,8 +482,7 @@ function Player(type, location) {
     _that.SoundCount = 0;
     _that.bullets = []; // player bullets
 
-    _that.stat = {
-
+    _that.stat ={
         name: 'player', // type
         gamerName: null, // || defult generated random name
         health: 200,
@@ -378,27 +494,27 @@ function Player(type, location) {
             [703, 0], [31, 34], 2, [0, 1]),
         bullets: new Bullets(),
     };
-    _that.move = {
+    _that.move ={
         speeds: 200,
         pos: [location.settings.width / 2, location.settings.height / 2],
         startPos: [385, -120], // position for start animation
         animationPos: [location.settings.width / 2, location.settings.height / 2],
     };
 
-    _that.setHealth = function (count) {
+    _that.setHealth = function (count){
 
         return this.stat.health = count;
     };
 }
 
 
-Player.prototype.GameOver = function (gamer, game, load) {
+Player.prototype.GameOver = function (gamer, game, load){
 
-    if (gamer.stat.health <= 0) {
+    if (gamer.stat.health <= 0){
 
         load.enemy = []; // cleaer enemy
 
-        if (!(gamer.SoundCount) && (game.about.stageNumber < 20)) {
+        if (!(gamer.SoundCount) && (game.about.stageNumber < 20)){
 
             load.SoundsStorage[9].play();
             gamer.SoundCount++;
@@ -407,11 +523,11 @@ Player.prototype.GameOver = function (gamer, game, load) {
     }
 };
 
-Player.prototype.Win = function (gamer, game, load) {
+Player.prototype.Win = function (gamer, game, load){
 
-    if (!(gamer.stat.health < 0)) {
+    if (!(gamer.stat.health < 0)){
 
-        if (!(load.enemy.length) && !(game.about.count)) {
+        if (!(load.enemy.length) && !(game.about.count)){
 
             game.about.stageNumber++;
             game.about.count++;
@@ -421,25 +537,25 @@ Player.prototype.Win = function (gamer, game, load) {
 
 
 
-function Bullets() {
+function Bullets(){
 
     this.lastFire = 0;
     this.i = 50;
-    this.weapons = {
+    this.weapons ={
         speed: 320,
         active: false,
     };
 };
 
-Bullets.prototype.useSkill = function (load, gamer, ui) {
+Bullets.prototype.useSkill = function (load, gamer, ui){
 
     // * Bull
-    if (Date.now() - this.lastFire > 200) { // delay
+    if (Date.now() - this.lastFire > 200){ // delay
 
         gamer.countThrow++; // counter
 
         load.bullets.push({
-            pos: {
+            pos:{
                 x: gamer.move.pos[0],
                 y: gamer.move.pos[1]
             },
@@ -459,28 +575,28 @@ Bullets.prototype.useSkill = function (load, gamer, ui) {
     }
 };
 
-Bullets.prototype.createBullets = function (type) {
+Bullets.prototype.createBullets = function (type){
 
     // bull for player
     return new Sprite('bull', type.SpriteStorage[0],
         [192.5, 31], [32, 36], 0);
 };
 
-Bullets.prototype.createBulletsCustom = function (type, spriteCoordX, spriteCoordY) {
+Bullets.prototype.createBulletsCustom = function (type, spriteCoordX, spriteCoordY){
 
     // bull for enemys
     return new Sprite('bull2', type.SpriteStorage[0],
         [spriteCoordX, spriteCoordY], [22, 34], 0);
 };
 
-function Enemy() {
+function Enemy(){
 
 
     this.enemySpeedX = 1 * getRandomPull(); // start random position X
     this.enemySpeedY = 1 * getRandomPull(); // start random position X
     this.DeathTimer = null;
 
-    this.stat = {
+    this.stat ={
         name: '',
         type: '',
         collision: false,
@@ -492,7 +608,7 @@ function Enemy() {
         onDeath: false,
     };
 
-    this.bull = {
+    this.bull ={
         bullStorage: [], // enemys bulls 
         speed: null,
         speedY: null,
@@ -501,7 +617,7 @@ function Enemy() {
         lastBull: null, // delay
     }
 
-    this.move = {
+    this.move ={
         speeds: 10, // bullets enemys speed
         pos: [0, 0], // bullets position
         randomMove: getRandomPull(), // random flight
@@ -509,12 +625,13 @@ function Enemy() {
 }
 
 Enemy.prototype.createEnemy = function (load, hp, damage, name, type,
-    spriteX, spriteY, spriteW, spriteH,
-    frameCount, frameGo, posX, posY, music) {
+                                        spriteX, spriteY, spriteW, spriteH,
+                                        frameCount, frameGo, posX, posY, music){
 
     let spriteEnemy = new Enemy(load, this, hp, damage, name,
         type, spriteX, spriteY, spriteW, spriteH,
         frameCount, frameGo, music);
+
     // * Set settings enemy
     spriteEnemy.stat.name = name;
     spriteEnemy.stat.type = type;
@@ -525,14 +642,16 @@ Enemy.prototype.createEnemy = function (load, hp, damage, name, type,
     spriteEnemy.sound = music;
 
     // ----Start moving position-----
-    if ((spriteEnemy.stat.type === 'boss' || spriteEnemy.stat.type === 'bossExtra') &&
-        (spriteEnemy.enemySpeedY < 0)) {
+    if ((spriteEnemy.stat.type === 'boss' ||
+        spriteEnemy.stat.type === 'bossExtra') &&
+        (spriteEnemy.enemySpeedY < 0)){
 
         spriteX = 452;
     }
 
-    if ((spriteEnemy.stat.type === 'boss' || spriteEnemy.stat.type === 'bossExtra') &&
-        (spriteEnemy.enemySpeedY > 0)) {
+    if ((spriteEnemy.stat.type === 'boss' ||
+        spriteEnemy.stat.type === 'bossExtra') &&
+        (spriteEnemy.enemySpeedY > 0)){
 
         spriteX = 964;
     }
@@ -546,7 +665,7 @@ Enemy.prototype.createEnemy = function (load, hp, damage, name, type,
     load.enemy.push(spriteEnemy);
 };
 
-function Sprite(name, url, pos, size, speed, frames, dir, once) {
+function Sprite(name, url, pos, size, speed, frames, dir, once){
 
     this.Saveframes = null;
     this.name = name;
@@ -556,92 +675,82 @@ function Sprite(name, url, pos, size, speed, frames, dir, once) {
     this.frames = frames; //  array animation frame from start to end
     this.index = 0;
     this.url = url; // путь к изображению
-    this.dir = dir || 'horizontal'; // what dir moving on sprite map
     this.once = once; // once:true if need one cycle animation
     this.x = null;
     this.y = null;
 };
 
-Sprite.prototype.update = function (time) {
+Sprite.prototype.update = function (time){
 
     this.index += this.speed * time;
 };
 
-Sprite.prototype.render = function () {
+Sprite.prototype.render = function (){
 
     let frame;
 
-    if (this.speed > 0) {
+    if (this.speed > 0){
 
         let max = this.frames.length;
         let idx;
 
-        if (this.index) {
+        if (this.index){
 
             idx = Math.floor(this.index);
         }
 
         frame = this.frames[idx % max];
 
-        if (this.once && idx >= max) {
+        if (this.once && idx >= max){
 
             this.once = true;
             return;
         }
-    } else {
 
-        frame = 0;
-    }
+    } else frame = 0;
 
     this.x = this.pos[0];
     this.y = this.pos[1];
     this.Saveframes = frame;
 
-
-    if (this.dir === 'vertical') {
-
-        return this.y += frame * this.size[1];
-    } else {
-
-        return this.x += frame * this.size[0];
-    }
+    return this.x += frame * this.size[0];
 };
 
-function Items() {
+function Items(){
 
     let _that = this; // save ctx
 
     this.name = null;
     this.sprite = null;
     this.pos = [];
-    this.lucky = (percent) => {
+    this.lucky = (percent) =>{
         return Math.random() < percent
     }
 
-    this.settingsItems = {
+    this.settingsItems ={
 
-        get name() { // get items name
+        get name(){ // get items name
             return _that.name;
         },
-        set name(valueName) { // set items name
+        set name(valueName){ // set items name
             return _that.name = valueName;
         },
 
-        get sprite() { // get item sprite
+        get sprite(){ // get item sprite
             return _that.sprite;
         },
     }
 }
 
 Items.prototype.setSprite = function (load, cordSpriteX, cordsSpriteY,
-    sizeSpriteX, sizeSpriteY) {
+    sizeSpriteX, sizeSpriteY){
 
     return this.sprite = new Sprite(this.name, load.SpriteStorage[0],
         [cordSpriteX, cordsSpriteY], [sizeSpriteX, sizeSpriteY]);
 }
 
 
-function update(time, gamer, load, game, link) {
+function update(time, gamer, load, game, link){
 
     gamer.gameTime += time; // game time
 
@@ -651,7 +760,7 @@ function update(time, gamer, load, game, link) {
 
     /* check win and gameOver */
     if ((game.about.state === 'play') ||
-        (game.about.state === 'wait')) {
+        (game.about.state === 'wait')){
 
         gamer.GameOver(gamer, game, load);
         gamer.Win(gamer, game, load);
@@ -660,9 +769,7 @@ function update(time, gamer, load, game, link) {
 
     // * If game state play
     if ((!(game.pause(link[5]))) && (game.about.state !== 'pause') &&
-        ((game.about.state !== 'menu') && (game.about.state !== 'rating'))) {
-
-        inputs(time, gamer); // check inputs
+        ((game.about.state !== 'menu') && (game.about.state !== 'rating'))){
         updateCreeps(time, gamer, load, game); // check enemys and update player/enemy sprite
         updateBulls(time, gamer, load); // check bullets
         checkShot(load, gamer); // check shot
@@ -673,15 +780,15 @@ function update(time, gamer, load, game, link) {
 
 }
 
-function damageCheck(load, gamer) {
+function damageCheck(load, gamer){
 
     let resetSprite; // timer for splice items
 
-    load.enemy.forEach((itemEnemy, i, arrayEnemy) => { // check all enemys
+    load.enemy.forEach((itemEnemy, i, arrayEnemy) =>{ // check all enemys
 
-        if (itemEnemy.stat.health <= 0) {
+        if (itemEnemy.stat.health <= 0){
 
-            if ((itemEnemy.stat.onDeath === false)) {
+            if ((itemEnemy.stat.onDeath === false)){
 
                 itemEnemy.stat.onDeath = true;
                 gamer.stat.whatDrop = Math.random() < 0.5;
@@ -689,32 +796,32 @@ function damageCheck(load, gamer) {
 
                 deathEnemyUpdate(itemEnemy);
 
-                if (itemEnemy.stat.type === 'common') {
+                if (itemEnemy.stat.type === 'common'){
 
                     itemEnemy.stat.sprite.pos[0] = 960;
                     itemEnemy.stat.sprite.pos[1] = 102;
                 }
 
-                if (itemEnemy.stat.type === 'boss') {
+                if (itemEnemy.stat.type === 'boss'){
 
                     itemEnemy.stat.sprite.pos[0] = 1540;
                     itemEnemy.stat.sprite.pos[1] = 232;
                     itemEnemy.stat.sprite.frames = [0, 1, 2];
                 }
 
-                if (itemEnemy.stat.type === 'bossExtra') {
+                if (itemEnemy.stat.type === 'bossExtra'){
 
                     itemEnemy.stat.sprite.pos[0] = 1542;
                     itemEnemy.stat.sprite.pos[1] = 298;
                     itemEnemy.stat.sprite.frames = [0, 1, 2];
                 }
 
-                if (gamer.stat.whatDrop) { // drops
+                if (gamer.stat.whatDrop){ // drops
 
                     coins = new Items();
                     coins.settingsItems.name = 'coin';
 
-                    if (coins.lucky(0.7)) { // drop coins
+                    if (coins.lucky(0.7)){ // drop coins
 
                         coins.setSprite(load, 69, 30, 26, 37);
                         // coins position
@@ -725,12 +832,12 @@ function damageCheck(load, gamer) {
 
                     } else delete coins;
 
-                } else {
+                } else{
 
                     eat = new Items();
                     eat.settingsItems.name = 'eat';
 
-                    if (eat.lucky(0.5)) { // drop eats
+                    if (eat.lucky(0.5)){ // drop eats
 
                         eat.setSprite(load, 95, 30, 39, 40);
                         // eat position
@@ -743,7 +850,7 @@ function damageCheck(load, gamer) {
 
                 }
 
-                if (gamer.stat.upgradeRate) {
+                if (gamer.stat.upgradeRate){
 
                     upgrade = new Items();
                     upgrade.settingsItems.name = 'scroll';
@@ -763,7 +870,7 @@ function damageCheck(load, gamer) {
                 itemEnemy.sound.play();
             }
 
-            if (itemEnemy.stat.sprite.index >= itemEnemy.stat.sprite.frames.length) {
+            if (itemEnemy.stat.sprite.index >= itemEnemy.stat.sprite.frames.length){
                 itemEnemy.DeathTimer = null;
                 arrayEnemy.splice(i, 1);
                 gamer.stat.points += 25;
@@ -776,13 +883,13 @@ function damageCheck(load, gamer) {
     });
 }
 
-function checkPlayerDmg(itemEnemy, gamer, load) {
+function checkPlayerDmg(itemEnemy, gamer, load){
 
     // * Get player dmg or no
     if ((itemEnemy) && (boxCollides([itemEnemy.move.pos[0], itemEnemy.move.pos[1]],
-            [30, 30], [gamer.move.pos[0], gamer.move.pos[1]], [32, 32]))) {
+            [30, 30], [gamer.move.pos[0], gamer.move.pos[1]], [32, 32]))){
 
-        if (gamer.stat.health > -1) {
+        if (gamer.stat.health > -1){
 
             gamer.stat.sprite.pos[0] = 956; // damage player sprite
             load.SoundsStorage[5].play();
@@ -790,7 +897,7 @@ function checkPlayerDmg(itemEnemy, gamer, load) {
 
             gamer.move.pos[0, 1]++; // repulsion
 
-            resetSprite = setTimeout(() => {
+            resetSprite = setTimeout(() =>{
 
                 // start animation player frame
                 gamer.stat.sprite.pos[0] = 700;
@@ -800,7 +907,7 @@ function checkPlayerDmg(itemEnemy, gamer, load) {
     }
 }
 
-function deathEnemyUpdate(itemEnemy) {
+function deathEnemyUpdate(itemEnemy){
 
     // * Death enemy
     itemEnemy.stat.sprite.once = true;
@@ -815,13 +922,13 @@ function deathEnemyUpdate(itemEnemy) {
     itemEnemy.bull.bullStorage = [];
 }
 
-function updateCreeps(time, gamer, load, game) {
+function updateCreeps(time, gamer, load, game){
 
     gamer.stat.sprite.update(time); // update player sprite
 
-    if (Date.now() - game.about.lastTimeBull > 10) { // delay
+    if (Date.now() - game.about.lastTimeBull > 10){ // delay
 
-        load.enemy.forEach((item) => {
+        load.enemy.forEach((item) =>{
 
             let bulPosX = item.bull.pos[0]; // get bullets pos x
             let bulPosY = item.bull.pos[1]; // get bullets pos y
@@ -833,7 +940,7 @@ function updateCreeps(time, gamer, load, game) {
 
             if ((item.bull.bullStorage.length) &&
                 ((item.bull.pos[0] <= 40) || (item.bull.pos[0] > 755) ||
-                    (item.bull.pos[1] < 60) || (item.bull.pos[1] > 440))) {
+                (item.bull.pos[1] < 60) || (item.bull.pos[1] > 440))){
 
                 // delete bullets
                 item.bull.bullStorage.splice(0, 1);
@@ -842,26 +949,23 @@ function updateCreeps(time, gamer, load, game) {
                 return;
             }
             // -------Create bullets sprite-------
-            if (!(item.bull.bullStorage.length)) {
+            if (!(item.bull.bullStorage.length)){
                 let bullEnemy;
 
-                if (item.stat.type === `boss`) {
+                (item.stat.type === `boss`) &&
+                    (bullEnemy = new Sprite('bull2', load.SpriteStorage[0],
+                                            [192, 2], [30, 30], 0)
+                    );
 
-                    bullEnemy = new Sprite('bull2', load.SpriteStorage[0],
-                        [192, 2], [30, 30], 0);
-                }
+                (item.stat.type === `bossExtra`) &&
+                    (bullEnemy = new Sprite('bull2', load.SpriteStorage[0],
+                                            [354, 2], [30, 30], 0)
+                    );
 
-                if (item.stat.type === `bossExtra`) {
-
-                    bullEnemy = new Sprite('bull2', load.SpriteStorage[0],
-                        [354, 2], [30, 30], 0);
-                }
-
-                if (item.stat.type === `common`) {
-
-                    bullEnemy = new Sprite('bull2', load.SpriteStorage[0],
-                        [324, 0], [30, 30], 0);
-                }
+                (item.stat.type === `common`) &&
+                    (bullEnemy = new Sprite('bull2', load.SpriteStorage[0],
+                        [324, 0], [30, 30], 0)
+                    );
 
                 item.bull.bullStorage.push(bullEnemy); // bullets storage
                 item.bull.speed = 150; // set bullets speed x
@@ -875,7 +979,7 @@ function updateCreeps(time, gamer, load, game) {
 
             // ------collision enemy bullets with player------
             if ((boxCollides([bulPosX, bulPosY], [30, 30],
-                    [gamerPosX, gamerPosY], [32, 32]))) {
+                    [gamerPosX, gamerPosY], [32, 32]))){
 
                 load.SoundsStorage[5].currentTime = 0;
                 load.SoundsStorage[5].play();
@@ -883,7 +987,7 @@ function updateCreeps(time, gamer, load, game) {
                 gamer.move.pos[0, 1]++;
 
                 // set start sprite frame
-                resetSprite = setTimeout(() => {
+                resetSprite = setTimeout(() =>{
 
                     gamer.stat.sprite.pos[0] = 700;
 
@@ -904,9 +1008,9 @@ function updateCreeps(time, gamer, load, game) {
     }
 }
 
-function dirMovingEnemy(item) {
+function dirMovingEnemy(item){
 
-    if ((item) && (item.move.pos[0] > 700)) {
+    if ((item) && (item.move.pos[0] > 700)){
 
         item.enemySpeedX *= -1;
 
@@ -917,7 +1021,7 @@ function dirMovingEnemy(item) {
     }
 
     // ---change dir moving---
-    if ((item) && (item.move.pos[0] < 70)) {
+    if ((item) && (item.move.pos[0] < 70)){
 
         item.enemySpeedX *= -1;
 
@@ -927,24 +1031,24 @@ function dirMovingEnemy(item) {
     }
 
     // ---change dir moving---
-    if ((item) && (item.move.pos[1] < 70)) {
+    if ((item) && (item.move.pos[1] < 70)){
 
         item.enemySpeedY *= -1; // change dir moving
 
         // ---set sprite frames---
-        if ((item.stat.type === 'boss') || (item.stat.type === 'bossExtra')) {
+        if ((item.stat.type === 'boss') || (item.stat.type === 'bossExtra')){
 
             item.stat.sprite.pos[0] = 964;
         }
     }
 
     // ---change dir moving---
-    if ((item) && (item.move.pos[1] > 400)) {
+    if ((item) && (item.move.pos[1] > 400)){
 
         item.enemySpeedY *= -1; // change dir moving
 
         // ---set sprite frames---
-        if ((item.stat.type === 'boss') || (item.stat.type === 'bossExtra')) {
+        if ((item.stat.type === 'boss') || (item.stat.type === 'bossExtra')){
 
             item.stat.sprite.pos[0] = 452;
         }
@@ -952,10 +1056,10 @@ function dirMovingEnemy(item) {
     }
 }
 
-function updateBulls(time, gamer, load) {
+function updateBulls(time, gamer, load){
 
 
-    load.bullets.forEach((item, i, array) => {
+    load.bullets.forEach((item, i, array) =>{
 
         let bull = item; // short write
 
@@ -964,7 +1068,7 @@ function updateBulls(time, gamer, load) {
         calcBullet(item, gamer, time);
 
         if (bull.pos.y < 50 || bull.pos.y > 440 ||
-            bull.pos.x > 727 || bull.pos.x < 35) {
+            bull.pos.x > 727 || bull.pos.x < 35){
 
             // if bullets left valid dir
             array.splice(i, 1);
@@ -973,9 +1077,9 @@ function updateBulls(time, gamer, load) {
     });
 }
 
-function calcBullet(bullet, gamer, time) {
-    // преобразуем координаты в объект класса Vector
+function calcBullet(bullet, gamer, time){
 
+    // преобразуем координаты в объект класса Vector
     const pos = new Vector(bullet.pos.x, bullet.pos.y);
 
     // рассчитываем вектор приращения в направлении движения пули для ее скорости
@@ -985,7 +1089,7 @@ function calcBullet(bullet, gamer, time) {
     bullet.pos = pos.add(vector);
 }
 
-function getName(buttonName, gamer) {
+function getName(buttonName, gamer){
 
     // get gamer name from localStorage and set
     localStorage.name = buttonName;
@@ -993,42 +1097,44 @@ function getName(buttonName, gamer) {
 }
 
 
-function collides(x, y, r, b, x2, y2, r2, b2) {
+function collides(x, y, r, b, x2, y2, r2, b2){
 
     // check collisions
     return !(r <= x2 || x > r2 ||
-        b <= y2 || y > b2);
+            b <= y2 || y > b2);
 }
 
-function boxCollides(pos, size, pos2, size2) {
+function boxCollides(pos, size, pos2, size2){
 
     // check collisions
-    return collides(pos[0], pos[1],
+    return collides(
+        pos[0], pos[1],
         pos[0] + size[0],
         pos[1] + size[1],
         pos2[0], pos2[1],
         pos2[0] + size2[0],
-        pos2[1] + size2[1]);
+        pos2[1] + size2[1]
+    );
 }
 
-function checkShot(load, gamer) { // get plater damage or no
+function checkShot(load, gamer){ // get plater damage or no
 
     //---auxiliary variables---
     let posBull = [];
     let enemyPos = [];
 
-    load.bullets.forEach((itemBull, i) => {
+    load.bullets.forEach((itemBull, i) =>{
 
         posBull[0] = itemBull.pos.x;
         posBull[1] = itemBull.pos.y;
 
-        load.enemy.forEach((itemEnemy) => {
+        load.enemy.forEach((itemEnemy) =>{
 
             enemyPos[0] = itemEnemy.move.pos[0];
             enemyPos[1] = itemEnemy.move.pos[1];
 
             if (boxCollides(enemyPos, [35, 35], posBull, [35, 35]) &&
-                (itemEnemy.stat.health >= 0)) {
+                (itemEnemy.stat.health > 0)){
 
                 itemEnemy.stat.health -= gamer.stat.damage;
                 load.bullets.splice(i, 1);
@@ -1037,7 +1143,7 @@ function checkShot(load, gamer) { // get plater damage or no
     });
 }
 
-function checkItem(load, gamer) { // player came on items or no
+function checkItem(load, gamer){ // player came on items or no
 
     //---auxiliary variables---
     let posItem = [];
@@ -1045,7 +1151,7 @@ function checkItem(load, gamer) { // player came on items or no
     let timerDelete = null; // timer for delte unactive items
 
 
-    load.coins.forEach((item, i, array) => {
+    load.coins.forEach((item, i, array) =>{
 
         posItem[0] = item.pos[0]; // coins position x
         posItem[1] = item.pos[1]; // coins position y
@@ -1053,7 +1159,7 @@ function checkItem(load, gamer) { // player came on items or no
         posGamer[0] = gamer.move.pos[0]; // gamer position x
         posGamer[1] = gamer.move.pos[1]; // gamer position y
 
-        if (boxCollides(posGamer, [26, 26], posItem, [26, 26])) {
+        if (boxCollides(posGamer, [26, 26], posItem, [26, 26])){
 
             load.SoundsStorage[3].currentTime = 0;
             load.SoundsStorage[3].play();
@@ -1062,7 +1168,7 @@ function checkItem(load, gamer) { // player came on items or no
         }
     });
 
-    load.eat.forEach((item, i, array) => {
+    load.eat.forEach((item, i, array) =>{
 
         posItem[0] = item.pos[0]; // eat position x
         posItem[1] = item.pos[1]; // eat position y
@@ -1070,23 +1176,23 @@ function checkItem(load, gamer) { // player came on items or no
         posGamer[0] = gamer.move.pos[0]; // gamer position x
         posGamer[1] = gamer.move.pos[1]; // gamer position y
 
-        if (boxCollides(posGamer, [26, 26], posItem, [26, 26])) {
+        if (boxCollides(posGamer, [26, 26], posItem, [26, 26])){
 
             if ((gamer.stat.health < 200) &&
-                ((gamer.stat.health + (gamer.stat.health * 0.20) < 200))) {
+                ((gamer.stat.health + (gamer.stat.health * 0.20) < 200))){
 
                 load.SoundsStorage[4].currentTime = 0;
                 load.SoundsStorage[4].play();
                 gamer.stat.health += Math.floor(200 * 0.16);
                 array.splice(i, 1);
 
-            } else timerDelete = setTimeout(() => {
+            } else timerDelete = setTimeout(() =>{
                 array.splice(i, 1);
             }, 2000);
         }
     });
 
-    load.upgrade.forEach((item, i, array) => {
+    load.upgrade.forEach((item, i, array) =>{
 
         posItem[0] = item.pos[0]; // eat position x
         posItem[1] = item.pos[1]; // eat position y
@@ -1094,7 +1200,7 @@ function checkItem(load, gamer) { // player came on items or no
         posGamer[0] = gamer.move.pos[0]; // gamer position x
         posGamer[1] = gamer.move.pos[1]; // gamer position y
 
-        if (boxCollides(posGamer, [30, 30], posItem, [30, 30])) {
+        if (boxCollides(posGamer, [30, 30], posItem, [30, 30])){
 
             load.SoundsStorage[11].currentTime = 0;
             load.SoundsStorage[11].play();
@@ -1106,11 +1212,11 @@ function checkItem(load, gamer) { // player came on items or no
 }
 
 
-function calculate(gamer, game) {
+function calculate(gamer, game){
 
     // -----calculate player position-----
 
-    if ((game.about.state = 'play')) {
+    if ((game.about.state === 'play')){
 
         (gamer.move.pos[0] <= 35) && (gamer.move.pos[0] = 35);
 
@@ -1123,70 +1229,17 @@ function calculate(gamer, game) {
     }
 }
 
-function animationMoving(gamer, game, time) {
+function animationMoving(gamer, game, time){
 
     // -----start game animation-----
-    if (gamer.move.animationPos[1] >= gamer.move.pos[1]) {
+    if (gamer.move.animationPos[1] >= gamer.move.pos[1]){
 
         gamer.move.pos[1] += gamer.move.speeds * time;
 
     } else game.about.state = 'play'; // set state
 }
 
-function inputs(time, gamer) {
-
-    // -----player moving-----
-    if (input.isDown('RIGHT') === true) {
-
-        gamer.stat.sprite.size[0] = 34;
-        gamer.stat.sprite.pos[0] = 572.1;
-        gamer.move.pos[0] += gamer.move.speeds * time;
-    }
-    if (input.isDown('LEFT') === true) {
-
-        gamer.stat.sprite.size[0] = 33;
-        gamer.stat.sprite.pos[0] = 828;
-        gamer.stat.sprite.frames = [0, 1];
-        gamer.move.pos[0] -= gamer.move.speeds * time;
-    }
-    if (input.isDown('UP') === true) {
-
-        gamer.stat.sprite.size[0] = 34;
-        gamer.stat.sprite.pos[0] = 444;
-        gamer.move.pos[1] -= gamer.move.speeds * time;
-    }
-    if (input.isDown('DOWN') === true) {
-
-        gamer.stat.sprite.size[0] = 34;
-        gamer.stat.sprite.pos[0] = 700;
-        gamer.move.pos[1] += gamer.move.speeds * time;
-    }
-    if ((input.isDown('UP') === true) && (input.isDown('RIGHT') === true)) {
-
-        gamer.stat.sprite.size[0] = 33;
-        gamer.stat.sprite.pos[0] = 510;
-    } else
-    if ((input.isDown('UP') === true) && (input.isDown('LEFT') === true)) {
-
-        gamer.stat.sprite.size[0] = 34;
-        gamer.stat.sprite.pos[0] = 891;
-    }
-
-    if ((input.isDown('DOWN') === true) && (input.isDown('LEFT') === true)) {
-
-        gamer.stat.sprite.size[0] = 33;
-        gamer.stat.sprite.pos[0] = 766;
-    } else
-    if ((input.isDown('DOWN') === true) && (input.isDown('RIGHT') === true)) {
-
-        gamer.stat.sprite.size[0] = 33;
-        gamer.stat.sprite.pos[0] = 636.5;
-    }
-
-
-}
-
-function getRandom() {
+function getRandom(){
 
     // -----get random enemy position-----
     let arr = [0.3, 0.6, 0.8, 0.9, 1.2];
@@ -1194,7 +1247,7 @@ function getRandom() {
     return arr[rand];
 }
 
-function getRandomPull() {
+function getRandomPull(){
 
     // -----get random bullets dir-----
     let arr = [-1.2, -1, 1, 1.2];
@@ -1202,20 +1255,20 @@ function getRandomPull() {
     return arr[rand];
 }
 
-function compare(a, b) {
+function compare(a, b){
 
     // bubble sort records list
-    if (a.points < b.points) {
+    if (a.points < b.points){
 
         return -1;
     }
-    if (a.points > b.points) {
+    if (a.points > b.points){
 
         return 1;
     }
     return 0;
 }
-function Draw() {
+function Draw(){
     let _that = this;
 
     this.blink = 1;
@@ -1225,7 +1278,7 @@ function Draw() {
     this.viewMode = 'full';
     this.viewDesktop = 'none';
 
-    _that.settings = {
+    _that.settings ={
         width: _that.width(), // canvas w
         height: _that.height(), // canvas h
         textureW: _that.width(), // texture weight
@@ -1237,18 +1290,18 @@ function Draw() {
         mouse: 0
     };
 
-    _that.bullets = {
+    _that.bullets ={
         //---for player---
         spriteListBulletsPosition: [106, 0],
         spritePlayerSizeW: 14,
         spritePlayerSizeH: 32,
     };
 
-    _that.items = {
+    _that.items ={
         spriteItemSize: [15, 15]
     };
 
-    _that.pause = {
+    _that.pause ={
         RectPause: [this.settings.width / 6, 40],
         RectPauseSize: [this.settings.width / 1.5, this.settings.height / 1.4],
         TextStageName: [this.settings.width / 2.1, 100],
@@ -1256,7 +1309,7 @@ function Draw() {
         Menu: [this.settings.width / 2.1, 450]
     }
 
-    _that.menu = {
+    _that.menu ={
         background: null,
         TitleGame: [this.settings.width / 2, 100],
         play: [this.settings.width / 2, this.settings.height / 2.5],
@@ -1265,7 +1318,7 @@ function Draw() {
         version: [this.settings.width - 40, this.settings.height - 20]
     }
 
-    _that.rating = {
+    _that.rating ={
         TitleGame: [this.settings.width / 2, 50],
         return: [this.settings.width / 2, 165],
         StrokeRectCoords: [this.settings.width / 9.4, 200],
@@ -1278,7 +1331,7 @@ function Draw() {
         ratingListPointsX: [this.settings.width / 8, this.settings.height - 50]
     }
 
-    _that.gameOver = {
+    _that.gameOver ={
         TitleCoords: [this.settings.width / 2, 100],
         win: [this.settings.width / 2, 100],
         Points: [this.settings.width / 2, 150],
@@ -1287,7 +1340,7 @@ function Draw() {
         menu: [this.settings.width / 2.02, 450]
     }
 
-    _that.playGame = {
+    _that.playGame ={
         spriteTextureBorder: [5, 610],
         spriteTexture: [5, 5],
         gamePanelCoords: [0, 542],
@@ -1307,25 +1360,25 @@ function Draw() {
         pauseButton: [this.settings.width - 40, this.settings.height - 48],
     }
 
-    _that.loading = {
+    _that.loading ={
         loadingText: [this.settings.width / 4.7, this.settings.height / 2],
     }
 
 
 
-    _that.drawBuffer = {
+    _that.drawBuffer ={
         canvasBuffer: null,
         ctxBuffer: null
     }; // buffer canvas
-    _that.getCanvas = {
+    _that.getCanvas ={
         canvas: document.getElementById('arena'),
     }; // get canvas in app
-    _that.getCtx = {
+    _that.getCtx ={
         ctx: _that.getCanvas.canvas.getContext('2d'),
     }; // get ctx in app
 }
 
-Draw.prototype.render = function () {
+Draw.prototype.render = function (){
     // -----All render-----
 
     this.getCtx.ctx.drawImage(this.drawBuffer.canvasBuffer,
@@ -1334,9 +1387,9 @@ Draw.prototype.render = function () {
     this.drawBuffer.ctxBuffer.restore();
 };
 
-Draw.prototype.renderEnemys = function (gamer) {
+Draw.prototype.renderEnemys = function (gamer){
 
-    if (gamer.stat.name !== 'player') {
+    if (gamer.stat.name !== 'player'){
 
         gamer.stat.sprite.x = gamer.stat.sprite.render(); // render sprite update
 
@@ -1355,12 +1408,12 @@ Draw.prototype.renderEnemys = function (gamer) {
     }
 }
 
-Draw.prototype.renderItems = function (load) {
+Draw.prototype.renderItems = function (load){
 
 
-    load.coins.forEach((item) => {
+    load.coins.forEach((item) =>{
 
-        if (item.lucky) {
+        if (item.lucky){
             item.sprite.x = item.sprite.render(); // render sprite coins
             // render coins
             this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
@@ -1372,9 +1425,9 @@ Draw.prototype.renderItems = function (load) {
         }
     });
 
-    load.eat.forEach((item) => {
+    load.eat.forEach((item) =>{
 
-        if (item.lucky) {
+        if (item.lucky){
 
             item.sprite.x = item.sprite.render(); // render sprite eat
             this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
@@ -1386,9 +1439,9 @@ Draw.prototype.renderItems = function (load) {
         }
     });
 
-    load.upgrade.forEach((item) => {
+    load.upgrade.forEach((item) =>{
 
-        if (item.lucky) {
+        if (item.lucky){
 
             item.sprite.x = item.sprite.render(); // render sprite eat
             this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
@@ -1401,9 +1454,9 @@ Draw.prototype.renderItems = function (load) {
     });
 }
 
-Draw.prototype.renderPlayer = function (gamer, game) {
+Draw.prototype.renderPlayer = function (gamer, game){
 
-    if (game.fade <= 0) {
+    if (game.fade <= 0){
 
         gamer.stat.sprite.x = gamer.stat.sprite.render(); // update sprite player
         this.drawBuffer.ctxBuffer.drawImage(gamer.stat.sprite.url,
@@ -1414,10 +1467,10 @@ Draw.prototype.renderPlayer = function (gamer, game) {
     }
 }
 
-Draw.prototype.fadeIn = function (game, load) {
+Draw.prototype.fadeIn = function (game, load){
 
 
-    if (game.about.state === 'play-animation' && (game.fade > 0)) {
+    if (game.about.state === 'play-animation' && (game.fade > 0)){
         this.drawBuffer.ctxBuffer.restore();
         this.drawBuffer.ctxBuffer.save();
 
@@ -1446,14 +1499,14 @@ Draw.prototype.fadeIn = function (game, load) {
     }
 }
 
-Draw.prototype.renderEnemyBulls = function (bull) {
+Draw.prototype.renderEnemyBulls = function (bull){
 
     let bulls = bull.bull; // short write
 
-    if (bull.bull.on === 'true') { // if bullets active
+    if (bull.bull.on === 'true'){ // if bullets active
 
         this.drawBuffer.ctxBuffer.restore(); // restove ctx
-        if ((bulls.bullStorage.length)) {
+        if ((bulls.bullStorage.length)){
 
             this.drawBuffer.ctxBuffer.drawImage(bull.bull.bullStorage[0].url,
                 bull.bull.bullStorage[0].pos[0],
@@ -1470,10 +1523,10 @@ Draw.prototype.renderEnemyBulls = function (bull) {
     }
 }
 
-Draw.prototype.renderBulls = function (bull, load, gamer) {
+Draw.prototype.renderBulls = function (bull, load, gamer){
     // translate and rotate for renders bullets in corect dir
 
-    if ((load.bullets.length)) {
+    if ((load.bullets.length)){
 
         this.drawBuffer.ctxBuffer.setTransform(1, 0, 0, 1, 0, 0);
         this.drawBuffer.ctxBuffer.save();
@@ -1495,11 +1548,11 @@ Draw.prototype.renderBulls = function (bull, load, gamer) {
     }
 }
 
-Draw.prototype.renders = function (gamer, load, game, UserInterface) {
+Draw.prototype.renders = function (gamer, load, game, UserInterface){
 
     if ((game.about.state !== 'menu') &&
         (game.about.state !== 'rating') &&
-        (gamer.stat.health <= 0)) { // render gameOver
+        (gamer.stat.health <= 0)){ // render gameOver
 
         gamer.GameOver(gamer, game, load);
     }
@@ -1513,9 +1566,9 @@ Draw.prototype.renders = function (gamer, load, game, UserInterface) {
     // --render rating---
     ((game.about.state === 'rating') && (this.drawRatingList(load, gamer, UserInterface, gamer)));
 
-    if ((game.about.state === 'play')) { //if game state play
+    if ((game.about.state === 'play')){ //if game state play
 
-        load.enemy.forEach((item) => { // render all enemys and items
+        load.enemy.forEach((item) =>{ // render all enemys and items
 
             this.renderEnemys(item);
             this.renderItems(load);
@@ -1524,20 +1577,20 @@ Draw.prototype.renders = function (gamer, load, game, UserInterface) {
 
         this.renderPlayer(gamer, game);
 
-        load.bullets.forEach((item) => { // render player bullets
+        load.bullets.forEach((item) =>{ // render player bullets
 
             this.renderBulls(item, load, gamer);
 
         });
 
-        load.enemy.forEach((item) => { // render enemys bullets
+        load.enemy.forEach((item) =>{ // render enemys bullets
 
             this.renderEnemyBulls(item);
 
         });
     }
 
-    if (game.about.state === 'play-animation') { // render start animation state
+    if (game.about.state === 'play-animation'){ // render start animation state
 
         (game.fade > 0) && (this.fadeIn(game, load));
         (game.fade <= 0) && (this.renderPlayer(gamer, game));
@@ -1547,14 +1600,14 @@ Draw.prototype.renders = function (gamer, load, game, UserInterface) {
     this.pauseMenuView(game, gamer, UserInterface, load); // render pause menu
 
     if (((game.about.state === 'pause') || (game.about.state === 'menu')) &&
-        (UserInterface.linki.length)) {
+        (UserInterface.linki.length)){
 
-        if (UserInterface.linki[0].selectName) { // link menu
+        if (UserInterface.linki[0].selectName){ // link menu
 
             game.about.state = 'menu'; // set state menu
             this.DrawMenu(load, game, UserInterface); // render menu
 
-        } else if (game.about.state === 'menu') {
+        } else if (game.about.state === 'menu'){
 
             this.DrawMenu(load, game, UserInterface);
         }
@@ -1563,9 +1616,9 @@ Draw.prototype.renders = function (gamer, load, game, UserInterface) {
     this.render(); // all render in main canvas
 }
 
-Draw.prototype.pauseMenuView = function (game, gamer, UserInterface, load) {
+Draw.prototype.pauseMenuView = function (game, gamer, UserInterface, load){
 
-    if (game.about.state === 'pause') {
+    if (game.about.state === 'pause'){
 
         let CTX = this.drawBuffer.ctxBuffer; // short write
 
@@ -1611,10 +1664,10 @@ Draw.prototype.pauseMenuView = function (game, gamer, UserInterface, load) {
         CTX.fillText('Kills: ' + gamer.killCount, this.gameOver.killCount[0] - 20,
             this.gameOver.killCount[1] + 10);
 
-        if (UserInterface.checkFrame(UserInterface.linki[0])) { // menu link
+        if (UserInterface.checkFrame(UserInterface.linki[0])){ // menu link
 
             CTX.fillStyle = UserInterface.linki[0].selectColor;
-        } else {
+        } else{
 
             CTX.fillStyle = UserInterface.linki[0].color;
         }
@@ -1625,13 +1678,13 @@ Draw.prototype.pauseMenuView = function (game, gamer, UserInterface, load) {
         CTX.font = '40px PIXI';
         CTX.fillText('MENU', this.pause.Menu[0], this.pause.Menu[1]);
         this.render(); // all render
-    } else {
+    } else{
 
         this.drawBuffer.ctxBuffer.clearRect(0, 0, this.settings.width, this.settings.health);
     }
 }
 
-Draw.prototype.DrawMenu = function (load, game, UserInterface, gamer) {
+Draw.prototype.DrawMenu = function (load, game, UserInterface, gamer){
 
     let CTX = this.drawBuffer.ctxBuffer; // short write
 
@@ -1655,11 +1708,11 @@ Draw.prototype.DrawMenu = function (load, game, UserInterface, gamer) {
 
     CTX.globalAlpha = this.blink;
 
-    if ((this.frameBlink) && (this.blink > 0.5)) {
+    if ((this.frameBlink) && (this.blink > 0.5)){
 
         this.blink -= 0.01;
 
-    } else if (!(this.frameBlink) && (this.blink != 1)) {
+    } else if (!(this.frameBlink) && (this.blink != 1)){
 
         this.blink += 0.01;
 
@@ -1677,28 +1730,28 @@ Draw.prototype.DrawMenu = function (load, game, UserInterface, gamer) {
     CTX.shadowColor = 'black';
     CTX.font = '100px PIXI';
 
-    if (UserInterface.checkFrame(UserInterface.linki[1])) {
+    if (UserInterface.checkFrame(UserInterface.linki[1])){
 
         CTX.fillStyle = UserInterface.linki[1].selectColor;
 
-    } else {
+    } else{
 
         CTX.fillStyle = UserInterface.linki[1].color;
     }
 
     CTX.fillText('PLAY', this.menu.play[0], this.menu.play[1]);
 
-    if (UserInterface.checkFrame(UserInterface.linki[2])) {
+    if (UserInterface.checkFrame(UserInterface.linki[2])){
 
         CTX.fillStyle = UserInterface.linki[2].selectColor;
-    } else {
+    } else{
 
         CTX.fillStyle = UserInterface.linki[2].color;
     }
 
     CTX.fillText('RATING', this.menu.rating[0], this.menu.rating[1]);
 
-    if (this.viewMode === 'demo') {
+    if (this.viewMode === 'demo'){
 
         CTX.fillStyle = 'lightblue';
         CTX.font = '20px bold Aria';
@@ -1724,7 +1777,7 @@ Draw.prototype.DrawMenu = function (load, game, UserInterface, gamer) {
     CTX.fillText('v0.0.5', this.menu.version[0], this.menu.version[1]);
 }
 
-Draw.prototype.drawRatingList = function (load, game, UserInterface) {
+Draw.prototype.drawRatingList = function (load, game, UserInterface){
 
     let CTX = this.drawBuffer.ctxBuffer; // short write
     let speedText = null; // for records text cycle
@@ -1762,12 +1815,12 @@ Draw.prototype.drawRatingList = function (load, game, UserInterface) {
     CTX.shadowOffsetY = 7;
     (this.view != 'mobile') ? CTX.font = 'bold 80px PIXI': CTX.font = 'bold 60px PIXI';
 
-    if (this.view === 'mobile') {
+    if (this.view === 'mobile'){
 
         this.rating.TitleGame[1] = 40;
         CTX.fillText('THE BEST', this.rating.TitleGame[0], this.rating.TitleGame[1]);
 
-    } else {
+    } else{
 
         CTX.fillText('THE BEST', this.rating.TitleGame[0], this.menu.TitleGame[1]);
 
@@ -1775,11 +1828,11 @@ Draw.prototype.drawRatingList = function (load, game, UserInterface) {
     CTX.shadowOffsetX = 0;
     CTX.shadowOffsetY = 0;
 
-    if (UserInterface.checkFrame(UserInterface.linki[3])) {
+    if (UserInterface.checkFrame(UserInterface.linki[3])){
 
         CTX.fillStyle = UserInterface.linki[3].selectColor;
 
-    } else {
+    } else{
 
         CTX.fillStyle = UserInterface.linki[3].color;
     }
@@ -1809,14 +1862,14 @@ Draw.prototype.drawRatingList = function (load, game, UserInterface) {
     (this.view != 'mobile') && (CTX.fillText('NAME', this.rating.TitleName[0],
         this.rating.TitleName[1]));
 
-    if (this.view === 'mobile') {
+    if (this.view === 'mobile'){
 
         CTX.textAlign = 'center';
         CTX.fillText('NAME', this.settings.width / 2.1, this.rating.TitleName[1] / 1.3);
     }
 
 
-    if (this.view != 'mobile' || this.viewDesktop === 'half-half') {
+    if (this.view != 'mobile' || this.viewDesktop === 'half-half'){
 
         CTX.fillStyle = 'yellow';
         CTX.fillText('POINTS', this.rating.RectSize[0] - 70, this.rating.TitlePoints[1]);
@@ -1827,9 +1880,9 @@ Draw.prototype.drawRatingList = function (load, game, UserInterface) {
     CTX.font = 'bold 40px PIXI';
     CTX.fillStyle = 'yellow';
 
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++){
 
-        if (this.view === 'mobile') {
+        if (this.view === 'mobile'){
 
             CTX.textAlign = 'left';
             this.rating.ratingListX[0] = this.rating.RectCoords[0] + 10;
@@ -1839,7 +1892,7 @@ Draw.prototype.drawRatingList = function (load, game, UserInterface) {
         CTX.fillText(`${i+1}. ` + load.startRecord[load.startRecord.length - (i + 1)].name,
             this.rating.ratingListX[0], RecordsY);
 
-        if (this.view != 'mobile' || this.viewDesktop === 'half-half') {
+        if (this.view != 'mobile' || this.viewDesktop === 'half-half'){
 
             CTX.fillText(load.startRecord[load.startRecord.length - (i + 1)].points,
                 this.rating.RectSize[0] - 50, RecordsY);
@@ -1860,7 +1913,7 @@ Draw.prototype.drawRatingList = function (load, game, UserInterface) {
     CTX.fillText('v0.0.5', this.menu.version[0], this.menu.version[1]);
 }
 
-Draw.prototype.gameOverView = function (gamer, UserInterface, game) {
+Draw.prototype.gameOverView = function (gamer, UserInterface, game){
 
     this.drawBuffer.ctxBuffer.save();
     let CTX = this.drawBuffer.ctxBuffer; // short write
@@ -1872,10 +1925,10 @@ Draw.prototype.gameOverView = function (gamer, UserInterface, game) {
     CTX.fillStyle = 'red';
     CTX.textAlign = 'center';
     CTX.font = '100px PIXI';
-    if ((game.about.stageNumber >= 20) && (gamer.stat.health > 0)) {
+    if ((game.about.stageNumber >= 20) && (gamer.stat.health > 0)){
         CTX.fillText('W I N', this.gameOver.win[0], this.gameOver.win[1]);
 
-    } else {
+    } else{
 
         CTX.fillText('GAME OVER', this.gameOver.TitleCoords[0], this.gameOver.TitleCoords[1]);
     }
@@ -1895,11 +1948,11 @@ Draw.prototype.gameOverView = function (gamer, UserInterface, game) {
     CTX.fillText('Kills: ' + gamer.killCount, this.gameOver.killCount[0],
         this.gameOver.killCount[1]);
 
-    if (UserInterface.checkFrame(UserInterface.linki[0])) {
+    if (UserInterface.checkFrame(UserInterface.linki[0])){
 
         CTX.fillStyle = UserInterface.linki[4].selectColor;
 
-    } else {
+    } else{
 
         CTX.fillStyle = UserInterface.linki[4].color;
 
@@ -1910,7 +1963,7 @@ Draw.prototype.gameOverView = function (gamer, UserInterface, game) {
     this.render(); // render game over
 }
 
-Draw.prototype.building = function (load, gamer, game) {
+Draw.prototype.building = function (load, gamer, game){
     // ---get main canvas---
     this.drawBuffer.canvasBuffer = document.createElement('canvas');
     this.drawBuffer.ctxBuffer = this.drawBuffer.canvasBuffer.getContext('2d');
@@ -1919,14 +1972,14 @@ Draw.prototype.building = function (load, gamer, game) {
 
     let CTX = this.drawBuffer.ctxBuffer; // short write
 
-    if (this.view === 'mobile' && (this.viewMode === 'demo')) {
+    if (this.view === 'mobile' && (this.viewMode === 'demo')){
 
         CTX.fillStyle = 'rgb(240,230,140)';
 
         CTX.fillRect(this.settings.drawInX, this.settings.drawInY,
             this.settings.width, this.settings.height);
 
-    } else {
+    } else{
 
         CTX.drawImage(load.TextureStorage[0],
             this.playGame.spriteTextureBorder[0], this.playGame.spriteTextureBorder[1],
@@ -1947,9 +2000,9 @@ Draw.prototype.building = function (load, gamer, game) {
         CTX.drawImage(load.SpriteStorage[0], -14, 190, 85, 65, 109, 0, 95, 65);
 
         // gate 2
-        if ((game.about.state === 'play-animation') || (game.about.state === 'menu')) {
+        if ((game.about.state === 'play-animation') || (game.about.state === 'menu')){
 
-            if (this.settings.openGate !== -50) {
+            if (this.settings.openGate !== -50){
 
                 this.settings.openGate--;
 
@@ -1957,9 +2010,9 @@ Draw.prototype.building = function (load, gamer, game) {
 
             CTX.drawImage(load.SpriteStorage[0], -14, 190, 85, 65, 349, this.settings.openGate, 95, 65);
 
-        } else {
+        } else{
 
-            if (this.settings.openGate !== 0) {
+            if (this.settings.openGate !== 0){
                 this.settings.openGate++;
             }
 
@@ -1987,12 +2040,12 @@ Draw.prototype.building = function (load, gamer, game) {
         this.playGame.hpBarBoorderSize[0], this.playGame.hpBarBoorderSize[1]);
     CTX.fillStyle = 'crimson';
 
-    if (gamer.stat.health <= 0) {
+    if (gamer.stat.health <= 0){
 
         CTX.fillRect(this.playGame.hpBarBoorderCoords[0] + 2, this.playGame.hpBarBoorderCoords[1] + 2,
             0, 20);
 
-    } else {
+    } else{
 
         CTX.fillRect(this.playGame.hpBarBoorderCoords[0] + 2, this.playGame.hpBarBoorderCoords[1] + 2,
             gamer.stat.health, 20);
@@ -2030,7 +2083,7 @@ Draw.prototype.building = function (load, gamer, game) {
     CTX.drawImage(load.SpriteStorage[2], this.playGame.pauseButton[0],
         this.playGame.pauseButton[1], 20, 20);
 
-    if ((game.about.state === 'play') && (this.settings.countModal === 0)) {
+    if ((game.about.state === 'play') && (this.settings.countModal === 0)){
 
         CTX.fillStyle = 'black';
         CTX.globalAlpha = '0.8';
@@ -2051,7 +2104,7 @@ Draw.prototype.building = function (load, gamer, game) {
     CTX.restore();
 }
 
-Draw.prototype.loadingRender = function (load) {
+Draw.prototype.loadingRender = function (load){
 
     this.getCtx.ctx.fillRect(this.settings.drawInX, this.settings.drawInY,
         this.settings.width, this.settings.height);
@@ -2065,13 +2118,13 @@ Draw.prototype.loadingRender = function (load) {
 
 };
 
-Draw.prototype.renderMouse = function (load, ul) {
+Draw.prototype.renderMouse = function (load, ul){
 
     this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[0], 255, 192,
         65, 65, ul.coordsMouseX - 32.5, ul.coordsMouseY - 32.5, 65, 65);
 }
 
-Draw.prototype.buildingGetNameView = function (type, canvas) {
+Draw.prototype.buildingGetNameView = function (type, canvas){
 
     const inputName = type.createElement('input');
     const buttonCancel = type.createElement('input');
@@ -2106,30 +2159,30 @@ Draw.prototype.buildingGetNameView = function (type, canvas) {
 
 }
 
-Draw.prototype.deleteGetNameView = function (type) {
+Draw.prototype.deleteGetNameView = function (type){
 
     const modal = type.querySelector('.background-modal');
     modal.remove();
 }
 
 
-Draw.prototype.height = function () {
+Draw.prototype.height = function (){
 
-    if (window.screen.availHeight < 620) {
+    if (window.screen.availHeight < 620){
 
         this.view = 'mobile';
 
         return (window.screen.availHeight);
-    } else {
+    } else{
 
         return 620;
 
     }
 }
 
-Draw.prototype.width = function () {
+Draw.prototype.width = function (){
 
-    if (window.screen.availWidth < 800) {
+    if (window.screen.availWidth < 800){
 
         ((760 < window.screen.availWidth) && (window.screen.availWidth < 800)) &&
         (this.viewDesktop = 'half-half');
@@ -2138,20 +2191,19 @@ Draw.prototype.width = function () {
 
         return window.screen.availWidth - 10;
 
-    } else {
+    } else{
 
         return 800;
 
     }
 }
-function GameController() {
-    let _that = this;
-    _that.count = 0;
+function GameController(){
 
-    _that.canvasLeft = null;
-    _that.canvasTop = null;
+    this.count = 0;
+    this.canvasLeft = null;
+    this.canvasTop = null;
 
-    _that.inputState = {
+    this.inputState ={
         UP: false,
         DOWN: false,
         LEFT: false,
@@ -2159,166 +2211,211 @@ function GameController() {
         ESCAPE: false,
     };
 
-    _that.setEvent = (location, gamer, load, game, UserInterface) => {
-
-        let canvas = document.getElementById('arena');
-        let inputName = document.getElementsByClassName('name')[0];
-
-        document.addEventListener('keydown', moveTrue, false);
-        document.addEventListener('keyup', moveFalse, false);
-        document.addEventListener('mousemove', movingMouse);
-        document.addEventListener('click', clickOnDOM, false);
-        location.getCanvas.canvas.addEventListener('click', clickOnCanvas, false);
-
-        function moveTrue(e) {
-
-            if (e.target.className === 'name') return 0;
-
-            if ((location.settings.countModal === 0) && (game.about.state === 'play')) {
-
-                location.settings.countModal++;
-
-            } else if (!(game.about.state === 'play' || game.about.state === 'pause')) {
-
-                e.preventDefault();
-            } else {
-
-                if (input.isDown("ESCAPE") === true) {
-
-                    game.about.state = 'play';
-
-                    return _that.setKeyState(e.which, false);
-                } else {
-                    return _that.setKeyState(e.which, true);
-                }
-            }
-        };
-
-        function moveFalse(e) {
-
-            if (!(game.about.state === 'play' || game.about.state === 'pause')) {
-
-                e.preventDefault();
-            } else {
-
-                if (input.isDown("ESCAPE") === true) return;
-                else {
-
-                    return _that.setKeyState(e.which, false);
-                }
-            }
-        };
-
-        function movingMouse(e) {
-
-            // For links and bullets
-            if (e.target === canvas) {
-
-                _that.canvasLeft = canvas.offsetLeft;
-                _that.canvasTop = canvas.offsetTop;
-
-                UserInterface.coordsMouseX = e.pageX - _that.canvasLeft;
-                UserInterface.coordsMouseY = e.pageY - _that.canvasTop;
-
-                UserInterface.coorddX = UserInterface.coordsMouseX - gamer.move.pos[0];
-                UserInterface.coorddY = UserInterface.coordsMouseY - gamer.move.pos[1];
-            }
-        };
-
-        function clickOnCanvas(e) {
-
-            if (game.about.state === 'loading') {
-                e.preventDefault();
-                return 0;
-            }
-
-
-            command = UserInterface.linki; // short write
-
-            for (let i = 0; i < command.length; i++) {
-
-                if ((UserInterface.checkFrame(command[i])) &&
-                    (command[i].Name === game.about.state)) {
-                    command[i].selectName = true;
-
-                } else command[i].selectName = false;
-            }
-
-            (location.viewMode === 'demo') && (UserInterface.linki[1].selectName = false);
-
-            if (game.about.state === 'menu' ||
-                game.about.state === 'rating' ||
-                game.about.state === 'wait') {
-
-                for (let elem in _that.inputState) {
-
-                    _that.inputState[elem] = false;
-                }
-            } else {
-
-                if ((input.isDown("ESCAPE") === true) || (UserInterface.linki[5].selectName)) {
-
-                    return 0;
-                } else {
-
-                    gamer.stat.bullets.useSkill(load, gamer, UserInterface);
-                }
-
-            }
-
-        };
-
-        function clickOnDOM(e) {
-
-            if (e.target.className === 'btnName' && inputName.value !== '') {
-
-                getName(inputName.value, gamer);
-                location.deleteGetNameView(document, e.target);
-            } else if (e.target.className === 'cancelName') {
-                location.deleteGetNameView(document, e.target);
-            }
-
-            if (e.target.className === 'ZoomUP') {
-                location.transformCanvasViewUp(canvas);
-            }
-
-        };
-    };
-
-    _that.setKeyState = function (keyCode, isPressed) {
-
-        switch (keyCode) {
-            case 65:
-                _that.inputState.LEFT = isPressed;
-                break;
-            case 87:
-                _that.inputState.UP = isPressed;
-                break;
-            case 68:
-                _that.inputState.RIGHT = isPressed;
-                break;
-            case 83:
-                _that.inputState.DOWN = isPressed;
-                break;
-            case 27:
-                _that.inputState.ESCAPE = isPressed;
-                break;
-        }
-    };
-
-    window.input = {
-
-        isDown: (key) => {
-
-            return _that.inputState[key];
-        }
-    };
-
 };
+
+GameController.prototype.setEvent =  function(location, gamer, load, game, UserInterface){
+
+    let _that = this;
+    let canvas = document.getElementById('arena');
+    let inputName = document.getElementsByClassName('name')[0];
+
+    document.addEventListener('keydown', moveTrue, false);
+    document.addEventListener('keyup', moveFalse, false);
+    document.addEventListener('mousemove', movingMouse);
+    document.addEventListener('click', clickOnDOM, false);
+    location.getCanvas.canvas.addEventListener('click', clickOnCanvas, false);
+
+    function moveTrue(e){
+
+        if (e.target.className === 'name') return 0;
+
+        if ((location.settings.countModal === 0) && (game.about.state === 'play')){
+
+            location.settings.countModal++;
+
+        } else if (!(game.about.state === 'play' || game.about.state === 'pause')){
+
+            e.preventDefault();
+        } else{
+
+            if (_that.inputState.ESCAPE){
+
+                game.about.state = 'play';
+
+                return _that.setKeyState(e.which, false);
+            } else{
+
+                return _that.setKeyState(e.which, true);
+            }
+        }
+    };
+
+    function moveFalse(e){
+
+        if (!(game.about.state === 'play' || game.about.state === 'pause')){
+
+            e.preventDefault();
+        } else{
+
+            if (_that.inputState.ESCAPE) return;
+            else{
+                
+                return _that.setKeyState(e.which, false);
+            }
+        }
+    };
+
+    function movingMouse(e){
+
+        // For links and bullets
+        if (e.target === canvas){
+
+            _that.canvasLeft = canvas.offsetLeft;
+            _that.canvasTop = canvas.offsetTop;
+
+            UserInterface.coordsMouseX = e.pageX - _that.canvasLeft;
+            UserInterface.coordsMouseY = e.pageY - _that.canvasTop;
+
+            UserInterface.coorddX = UserInterface.coordsMouseX - gamer.move.pos[0];
+            UserInterface.coorddY = UserInterface.coordsMouseY - gamer.move.pos[1];
+        }
+    };
+
+    function clickOnCanvas(e){
+
+        if (game.about.state === 'loading' || game.about.state === 'play-animation'){
+            e.preventDefault();
+            return 0;
+        }
+
+
+        command = UserInterface.linki; // short write
+
+        for (let i = 0; i < command.length; i++){
+
+            if ((UserInterface.checkFrame(command[i])) &&
+                (command[i].Name === game.about.state)){
+                command[i].selectName = true;
+
+            } else command[i].selectName = false;
+        }
+
+        (location.viewMode === 'demo') && (UserInterface.linki[1].selectName = false);
+
+        if (game.about.state === 'menu' ||
+            game.about.state === 'rating' ||
+            game.about.state === 'wait'){
+
+            for (let elem in _that.inputState){
+
+                _that.inputState[elem] = false;
+            }
+        } else{
+
+            if ((_that.inputState.ESCAPE) || (UserInterface.linki[5].selectName)){
+
+                return 0;
+            } else{
+
+                gamer.stat.bullets.useSkill(load, gamer, UserInterface);
+            }
+
+        }
+
+    };
+
+    function clickOnDOM(e){
+
+        if (e.target.className === 'btnName' && inputName.value !== ''){
+
+            getName(inputName.value, gamer);
+            location.deleteGetNameView(document, e.target);
+        } else if (e.target.className === 'cancelName'){
+            location.deleteGetNameView(document, e.target);
+        }
+
+        if (e.target.className === 'ZoomUP'){
+            location.transformCanvasViewUp(canvas);
+        }
+
+    };
+};
+
+
+GameController.prototype.setKeyState = function (keyCode, isPressed){
+
+    switch (keyCode){
+        case 65:
+            this.inputState.LEFT = isPressed; break;
+        case 87:
+            this.inputState.UP = isPressed; break;
+        case 68:
+            this.inputState.RIGHT = isPressed; break;
+        case 83:
+            this.inputState.DOWN = isPressed; break;
+        case 27:
+            this.inputState.ESCAPE = isPressed; break;
+    }
+};
+
+
+GameController.prototype.inputs = function(time, gamer){
+
+    // -----player moving-----
+    if (this.inputState['RIGHT']){
+
+        gamer.stat.sprite.size[0] = 34;
+        gamer.stat.sprite.pos[0] = 572.1;
+        gamer.move.pos[0] += gamer.move.speeds * time;
+    }
+    if ((this.inputState['LEFT'])){
+
+        gamer.stat.sprite.size[0] = 33;
+        gamer.stat.sprite.pos[0] = 828;
+        gamer.stat.sprite.frames = [0, 1];
+        gamer.move.pos[0] -= gamer.move.speeds * time;
+    }
+    if (this.inputState['UP']){
+
+        gamer.stat.sprite.size[0] = 34;
+        gamer.stat.sprite.pos[0] = 444;
+        gamer.move.pos[1] -= gamer.move.speeds * time;
+    }
+    if (this.inputState['DOWN']){
+
+        gamer.stat.sprite.size[0] = 34;
+        gamer.stat.sprite.pos[0] = 700;
+        gamer.move.pos[1] += gamer.move.speeds * time;
+    }
+    if ((this.inputState['UP']) && (this.inputState['RIGHT'])){
+
+        gamer.stat.sprite.size[0] = 33;
+        gamer.stat.sprite.pos[0] = 510;
+    } else
+    if ((this.inputState['UP']) && (this.inputState['LEFT'])){
+
+        gamer.stat.sprite.size[0] = 34;
+        gamer.stat.sprite.pos[0] = 891;
+    }
+
+    if ((this.inputState['DOWN']) && (this.inputState['LEFT'])){
+
+        gamer.stat.sprite.size[0] = 33;
+        gamer.stat.sprite.pos[0] = 766;
+    } else
+    if ((this.inputState['DOWN']) && (this.inputState['RIGHT'])){
+
+        gamer.stat.sprite.size[0] = 33;
+        gamer.stat.sprite.pos[0] = 636.5;
+    }
+};
+
+
+
 //--------INIT--------//
 
-(function () {
-    function main() {
+(function (){
+    function main(){
 
 
         let canvas = document.getElementById('arena');
@@ -2331,7 +2428,7 @@ function GameController() {
 
         // Object init
         const game = new Game();
-        const gamePlayDraw = new Draw();
+        const gamePlayDraw = new Draw(); 
         const controller = new GameController();
         const UserInterface = new UI();
         const loader = new Loader();
@@ -2350,7 +2447,7 @@ function GameController() {
 
         // links
 
-        if (gamePlayDraw.view != 'mobile') {
+        if (gamePlayDraw.view != 'mobile'){
 
             UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
             UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0] - 85,
@@ -2367,7 +2464,7 @@ function GameController() {
 
             UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760,
                 570, 50, 50));
-        } else {
+        } else{
             UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
 
             UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0] - 85,
@@ -2419,7 +2516,7 @@ function GameController() {
         let player = new Player(loader, gamePlayDraw);
 
 
-        loader.enemy.forEach(() => {
+        loader.enemy.forEach(() =>{
             // -----start move-----
             loader.enemy[i].bull.pos[0] = loader.enemy[i].move.pos[0];
             loader.enemy[i].bull.pos[1] = loader.enemy[i].move.pos[1];
@@ -2427,34 +2524,34 @@ function GameController() {
         });
 
 
-        function linkers(loader, player) {
+        function linkers(loader, player){
 
 
 
-            if (UserInterface.linki[1].selectName) {
+            if (UserInterface.linki[1].selectName){
 
                 loader.SoundsStorage[13].play();
                 game.startGameAnimation(loader, player, UserInterface.linki[1]);
             }
-            if (UserInterface.linki[2].selectName) {
+            if (UserInterface.linki[2].selectName){
 
                 loader.SoundsStorage[13].play();
                 game.ratingGame(UserInterface.linki[2]);
             }
 
-            if (UserInterface.linki[3].selectName) {
+            if (UserInterface.linki[3].selectName){
 
                 loader.SoundsStorage[13].play();
                 game.mainMenu(UserInterface.linki[3]);
             }
 
-            if (UserInterface.linki[4].selectName) {
+            if (UserInterface.linki[4].selectName){
 
                 loader.SoundsStorage[13].play();
                 game.mainMenu(UserInterface.linki[4]);
             }
 
-            if ((gamePlayDraw.viewMode != 'demo') && UserInterface.linki[5].selectName) {
+            if ((gamePlayDraw.viewMode != 'demo') && UserInterface.linki[5].selectName){
 
                 loader.SoundsStorage[13].play();
                 game.pause(UserInterface.linki[5]);
@@ -2463,9 +2560,9 @@ function GameController() {
         }
 
 
-        function menu(loader, player) {
+        function menu(loader, player){
 
-            if (game.about.state === 'menu') {
+            if (game.about.state === 'menu'){
 
                 player.setHealth(200);
                 game.setRequstCount(0);
@@ -2474,13 +2571,13 @@ function GameController() {
             }
         }
 
-        function gameplay(loader, player, game) {
+        function gameplay(loader, player, game){
 
-            if (game.about.state === 'play-animation') {
+            if (game.about.state === 'play-animation'){
 
                 gamePlayDraw.building(loader, player, game);
             }
-            if ((game.about.state === 'play') && !(loader.enemy.length)) {
+            if ((game.about.state === 'play') && !(loader.enemy.length)){
 
                 loader.SoundsStorage[10].currentTime = 0;
                 loader.SoundsStorage[10].play();
@@ -2488,13 +2585,13 @@ function GameController() {
                 (game.about.stageNumber >= 20) && (player.setHealth(0));
 
 
-                if (game.about.stageNumber >= 10) {
+                if (game.about.stageNumber >= 10){
 
                     game.about.stageNumber++;
                     game.about.stageBossCount++;
                     game.about.stageExtraBossCount++;
 
-                } else if (game.about.stageNumber >= 7) {
+                } else if (game.about.stageNumber >= 7){
 
                     game.about.stageNumber++;
                     game.about.stageBossCount++;
@@ -2506,28 +2603,28 @@ function GameController() {
             };
         }
 
-        function buildTexture(game, loader, player) {
+        function buildTexture(game, loader, player){
 
             if ((game.about.state === 'play') ||
-                (game.about.state === 'wait')) {
+                (game.about.state === 'wait')){
 
                 (game.about.state === 'play') && (calculate(player, game));
                 gamePlayDraw.building(loader, player, game);
             }
         }
 
-        function pauseCheck(game, controller) {
-            if ((game.about.state === 'pause') && !(input.isDown('ESCAPE'))) {
+        function pauseCheck(game, controller){
+            if ((game.about.state === 'pause') && !(controller.inputState.ESCAPE)){
 
                 controller.inputState.ESCAPE = true;
             }
         }
 
-        function death(game, player, loader) {
+        function death(game, player, loader){
 
             if ((game.about.state === 'wait') &&
                 (game.about.requstCount === 0) &&
-                (player.stat.health <= 0)) {
+                (player.stat.health <= 0)){
 
                 (localStorage.name) && (player.stat.gamerName = localStorage.name);
 
@@ -2536,9 +2633,9 @@ function GameController() {
 
                 let id = '_id' + loader.startRecord.length;
 
-                const statistic = {
+                const statistic ={
 
-                    result: {
+                    result:{
                         name: player.stat.gamerName,
                         points: player.stat.points,
                         id: id.slice(1, id.length),
@@ -2559,7 +2656,7 @@ function GameController() {
             gamePlayDraw.buildingGetNameView(document, gamePlayDraw.getCanvas.canvas);
 
 
-        let timer = setTimeout(() => {
+        let timer = setTimeout(() =>{
             game.about.state = 'menu';
             gameLoop = requestAnimationFrame(loop);
         }, 3000);
@@ -2569,7 +2666,7 @@ function GameController() {
 
         mainDB.getUserData(loader);
 
-        function loop() {
+        function loop(){
 
             now = Date.now();
             time = Math.min(0.05, (now - lastTime) / 1000.0);
@@ -2577,6 +2674,13 @@ function GameController() {
             linkers(loader, player, time);
             menu(loader, player);
             gameplay(loader, player, game);
+
+            if ((!(game.pause(UserInterface.linki[5],
+                controller.inputState.ESCAPE))) &&
+                (game.about.state === 'play')){
+
+            controller.inputs(time, player); // check inputs
+            }
             update(time, player, loader, game, UserInterface.linki);
             pauseCheck(game, controller);
             buildTexture(game, loader, player);
@@ -2587,8 +2691,8 @@ function GameController() {
             requestAnimationFrame(loop);
         }
     } // main()
-    return application = {
-        init: main
+    return application ={
+        init: main,
     }
 })();
 
