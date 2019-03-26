@@ -1653,12 +1653,12 @@ Draw.prototype.pauseMenuView = function (game, gamer, UserInterface, load){
         CTX.fillText('If you leave the game, all saves will be lost.', this.pause.Notification[0],
             this.pause.Notification[1]);
 
+        CTX.restore();
+        CTX.save();
         CTX.fillStyle = 'yellow';
         CTX.shadowColor = 'brown';
         CTX.textAlign = 'center';
         CTX.font = '35px PIXI';
-        CTX.shadowOffsetX = 0;
-        CTX.shadowOffsetY = 0;
         CTX.fillText('Throws: ' + gamer.countThrow, this.gameOver.Throw[0] - 20,
             this.gameOver.Throw[1]);
         CTX.fillText('Kills: ' + gamer.killCount, this.gameOver.killCount[0] - 20,
@@ -1726,6 +1726,7 @@ Draw.prototype.DrawMenu = function (load, game, UserInterface, gamer){
     CTX.shadowOffsetX = 0;
     CTX.shadowOffsetY = 0;
     CTX.globalAlpha = 1;
+
 
     CTX.shadowColor = 'black';
     CTX.font = '100px PIXI';
@@ -1825,8 +1826,8 @@ Draw.prototype.drawRatingList = function (load, game, UserInterface){
         CTX.fillText('THE BEST', this.rating.TitleGame[0], this.menu.TitleGame[1]);
 
     }
-    CTX.shadowOffsetX = 0;
-    CTX.shadowOffsetY = 0;
+    CTX.restore();
+    CTX.save();
 
     if (UserInterface.checkFrame(UserInterface.linki[3])){
 
@@ -1905,6 +1906,8 @@ Draw.prototype.drawRatingList = function (load, game, UserInterface){
     CTX.textAlign = "center";
     CTX.fillStyle = 'white';
     CTX.font = 'bold 14px Arial';
+    CTX.restore();
+    CTX.save();
 
     CTX.fillText('© 2019', this.menu.myName[0], this.menu.myName[1]);
 
@@ -2259,7 +2262,7 @@ GameController.prototype.setEvent =  function(location, gamer, load, game, UserI
 
             if (_that.inputState.ESCAPE) return;
             else{
-                
+
                 return _that.setKeyState(e.which, false);
             }
         }
@@ -2362,48 +2365,48 @@ GameController.prototype.setKeyState = function (keyCode, isPressed){
 GameController.prototype.inputs = function(time, gamer){
 
     // -----player moving-----
-    if (this.inputState['RIGHT']){
+    if (this.inputState.RIGHT){
 
         gamer.stat.sprite.size[0] = 34;
         gamer.stat.sprite.pos[0] = 572.1;
         gamer.move.pos[0] += gamer.move.speeds * time;
     }
-    if ((this.inputState['LEFT'])){
+    if ((this.inputState.LEFT)){
 
         gamer.stat.sprite.size[0] = 33;
         gamer.stat.sprite.pos[0] = 828;
         gamer.stat.sprite.frames = [0, 1];
         gamer.move.pos[0] -= gamer.move.speeds * time;
     }
-    if (this.inputState['UP']){
+    if (this.inputState.UP){
 
         gamer.stat.sprite.size[0] = 34;
         gamer.stat.sprite.pos[0] = 444;
         gamer.move.pos[1] -= gamer.move.speeds * time;
     }
-    if (this.inputState['DOWN']){
+    if (this.inputState.DOWN){
 
         gamer.stat.sprite.size[0] = 34;
         gamer.stat.sprite.pos[0] = 700;
         gamer.move.pos[1] += gamer.move.speeds * time;
     }
-    if ((this.inputState['UP']) && (this.inputState['RIGHT'])){
+    if ((this.inputState.UP) && (this.inputState.RIGHT)){
 
         gamer.stat.sprite.size[0] = 33;
         gamer.stat.sprite.pos[0] = 510;
     } else
-    if ((this.inputState['UP']) && (this.inputState['LEFT'])){
+    if ((this.inputState.UP) && (this.inputState.LEFT)){
 
         gamer.stat.sprite.size[0] = 34;
         gamer.stat.sprite.pos[0] = 891;
     }
 
-    if ((this.inputState['DOWN']) && (this.inputState['LEFT'])){
+    if ((this.inputState.DOWN) && (this.inputState.LEFT)){
 
         gamer.stat.sprite.size[0] = 33;
         gamer.stat.sprite.pos[0] = 766;
     } else
-    if ((this.inputState['DOWN']) && (this.inputState['RIGHT'])){
+    if ((this.inputState.DOWN) && (this.inputState.RIGHT)){
 
         gamer.stat.sprite.size[0] = 33;
         gamer.stat.sprite.pos[0] = 636.5;
