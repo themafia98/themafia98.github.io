@@ -132,6 +132,7 @@ function Game() {
     this.pauseGame = 'pause';
 
     this.fade = 1;
+    this.loadingPercent = 0;
 
     this.setRequstCount = function (i) {
 
@@ -255,6 +256,7 @@ Game.prototype.updateGameStatus = function (gamer, load) { // new game
     this.about.stageBossCount = -1;
     this.about.count = -1;
     this.fade = 2;
+    this.loadingPercent = 0;
 
     // update game statistic
     gamer.countThrow = 0;
@@ -1213,8 +1215,7 @@ function compare(a, b) {
     }
     return 0;
 }
-
-function Draw(){
+function Draw() {
     let _that = this;
 
     this.blink = 1;
@@ -1232,103 +1233,110 @@ function Draw(){
         openGate: 0, // end gate possition
         countModal: 0, // counter modal window in game
         drawInX: 0, // position X to draw in main ctx
-        drawInY: 0,  // position Y to draw in main ctx
+        drawInY: 0, // position Y to draw in main ctx
         mouse: 0
     };
 
     _that.bullets = {
-          //---for player---
-        spriteListBulletsPosition: [106,0],
+        //---for player---
+        spriteListBulletsPosition: [106, 0],
         spritePlayerSizeW: 14,
         spritePlayerSizeH: 32,
     };
 
     _that.items = {
-        spriteItemSize: [15,15]
+        spriteItemSize: [15, 15]
     };
 
     _that.pause = {
-        RectPause: [this.settings.width/6,40],
-        RectPauseSize: [this.settings.width/1.5,this.settings.height/1.4],
-        TextStageName: [this.settings.width/2.1,100],
-        Notification: [this.settings.width/2 - 5,135],
-        Menu: [this.settings.width/2.1,450]
+        RectPause: [this.settings.width / 6, 40],
+        RectPauseSize: [this.settings.width / 1.5, this.settings.height / 1.4],
+        TextStageName: [this.settings.width / 2.1, 100],
+        Notification: [this.settings.width / 2 - 5, 135],
+        Menu: [this.settings.width / 2.1, 450]
     }
 
-    _that.menu ={
+    _that.menu = {
         background: null,
-        TitleGame: [this.settings.width/2,100],
-        play: [this.settings.width/2,this.settings.height/2.5],
-        rating: [this.settings.width/2,this.settings.height/1.8],
-        myName: [40,this.settings.height-20],
-        version: [this.settings.width-40,this.settings.height-20]
+        TitleGame: [this.settings.width / 2, 100],
+        play: [this.settings.width / 2, this.settings.height / 2.5],
+        rating: [this.settings.width / 2, this.settings.height / 1.8],
+        myName: [40, this.settings.height - 20],
+        version: [this.settings.width - 40, this.settings.height - 20]
     }
 
-    _that.rating ={
-        TitleGame: [this.settings.width/2,50],
-        return: [this.settings.width/2,165],
-        StrokeRectCoords: [this.settings.width/9.4,200],
-        StrokeRectSize: [this.settings.width/1.3,this.settings.height/1.8],
-        RectCoords: [this.settings.width/9.4,200],
-        RectSize: [this.settings.width/1.3,this.settings.height/1.8],
-        TitleName: [this.settings.width/8,235],
-        TitlePoints: [this.settings.width/1.45,235],
-        ratingListX: [this.settings.width/8,this.settings.height-50],
-        ratingListPointsX: [this.settings.width/8,this.settings.height-50]
+    _that.rating = {
+        TitleGame: [this.settings.width / 2, 50],
+        return: [this.settings.width / 2, 165],
+        StrokeRectCoords: [this.settings.width / 9.4, 200],
+        StrokeRectSize: [this.settings.width / 1.3, this.settings.height / 1.8],
+        RectCoords: [this.settings.width / 9.4, 200],
+        RectSize: [this.settings.width / 1.3, this.settings.height / 1.8],
+        TitleName: [this.settings.width / 8, 235],
+        TitlePoints: [this.settings.width / 1.45, 235],
+        ratingListX: [this.settings.width / 8, this.settings.height - 50],
+        ratingListPointsX: [this.settings.width / 8, this.settings.height - 50]
     }
 
-    _that.gameOver ={
-        TitleCoords: [this.settings.width/2,100],
-        win: [this.settings.width/2,100],
-        Points: [this.settings.width/2,150],
-        Throw: [this.settings.width/2,200],
-        killCount: [this.settings.width/2,250],
-        menu: [this.settings.width/2.02,450]
+    _that.gameOver = {
+        TitleCoords: [this.settings.width / 2, 100],
+        win: [this.settings.width / 2, 100],
+        Points: [this.settings.width / 2, 150],
+        Throw: [this.settings.width / 2, 200],
+        killCount: [this.settings.width / 2, 250],
+        menu: [this.settings.width / 2.02, 450]
     }
 
-    _that.playGame ={
-        spriteTextureBorder: [5,610],
-        spriteTexture: [5,5],
+    _that.playGame = {
+        spriteTextureBorder: [5, 610],
+        spriteTexture: [5, 5],
         gamePanelCoords: [0, 542],
         gamePanelSize: [this.settings.width, 80],
-        hpTextPosition: [this.settings.width/3, 588],
+        hpTextPosition: [this.settings.width / 3, 588],
         hpBarSize: [375, 588],
-        hpBarBoorderCoords: [this.settings.width/2.7, 570],
+        hpBarBoorderCoords: [this.settings.width / 2.7, 570],
         hpBarBoorderSize: [204, 25],
         PointsCoords: [-12, 20],
-        PointsSize: [45,45],
+        PointsSize: [45, 45],
         PointsGetCoords: [0, 560],
         PointsGetSize: [35, 35],
         PointsTextCoords: [40, 592],
-        ModalTextWASD: [this.settings.width/2,35],
-        ModalPress: [this.settings.width/2,65],
-        Audio: [this.settings.width,460],
-        pauseButton: [this.settings.width-40,this.settings.height-48],
+        ModalTextWASD: [this.settings.width / 2, 35],
+        ModalPress: [this.settings.width / 2, 65],
+        Audio: [this.settings.width, 460],
+        pauseButton: [this.settings.width - 40, this.settings.height - 48],
     }
 
-    _that.loading ={
-        loadingText: [this.settings.width/4.7,this.settings.height/2]
+    _that.loading = {
+        loadingText: [this.settings.width / 4.7, this.settings.height / 2],
     }
 
 
 
-      _that.drawBuffer ={canvasBuffer: null, ctxBuffer: null }; // buffer canvas
-      _that.getCanvas ={canvas: document.getElementById('arena'), }; // get canvas in app
-      _that.getCtx ={ ctx: _that.getCanvas.canvas.getContext('2d'), }; // get ctx in app
+    _that.drawBuffer = {
+        canvasBuffer: null,
+        ctxBuffer: null
+    }; // buffer canvas
+    _that.getCanvas = {
+        canvas: document.getElementById('arena'),
+    }; // get canvas in app
+    _that.getCtx = {
+        ctx: _that.getCanvas.canvas.getContext('2d'),
+    }; // get ctx in app
 }
 
-Draw.prototype.render =  function () {
-  // -----All render-----
+Draw.prototype.render = function () {
+    // -----All render-----
 
     this.getCtx.ctx.drawImage(this.drawBuffer.canvasBuffer,
-                              this.settings.drawInX,this.settings.drawInY,
-                              this.settings.width,this.settings.height);
+        this.settings.drawInX, this.settings.drawInY,
+        this.settings.width, this.settings.height);
     this.drawBuffer.ctxBuffer.restore();
 };
 
-Draw.prototype.renderEnemys = function(gamer){
+Draw.prototype.renderEnemys = function (gamer) {
 
-    if(gamer.stat.name !== 'player'){
+    if (gamer.stat.name !== 'player') {
 
         gamer.stat.sprite.x = gamer.stat.sprite.render(); // render sprite update
 
@@ -1336,138 +1344,149 @@ Draw.prototype.renderEnemys = function(gamer){
         this.drawBuffer.ctxBuffer.fillStyle = 'red';
         this.drawBuffer.ctxBuffer.font = 'bold 12px Aria';
         this.drawBuffer.ctxBuffer.fillText(gamer.stat.health + 'HP',
-                                            gamer.move.pos[0]-5,gamer.move.pos[1]-5);
-          // render enemys
+            gamer.move.pos[0] - 5, gamer.move.pos[1] - 5);
+        // render enemys
         this.drawBuffer.ctxBuffer.drawImage(gamer.stat.sprite.url,
             gamer.stat.sprite.x, gamer.stat.sprite.pos[1],
             gamer.stat.sprite.size[0], gamer.stat.sprite.size[1],
             gamer.move.pos[0], gamer.move.pos[1],
-            gamer.stat.sprite.size[1],gamer.stat.sprite.size[1]);
+            gamer.stat.sprite.size[1], gamer.stat.sprite.size[1]);
 
     }
 }
 
-Draw.prototype.renderItems = function(load){
+Draw.prototype.renderItems = function (load) {
 
 
-    load.coins.forEach( (item) =>{
+    load.coins.forEach((item) => {
 
-        if(item.lucky){
+        if (item.lucky) {
             item.sprite.x = item.sprite.render(); // render sprite coins
             // render coins
             this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
-                                                item.sprite.x, item.sprite.pos[1],
-                                                item.sprite.size[0], item.sprite.size[1],
-                                                item.pos[0],item.pos[1],
-                                                this.items.spriteItemSize[0],
-                                                this.items.spriteItemSize[1]);
-            }
-    });
-
-    load.eat.forEach((item) =>{
-
-        if(item.lucky){
-
-            item.sprite.x = item.sprite.render(); // render sprite eat
-            this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
-                                                item.sprite.x, item.sprite.pos[1],
-                                                item.sprite.size[0], item.sprite.size[1],
-                                                item.pos[0],  item.pos[1],
-                                                this.items.spriteItemSize[0],
-                                                this.items.spriteItemSize[1]);
+                item.sprite.x, item.sprite.pos[1],
+                item.sprite.size[0], item.sprite.size[1],
+                item.pos[0], item.pos[1],
+                this.items.spriteItemSize[0],
+                this.items.spriteItemSize[1]);
         }
     });
 
-    load.upgrade.forEach((item) =>{
+    load.eat.forEach((item) => {
 
-        if(item.lucky){
+        if (item.lucky) {
 
             item.sprite.x = item.sprite.render(); // render sprite eat
             this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
-                                                item.sprite.x, item.sprite.pos[1],
-                                                item.sprite.size[0], item.sprite.size[1],
-                                                item.pos[0], item.pos[1],
-                                                this.items.spriteItemSize[0],
-                                                this.items.spriteItemSize[1]);
+                item.sprite.x, item.sprite.pos[1],
+                item.sprite.size[0], item.sprite.size[1],
+                item.pos[0], item.pos[1],
+                this.items.spriteItemSize[0],
+                this.items.spriteItemSize[1]);
+        }
+    });
+
+    load.upgrade.forEach((item) => {
+
+        if (item.lucky) {
+
+            item.sprite.x = item.sprite.render(); // render sprite eat
+            this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
+                item.sprite.x, item.sprite.pos[1],
+                item.sprite.size[0], item.sprite.size[1],
+                item.pos[0], item.pos[1],
+                this.items.spriteItemSize[0],
+                this.items.spriteItemSize[1]);
         }
     });
 }
 
-Draw.prototype.renderPlayer = function (gamer,game){
+Draw.prototype.renderPlayer = function (gamer, game) {
 
-    if(game.fade <= 0){
+    if (game.fade <= 0) {
 
         gamer.stat.sprite.x = gamer.stat.sprite.render(); // update sprite player
         this.drawBuffer.ctxBuffer.drawImage(gamer.stat.sprite.url,
-                                            gamer.stat.sprite.x, gamer.stat.sprite.pos[1],
-                                            gamer.stat.sprite.size[0], gamer.stat.sprite.size[1],
-                                            gamer.move.pos[0],gamer.move.pos[1],
-                                            gamer.stat.sprite.size[1],gamer.stat.sprite.size[1]);
+            gamer.stat.sprite.x, gamer.stat.sprite.pos[1],
+            gamer.stat.sprite.size[0], gamer.stat.sprite.size[1],
+            gamer.move.pos[0], gamer.move.pos[1],
+            gamer.stat.sprite.size[1], gamer.stat.sprite.size[1]);
     }
 }
 
-Draw.prototype.fadeIn = function(game,load){
+Draw.prototype.fadeIn = function (game, load) {
 
 
-    if(game.about.state === 'play-animation' && (game.fade > 0)){
+    if (game.about.state === 'play-animation' && (game.fade > 0)) {
+        this.drawBuffer.ctxBuffer.restore();
+        this.drawBuffer.ctxBuffer.save();
 
-        this.drawBuffer.ctxBuffer.fillStyle = 'black';
+        let cof = (this.settings.width/2) / game.loadingPercent;
+        let perc = 100 / cof;
+
         this.drawBuffer.ctxBuffer.globalAlpha = game.fade;
         this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[1],
-                                            this.settings.drawInX,this.settings.drawInX,
-                                            this.settings.width,this.settings.height);
+            this.settings.drawInX, this.settings.drawInX,
+            this.settings.width, this.settings.height);
 
-        this.drawBuffer.ctxBuffer.font = '100px Aria bold';
-        this.drawBuffer.ctxBuffer.fillStyle = 'grey';
-        this.drawBuffer.ctxBuffer.fillText('RENDER',this.loading.loadingText[0]+30,
-                                            this.loading.loadingText[1]);
-
-        game.fade -= 0.02;
+        this.drawBuffer.ctxBuffer.strokeStyle = 'gold';
+        this.drawBuffer.ctxBuffer.lineWidth = 2;
+        this.drawBuffer.ctxBuffer.strokeRect(this.settings.width/4,this.settings.height/2.5,
+                                            this.settings.width/2,this.settings.height/6);
+        this.drawBuffer.ctxBuffer.fillStyle = 'brown';
+        this.drawBuffer.ctxBuffer.fillRect(this.settings.width/4,this.settings.height/2.5,
+                                            game.loadingPercent,this.settings.height/6);
+        this.drawBuffer.ctxBuffer.font = '30px PIXI';
+        this.drawBuffer.ctxBuffer.textAlign ='center';
+        this.drawBuffer.ctxBuffer.fillStyle = 'white';
+        this.drawBuffer.ctxBuffer.fillText(`Rendering... ${perc.toFixed(1)} %`,this.settings.width/2,this.settings.height/2);
+        (game.loadingPercent < this.settings.width/2) && (game.loadingPercent += 2.5);
+        (game.loadingPercent >= this.settings.width/2) && (game.fade -= 0.05);
         this.drawBuffer.ctxBuffer.restore();
     }
 }
 
-Draw.prototype.renderEnemyBulls = function (bull){
+Draw.prototype.renderEnemyBulls = function (bull) {
 
     let bulls = bull.bull; // short write
 
-        if (bull.bull.on === 'true'){ // if bullets active
+    if (bull.bull.on === 'true') { // if bullets active
 
+        this.drawBuffer.ctxBuffer.restore(); // restove ctx
+        if ((bulls.bullStorage.length)) {
+
+            this.drawBuffer.ctxBuffer.drawImage(bull.bull.bullStorage[0].url,
+                bull.bull.bullStorage[0].pos[0],
+                bull.bull.bullStorage[0].pos[1],
+                bull.bull.bullStorage[0].size[0],
+                bull.bull.bullStorage[0].size[1],
+                bulls.pos[0], bulls.pos[1],
+                this.items.spriteItemSize[0],
+                this.items.spriteItemSize[1]);
+
+            this.render(); // render bullets
             this.drawBuffer.ctxBuffer.restore(); // restove ctx
-            if((bulls.bullStorage.length)){
-
-                this.drawBuffer.ctxBuffer.drawImage(bull.bull.bullStorage[0].url,
-                                                    bull.bull.bullStorage[0].pos[0],
-                                                    bull.bull.bullStorage[0].pos[1],
-                                                    bull.bull.bullStorage[0].size[0],
-                                                    bull.bull.bullStorage[0].size[1],
-                                                    bulls.pos[0],bulls.pos[1],
-                                                    this.items.spriteItemSize[0],
-                                                    this.items.spriteItemSize[1]);
-
-          this.render(); // render bullets
-          this.drawBuffer.ctxBuffer.restore(); // restove ctx
-            }
         }
+    }
 }
 
-Draw.prototype.renderBulls =  function(bull,load,gamer){
-  // translate and rotate for renders bullets in corect dir
+Draw.prototype.renderBulls = function (bull, load, gamer) {
+    // translate and rotate for renders bullets in corect dir
 
-    if((load.bullets.length)){
+    if ((load.bullets.length)) {
 
         this.drawBuffer.ctxBuffer.setTransform(1, 0, 0, 1, 0, 0);
         this.drawBuffer.ctxBuffer.save();
 
-        this.drawBuffer.ctxBuffer.translate(bull.pos.x,bull.pos.y);
-        this.drawBuffer.ctxBuffer.rotate( (bull.degree*2) * (Math.PI / 180) );
+        this.drawBuffer.ctxBuffer.translate(bull.pos.x, bull.pos.y);
+        this.drawBuffer.ctxBuffer.rotate((bull.degree * 2) * (Math.PI / 180));
 
         this.drawBuffer.ctxBuffer.drawImage(bull.sprite.url,
-                                            bull.sprite.pos[0],
-                                            bull.sprite.pos[1],
-                                            bull.sprite.size[0], bull.sprite.size[1],
-                                            this.settings.drawInX,this.settings.drawInY,
-                                            25,27);
+            bull.sprite.pos[0],
+            bull.sprite.pos[1],
+            bull.sprite.size[0], bull.sprite.size[1],
+            this.settings.drawInX, this.settings.drawInY,
+            25, 27);
         bull.degree++;
 
         this.drawBuffer.ctxBuffer.restore();
@@ -1476,77 +1495,77 @@ Draw.prototype.renderBulls =  function(bull,load,gamer){
     }
 }
 
-Draw.prototype.renders = function(gamer,load,game,UserInterface){
+Draw.prototype.renders = function (gamer, load, game, UserInterface) {
 
     if ((game.about.state !== 'menu') &&
         (game.about.state !== 'rating') &&
-        (gamer.stat.health <= 0)){ // render gameOver
+        (gamer.stat.health <= 0)) { // render gameOver
 
-        gamer.GameOver(gamer,game,load);
+        gamer.GameOver(gamer, game, load);
     }
 
     (game.about.state === 'play' || game.about.state === 'play-animation') &&
-                                            this.renderMouse(load,UserInterface);
+    this.renderMouse(load, UserInterface);
 
 
     // ---render pause menu---
-    ((game.about.state === 'wait') && (this.gameOverView(gamer,UserInterface,game)));
-      // --render rating---
-    ((game.about.state === 'rating') && (this.drawRatingList(load,gamer,UserInterface,gamer)));
+    ((game.about.state === 'wait') && (this.gameOverView(gamer, UserInterface, game)));
+    // --render rating---
+    ((game.about.state === 'rating') && (this.drawRatingList(load, gamer, UserInterface, gamer)));
 
-    if((game.about.state === 'play')){ //if game state play
+    if ((game.about.state === 'play')) { //if game state play
 
-        load.enemy.forEach((item)=>{ // render all enemys and items
+        load.enemy.forEach((item) => { // render all enemys and items
 
             this.renderEnemys(item);
             this.renderItems(load);
 
         });
 
-        this.renderPlayer(gamer,game);
+        this.renderPlayer(gamer, game);
 
-        load.bullets.forEach((item)=>{ // render player bullets
+        load.bullets.forEach((item) => { // render player bullets
 
-        this.renderBulls(item,load,gamer);
+            this.renderBulls(item, load, gamer);
 
         });
 
-        load.enemy.forEach((item)=>{ // render enemys bullets
+        load.enemy.forEach((item) => { // render enemys bullets
 
-        this.renderEnemyBulls(item);
+            this.renderEnemyBulls(item);
 
         });
     }
 
-    if (game.about.state === 'play-animation'){ // render start animation state
+    if (game.about.state === 'play-animation') { // render start animation state
 
-        (game.fade > 0) && (this.fadeIn(game,load));
-        (game.fade <= 0) && (this.renderPlayer(gamer,game));
+        (game.fade > 0) && (this.fadeIn(game, load));
+        (game.fade <= 0) && (this.renderPlayer(gamer, game));
 
     }
 
-    this.pauseMenuView(game,gamer,UserInterface,load); // render pause menu
+    this.pauseMenuView(game, gamer, UserInterface, load); // render pause menu
 
-    if(((game.about.state === 'pause') || (game.about.state === 'menu')) &&
-        (UserInterface.linki.length)){
+    if (((game.about.state === 'pause') || (game.about.state === 'menu')) &&
+        (UserInterface.linki.length)) {
 
-        if(UserInterface.linki[0].selectName){ // link menu
+        if (UserInterface.linki[0].selectName) { // link menu
 
             game.about.state = 'menu'; // set state menu
-            this.DrawMenu(load,game,UserInterface); // render menu
+            this.DrawMenu(load, game, UserInterface); // render menu
 
-        } else if (game.about.state === 'menu'){
+        } else if (game.about.state === 'menu') {
 
-            this.DrawMenu(load,game,UserInterface);
-            }
+            this.DrawMenu(load, game, UserInterface);
         }
+    }
 
-      this.render(); // all render in main canvas
+    this.render(); // all render in main canvas
 }
 
-Draw.prototype.pauseMenuView = function (game,gamer,UserInterface,load){
+Draw.prototype.pauseMenuView = function (game, gamer, UserInterface, load) {
 
-    if(game.about.state === 'pause'){
+    if (game.about.state === 'pause') {
 
         let CTX = this.drawBuffer.ctxBuffer; // short write
 
@@ -1556,13 +1575,13 @@ Draw.prototype.pauseMenuView = function (game,gamer,UserInterface,load){
         CTX.globalAlpha = 0.9;
 
         this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[1],
-                                            this.pause.RectPause[0],this.pause.RectPause[1],
-                                            this.pause.RectPauseSize[0],this.pause.RectPauseSize[1]);
+            this.pause.RectPause[0], this.pause.RectPause[1],
+            this.pause.RectPauseSize[0], this.pause.RectPauseSize[1]);
 
         CTX.strokeStyle = 'gold';
         CTX.globalAlpha = 0.9;
-        CTX.strokeRect(this.pause.RectPause[0]+10,this.pause.RectPause[1]+10,
-                        this.pause.RectPauseSize[0]-20,this.pause.RectPauseSize[1]-20);
+        CTX.strokeRect(this.pause.RectPause[0] + 10, this.pause.RectPause[1] + 10,
+            this.pause.RectPauseSize[0] - 20, this.pause.RectPauseSize[1] - 20);
 
         CTX.fillStyle = 'yellow';
         CTX.textAlign = 'center';
@@ -1570,7 +1589,7 @@ Draw.prototype.pauseMenuView = function (game,gamer,UserInterface,load){
         CTX.shadowOffsetX = 2;
         CTX.shadowOffsetY = 3;
         CTX.font = '50px PIXI';
-        CTX.fillText('PAUSE',this.pause.TextStageName[0],this.pause.TextStageName[1]);
+        CTX.fillText('PAUSE', this.pause.TextStageName[0], this.pause.TextStageName[1]);
 
         CTX.fillStyle = 'gold';
         CTX.shadowColor = 'rgb(50,80,50)';
@@ -1578,8 +1597,8 @@ Draw.prototype.pauseMenuView = function (game,gamer,UserInterface,load){
         CTX.shadowOffsetX = 2;
         CTX.shadowOffsetY = 3;
         CTX.font = '25px PIXI';
-        CTX.fillText('If you leave the game, all saves will be lost.',this.pause.Notification[0],
-                    this.pause.Notification[1]);
+        CTX.fillText('If you leave the game, all saves will be lost.', this.pause.Notification[0],
+            this.pause.Notification[1]);
 
         CTX.fillStyle = 'yellow';
         CTX.shadowColor = 'brown';
@@ -1587,43 +1606,43 @@ Draw.prototype.pauseMenuView = function (game,gamer,UserInterface,load){
         CTX.font = '35px PIXI';
         CTX.shadowOffsetX = 0;
         CTX.shadowOffsetY = 0;
-        CTX.fillText('Throws: ' + gamer.countThrow,this.gameOver.Throw[0]-20,
-                    this.gameOver.Throw[1]);
-        CTX.fillText('Kills: ' + gamer.killCount,this.gameOver.killCount[0]-20,
-                    this.gameOver.killCount[1]+10);
+        CTX.fillText('Throws: ' + gamer.countThrow, this.gameOver.Throw[0] - 20,
+            this.gameOver.Throw[1]);
+        CTX.fillText('Kills: ' + gamer.killCount, this.gameOver.killCount[0] - 20,
+            this.gameOver.killCount[1] + 10);
 
-          if (UserInterface.checkFrame(UserInterface.linki[0])){ // menu link
+        if (UserInterface.checkFrame(UserInterface.linki[0])) { // menu link
 
             CTX.fillStyle = UserInterface.linki[0].selectColor;
-            } else{
+        } else {
 
             CTX.fillStyle = UserInterface.linki[0].color;
-            }
+        }
 
-            CTX.shadowOffsetX = 2;
-            CTX.shadowOffsetY = 3;
-            CTX.textAlign = 'center';
-            CTX.font = '40px PIXI';
-            CTX.fillText('MENU',this.pause.Menu[0],this.pause.Menu[1]);
-              this.render(); // all render
-        } else{
+        CTX.shadowOffsetX = 2;
+        CTX.shadowOffsetY = 3;
+        CTX.textAlign = 'center';
+        CTX.font = '40px PIXI';
+        CTX.fillText('MENU', this.pause.Menu[0], this.pause.Menu[1]);
+        this.render(); // all render
+    } else {
 
-        this.drawBuffer.ctxBuffer.clearRect(0,0,this.settings.width,this.settings.health);
+        this.drawBuffer.ctxBuffer.clearRect(0, 0, this.settings.width, this.settings.health);
     }
 }
 
-Draw.prototype.DrawMenu = function (load,game,UserInterface,gamer){
+Draw.prototype.DrawMenu = function (load, game, UserInterface, gamer) {
 
     let CTX = this.drawBuffer.ctxBuffer; // short write
 
-    this.menu.background = CTX.createPattern(load.SpriteStorage[3],'repeat');
-    CTX.fillRect(this.settings.drawInX,this.settings.drawInY,
-                    this.settings.width,this.settings.height);
+    this.menu.background = CTX.createPattern(load.SpriteStorage[3], 'repeat');
+    CTX.fillRect(this.settings.drawInX, this.settings.drawInY,
+        this.settings.width, this.settings.height);
 
     CTX.fillStyle = this.menu.background;
 
-    CTX.fillRect(this.settings.drawInX,this.settings.drawInY,
-                this.settings.width,this.settings.height);
+    CTX.fillRect(this.settings.drawInX, this.settings.drawInY,
+        this.settings.width, this.settings.height);
 
     CTX.fillStyle = 'rgb(255,215,0)';
     CTX.shadowColor = 'brown';
@@ -1636,11 +1655,11 @@ Draw.prototype.DrawMenu = function (load,game,UserInterface,gamer){
 
     CTX.globalAlpha = this.blink;
 
-    if ((this.frameBlink) && (this.blink > 0.5)){
+    if ((this.frameBlink) && (this.blink > 0.5)) {
 
         this.blink -= 0.01;
 
-    } else if (!(this.frameBlink) && (this.blink != 1)){
+    } else if (!(this.frameBlink) && (this.blink != 1)) {
 
         this.blink += 0.01;
 
@@ -1649,7 +1668,7 @@ Draw.prototype.DrawMenu = function (load,game,UserInterface,gamer){
     (this.blink <= 0.5) && (this.frameBlink = false);
     (this.blink >= 1) && (this.frameBlink = true);
 
-    CTX.fillText('ARENA',this.menu.TitleGame[0],this.menu.TitleGame[1]);
+    CTX.fillText('ARENA', this.menu.TitleGame[0], this.menu.TitleGame[1]);
     // --reset shadow--
     CTX.shadowOffsetX = 0;
     CTX.shadowOffsetY = 0;
@@ -1658,70 +1677,69 @@ Draw.prototype.DrawMenu = function (load,game,UserInterface,gamer){
     CTX.shadowColor = 'black';
     CTX.font = '100px PIXI';
 
-    if (UserInterface.checkFrame(UserInterface.linki[1])){
+    if (UserInterface.checkFrame(UserInterface.linki[1])) {
 
         CTX.fillStyle = UserInterface.linki[1].selectColor;
 
-    } else{
+    } else {
 
         CTX.fillStyle = UserInterface.linki[1].color;
     }
 
-    CTX.fillText('PLAY',this.menu.play[0],this.menu.play[1]);
+    CTX.fillText('PLAY', this.menu.play[0], this.menu.play[1]);
 
-    if (UserInterface.checkFrame(UserInterface.linki[2])){
+    if (UserInterface.checkFrame(UserInterface.linki[2])) {
 
         CTX.fillStyle = UserInterface.linki[2].selectColor;
-    } else{
+    } else {
 
         CTX.fillStyle = UserInterface.linki[2].color;
     }
 
-    CTX.fillText('RATING',this.menu.rating[0],this.menu.rating[1]);
+    CTX.fillText('RATING', this.menu.rating[0], this.menu.rating[1]);
 
-    if (this.viewMode === 'demo'){
+    if (this.viewMode === 'demo') {
 
         CTX.fillStyle = 'lightblue';
         CTX.font = '20px bold Aria';
 
         CTX.fillText('This is a demo game.',
-                    this.settings.width/2,this.settings.height-120);
+            this.settings.width / 2, this.settings.height - 120);
 
         CTX.fillText(`Your device doesn\'t support :(`,
-                    this.settings.width/2,this.settings.height-100);
+            this.settings.width / 2, this.settings.height - 100);
 
 
         CTX.fillText(`Need width 760px and more for full.`,
-                    this.settings.width/2,this.settings.height-80);
+            this.settings.width / 2, this.settings.height - 80);
 
     }
 
     CTX.fillStyle = 'white';
     CTX.font = 'bold 14px Arial';
-    CTX.fillText('© 2019',this.menu.myName[0],this.menu.myName[1]);
+    CTX.fillText('© 2019', this.menu.myName[0], this.menu.myName[1]);
 
     CTX.fillStyle = 'white';
     CTX.font = 'bold 14px Arial';
-    CTX.fillText('v0.0.5',this.menu.version[0],this.menu.version[1]);
+    CTX.fillText('v0.0.5', this.menu.version[0], this.menu.version[1]);
 }
 
-Draw.prototype.drawRatingList = function(load,game,UserInterface){
+Draw.prototype.drawRatingList = function (load, game, UserInterface) {
 
     let CTX = this.drawBuffer.ctxBuffer; // short write
-    let lengthCut = load.startRecord.length; // length array records
     let speedText = null; // for records text cycle
-    let posTxtY = null;  // for records text cycle
+    let posTxtY = null; // for records text cycle
     let RecordsY = null;
-    let length = null;  // for records text cycle
+    let length = null; // for records text cycle
 
     (this.view != 'mobile') && (length = (load.startRecord.length < 8) ?
-                                  load.startRecord.length : 8); // length records array
+        load.startRecord.length : 8); // length records array
 
     (this.view === 'mobile') && (length = (load.startRecord.length < 5) ?
-                                            load.startRecord.length : 5);
+        load.startRecord.length : 5);
 
     (this.view != 'mobile') && (RecordsY = 275); // start draw position
-    (this.view === 'mobile') && (RecordsY = Math.floor(350/1.5));
+    (this.view === 'mobile') && (RecordsY = Math.floor(350 / 1.5));
     speedText = 32; // i
 
     CTX.restore();
@@ -1730,78 +1748,78 @@ Draw.prototype.drawRatingList = function(load,game,UserInterface){
     CTX.textBaseline = "middle";
 
     CTX.fillStyle = this.menu.background;
-    CTX.fillRect(this.settings.drawInX,this.settings.drawInY,
-                this.settings.width,this.settings.height);
+    CTX.fillRect(this.settings.drawInX, this.settings.drawInY,
+        this.settings.width, this.settings.height);
 
     CTX.fillStyle = this.menu.background;
-    CTX.fillRect(this.settings.drawInX,this.settings.drawInY,
-                this.settings.width,this.settings.height);
+    CTX.fillRect(this.settings.drawInX, this.settings.drawInY,
+        this.settings.width, this.settings.height);
 
     CTX.fillStyle = 'rgb(255,215,0)';
     CTX.shadowColor = 'brown';
     CTX.shadowBlur = 3;
     CTX.shadowOffsetX = 6;
     CTX.shadowOffsetY = 7;
-    (this.view != 'mobile') ? CTX.font = 'bold 80px PIXI' : CTX.font = 'bold 60px PIXI';
+    (this.view != 'mobile') ? CTX.font = 'bold 80px PIXI': CTX.font = 'bold 60px PIXI';
 
     if (this.view === 'mobile') {
 
         this.rating.TitleGame[1] = 40;
-        CTX.fillText('THE BEST',this.rating.TitleGame[0],this.rating.TitleGame[1]);
+        CTX.fillText('THE BEST', this.rating.TitleGame[0], this.rating.TitleGame[1]);
 
     } else {
 
-    CTX.fillText('THE BEST',this.rating.TitleGame[0],this.menu.TitleGame[1]);
+        CTX.fillText('THE BEST', this.rating.TitleGame[0], this.menu.TitleGame[1]);
 
     }
     CTX.shadowOffsetX = 0;
     CTX.shadowOffsetY = 0;
 
-    if (UserInterface.checkFrame(UserInterface.linki[3])){
+    if (UserInterface.checkFrame(UserInterface.linki[3])) {
 
         CTX.fillStyle = UserInterface.linki[3].selectColor;
 
-    } else{
+    } else {
 
         CTX.fillStyle = UserInterface.linki[3].color;
     }
 
-    (this.view != 'mobile') ? CTX.font = 'bold 50px PIXI' : CTX.font = 'bold 40px PIXI';
+    (this.view != 'mobile') ? CTX.font = 'bold 50px PIXI': CTX.font = 'bold 40px PIXI';
     (this.view === 'mobile') && (this.rating.return[1] = 120);
 
-    CTX.fillText('RETURN',this.rating.return[0],this.rating.return[1]);
+    CTX.fillText('RETURN', this.rating.return[0], this.rating.return[1]);
     CTX.strokeStyle = 'yellow';
     (this.view === 'mobile') && (this.rating.StrokeRectCoords[1] = 140);
 
     CTX.strokeRect(this.rating.StrokeRectCoords[0],
-                    this.rating.StrokeRectCoords[1],
-                    this.rating.StrokeRectSize[0],
-                    this.rating.StrokeRectSize[1]);
+        this.rating.StrokeRectCoords[1],
+        this.rating.StrokeRectSize[0],
+        this.rating.StrokeRectSize[1]);
 
     CTX.fillStyle = 'black';
     (this.view === 'mobile') && (this.rating.RectCoords[1] = 140);
-    CTX.fillRect(this.rating.RectCoords[0],this.rating.RectCoords[1],
-                this.rating.RectSize[0],this.rating.RectSize[1]);
+    CTX.fillRect(this.rating.RectCoords[0], this.rating.RectCoords[1],
+        this.rating.RectSize[0], this.rating.RectSize[1]);
 
 
     CTX.textAlign = "left";
     CTX.font = 'bold 45px PIXI';
     CTX.fillStyle = 'yellow';
 
-    (this.view != 'mobile') && (CTX.fillText('NAME',this.rating.TitleName[0],
-                                            this.rating.TitleName[1]));
+    (this.view != 'mobile') && (CTX.fillText('NAME', this.rating.TitleName[0],
+        this.rating.TitleName[1]));
 
-    if (this.view === 'mobile'){
+    if (this.view === 'mobile') {
 
         CTX.textAlign = 'center';
-        CTX.fillText('NAME',this.settings.width/2.1,this.rating.TitleName[1]/1.3);
+        CTX.fillText('NAME', this.settings.width / 2.1, this.rating.TitleName[1] / 1.3);
     }
 
 
-    if (this.view != 'mobile' || this.viewDesktop === 'half-half'){
+    if (this.view != 'mobile' || this.viewDesktop === 'half-half') {
 
         CTX.fillStyle = 'yellow';
-        CTX.fillText('POINTS',this.rating.RectSize[0]-70,this.rating.TitlePoints[1]);
+        CTX.fillText('POINTS', this.rating.RectSize[0] - 70, this.rating.TitlePoints[1]);
 
     }
 
@@ -1809,22 +1827,22 @@ Draw.prototype.drawRatingList = function(load,game,UserInterface){
     CTX.font = 'bold 40px PIXI';
     CTX.fillStyle = 'yellow';
 
-    for (let i = 0; i < length; i++){
+    for (let i = 0; i < length; i++) {
 
         if (this.view === 'mobile') {
 
             CTX.textAlign = 'left';
-            this.rating.ratingListX[0] = this.rating.RectCoords[0]+10;
+            this.rating.ratingListX[0] = this.rating.RectCoords[0] + 10;
 
         }
 
-        CTX.fillText(`${i+1}. ` + load.startRecord[load.startRecord.length-(i+1)].name,
-                    this.rating.ratingListX[0],RecordsY);
+        CTX.fillText(`${i+1}. ` + load.startRecord[load.startRecord.length - (i + 1)].name,
+            this.rating.ratingListX[0], RecordsY);
 
-        if (this.view != 'mobile'  || this.viewDesktop === 'half-half'){
+        if (this.view != 'mobile' || this.viewDesktop === 'half-half') {
 
-            CTX.fillText(load.startRecord[load.startRecord.length-(i+1)].points,
-            this.rating.RectSize[0]-50,RecordsY);
+            CTX.fillText(load.startRecord[load.startRecord.length - (i + 1)].points,
+                this.rating.RectSize[0] - 50, RecordsY);
 
         }
 
@@ -1835,31 +1853,31 @@ Draw.prototype.drawRatingList = function(load,game,UserInterface){
     CTX.fillStyle = 'white';
     CTX.font = 'bold 14px Arial';
 
-    CTX.fillText('© 2019',this.menu.myName[0],this.menu.myName[1]);
+    CTX.fillText('© 2019', this.menu.myName[0], this.menu.myName[1]);
 
     CTX.fillStyle = 'white';
     CTX.font = 'bold 14px Arial';
-    CTX.fillText('v0.0.5',this.menu.version[0],this.menu.version[1]);
+    CTX.fillText('v0.0.5', this.menu.version[0], this.menu.version[1]);
 }
 
-Draw.prototype.gameOverView = function (gamer,UserInterface,game){
+Draw.prototype.gameOverView = function (gamer, UserInterface, game) {
 
     this.drawBuffer.ctxBuffer.save();
-      let CTX = this.drawBuffer.ctxBuffer; // short write
+    let CTX = this.drawBuffer.ctxBuffer; // short write
 
     CTX.fillStyle = 'grey';
     CTX.globalAlpha = 0.8;
-    CTX.fillRect(0, 0, this.settings.width, this.settings.height-75);
+    CTX.fillRect(0, 0, this.settings.width, this.settings.height - 75);
 
     CTX.fillStyle = 'red';
     CTX.textAlign = 'center';
     CTX.font = '100px PIXI';
-    if( (game.about.stageNumber >= 20) && (gamer.stat.health > 0) ){
-    CTX.fillText('W I N',this.gameOver.win[0],this.gameOver.win[1]);
+    if ((game.about.stageNumber >= 20) && (gamer.stat.health > 0)) {
+        CTX.fillText('W I N', this.gameOver.win[0], this.gameOver.win[1]);
 
     } else {
 
-        CTX.fillText('GAME OVER',this.gameOver.TitleCoords[0],this.gameOver.TitleCoords[1]);
+        CTX.fillText('GAME OVER', this.gameOver.TitleCoords[0], this.gameOver.TitleCoords[1]);
     }
 
     CTX.shadowColor = 'brown';
@@ -1869,30 +1887,30 @@ Draw.prototype.gameOverView = function (gamer,UserInterface,game){
     CTX.fillStyle = 'yellow';
     CTX.shadowColor = 'brown';
     CTX.fillText('Points: ' + gamer.stat.points, this.gameOver.Points[0],
-                this.gameOver.Points[1]);
+        this.gameOver.Points[1]);
 
-    CTX.fillText('Throws: ' + gamer.countThrow,this.gameOver.Throw[0],
-                this.gameOver.Throw[1]);
+    CTX.fillText('Throws: ' + gamer.countThrow, this.gameOver.Throw[0],
+        this.gameOver.Throw[1]);
 
-    CTX.fillText('Kills: ' + gamer.killCount,this.gameOver.killCount[0],
-                this.gameOver.killCount[1]);
+    CTX.fillText('Kills: ' + gamer.killCount, this.gameOver.killCount[0],
+        this.gameOver.killCount[1]);
 
-    if (UserInterface.checkFrame(UserInterface.linki[0])){
+    if (UserInterface.checkFrame(UserInterface.linki[0])) {
 
         CTX.fillStyle = UserInterface.linki[4].selectColor;
 
-        } else{
+    } else {
 
         CTX.fillStyle = UserInterface.linki[4].color;
 
-        }
+    }
 
     CTX.font = '50px PIXI';
-    CTX.fillText('MENU',this.gameOver.menu[0],this.gameOver.menu[1]);
+    CTX.fillText('MENU', this.gameOver.menu[0], this.gameOver.menu[1]);
     this.render(); // render game over
 }
 
-Draw.prototype.building = function(load,gamer,game){
+Draw.prototype.building = function (load, gamer, game) {
     // ---get main canvas---
     this.drawBuffer.canvasBuffer = document.createElement('canvas');
     this.drawBuffer.ctxBuffer = this.drawBuffer.canvasBuffer.getContext('2d');
@@ -1901,56 +1919,56 @@ Draw.prototype.building = function(load,gamer,game){
 
     let CTX = this.drawBuffer.ctxBuffer; // short write
 
-    if (this.view === 'mobile' && (this.viewMode === 'demo')){
+    if (this.view === 'mobile' && (this.viewMode === 'demo')) {
 
-         CTX.fillStyle = 'rgb(240,230,140)';
+        CTX.fillStyle = 'rgb(240,230,140)';
 
-        CTX.fillRect(this.settings.drawInX,this.settings.drawInY,
-                    this.settings.width,this.settings.height);
+        CTX.fillRect(this.settings.drawInX, this.settings.drawInY,
+            this.settings.width, this.settings.height);
 
-    } else{
+    } else {
 
         CTX.drawImage(load.TextureStorage[0],
-                    this.playGame.spriteTextureBorder[0],this.playGame.spriteTextureBorder[1],
-                    this.settings.textureW,this.settings.textureH,
-                    this.settings.drawInX,this.settings.drawInY,
-                    this.settings.textureW,this.settings.textureH);
+            this.playGame.spriteTextureBorder[0], this.playGame.spriteTextureBorder[1],
+            this.settings.textureW, this.settings.textureH,
+            this.settings.drawInX, this.settings.drawInY,
+            this.settings.textureW, this.settings.textureH);
 
-    CTX.drawImage(load.TextureStorage[0],
-                this.playGame.spriteTexture[0],this.playGame.spriteTexture[1],
-                this.settings.textureW,this.settings.textureH,
-                this.settings.drawInX,this.settings.drawInY,
-                this.settings.textureW,this.settings.textureH);
+        CTX.drawImage(load.TextureStorage[0],
+            this.playGame.spriteTexture[0], this.playGame.spriteTexture[1],
+            this.settings.textureW, this.settings.textureH,
+            this.settings.drawInX, this.settings.drawInY,
+            this.settings.textureW, this.settings.textureH);
 
 
-      //-----GATES----
-      // gate 1
+        //-----GATES----
+        // gate 1
 
-    CTX.drawImage(load.SpriteStorage[0], -14,190,85, 65,109, 0, 95, 65);
+        CTX.drawImage(load.SpriteStorage[0], -14, 190, 85, 65, 109, 0, 95, 65);
 
-      // gate 2
-    if ((game.about.state === 'play-animation') || (game.about.state === 'menu')){
+        // gate 2
+        if ((game.about.state === 'play-animation') || (game.about.state === 'menu')) {
 
-        if (this.settings.openGate !== -50){
+            if (this.settings.openGate !== -50) {
 
-            this.settings.openGate--;
+                this.settings.openGate--;
 
+            }
+
+            CTX.drawImage(load.SpriteStorage[0], -14, 190, 85, 65, 349, this.settings.openGate, 95, 65);
+
+        } else {
+
+            if (this.settings.openGate !== 0) {
+                this.settings.openGate++;
+            }
+
+            CTX.drawImage(load.SpriteStorage[0], -14, 190, 85, 65, 349, this.settings.openGate, 95, 65);
         }
+        // gate 3
+        CTX.drawImage(load.SpriteStorage[0], -14, 190, 85, 65, 588, 0, 95, 65);
 
-        CTX.drawImage(load.SpriteStorage[0],-14,190, 85, 65, 349, this.settings.openGate, 95, 65);
-
-    } else{
-
-        if (this.settings.openGate !== 0){
-            this.settings.openGate++;
-        }
-
-    CTX.drawImage(load.SpriteStorage[0],-14,190, 85, 65, 349,this.settings.openGate, 95, 65);
     }
-      // gate 3
-    CTX.drawImage(load.SpriteStorage[0],-14,190, 85, 65, 588, 0, 95, 65);
-
-}
 
     // Game panel
     let panel = this.drawBuffer.ctxBuffer.createLinearGradient(0, 0, 170, 0);
@@ -1958,34 +1976,34 @@ Draw.prototype.building = function(load,gamer,game){
     panel.addColorStop(0.5, "rgb(128,128,128)");
     panel.addColorStop(1, "rgb(169,169,169)");
     CTX.fillStyle = panel;
-    CTX.fillRect(this.playGame.gamePanelCoords[0],this.playGame.gamePanelCoords[1],
-                this.playGame.gamePanelSize[0],this.playGame.gamePanelSize[1]);
+    CTX.fillRect(this.playGame.gamePanelCoords[0], this.playGame.gamePanelCoords[1],
+        this.playGame.gamePanelSize[0], this.playGame.gamePanelSize[1]);
 
     CTX.strokeStyle = 'blue';
     CTX.lineWidth = 5;
-    (this.view === 'mobile') && (this.playGame.hpBarBoorderCoords[0] = this.settings.width/4);
+    (this.view === 'mobile') && (this.playGame.hpBarBoorderCoords[0] = this.settings.width / 4);
 
-    CTX.strokeRect(this.playGame.hpBarBoorderCoords[0],this.playGame.hpBarBoorderCoords[1],
-                this.playGame.hpBarBoorderSize[0],this.playGame.hpBarBoorderSize[1]);
+    CTX.strokeRect(this.playGame.hpBarBoorderCoords[0], this.playGame.hpBarBoorderCoords[1],
+        this.playGame.hpBarBoorderSize[0], this.playGame.hpBarBoorderSize[1]);
     CTX.fillStyle = 'crimson';
 
-    if (gamer.stat.health <= 0){
+    if (gamer.stat.health <= 0) {
 
-    CTX.fillRect(this.playGame.hpBarBoorderCoords[0]+2,this.playGame.hpBarBoorderCoords[1]+2,
-                0, 20);
+        CTX.fillRect(this.playGame.hpBarBoorderCoords[0] + 2, this.playGame.hpBarBoorderCoords[1] + 2,
+            0, 20);
 
-    } else{
+    } else {
 
-        CTX.fillRect(this.playGame.hpBarBoorderCoords[0]+2,this.playGame.hpBarBoorderCoords[1]+2,
-                    gamer.stat.health, 20);
+        CTX.fillRect(this.playGame.hpBarBoorderCoords[0] + 2, this.playGame.hpBarBoorderCoords[1] + 2,
+            gamer.stat.health, 20);
     }
 
     // HP bar
     CTX.fillStyle = 'white';
     CTX.font = 'bold 15px PIXI';
     (this.view != 'mobile') &&
-        CTX.fillText(gamer.stat.health + 'HP',this.playGame.hpBarSize[0],
-                    this.playGame.hpBarSize[1]);
+    CTX.fillText(gamer.stat.health + 'HP', this.playGame.hpBarSize[0],
+        this.playGame.hpBarSize[1]);
 
 
     // Lvl
@@ -1999,33 +2017,33 @@ Draw.prototype.building = function(load,gamer,game){
     CTX.shadowOffsetY = 0;
     // Points
     CTX.drawImage(load.SpriteStorage[0],
-                  this.playGame.PointsCoords[0],this.playGame.PointsCoords[1],
-                  this.playGame.PointsSize[0],this.playGame.PointsSize[1],
-                  this.playGame.PointsGetCoords[0],this.playGame.PointsGetCoords[1],
-                  this.playGame.PointsGetSize[0],this.playGame.PointsGetSize[1]);
+        this.playGame.PointsCoords[0], this.playGame.PointsCoords[1],
+        this.playGame.PointsSize[0], this.playGame.PointsSize[1],
+        this.playGame.PointsGetCoords[0], this.playGame.PointsGetCoords[1],
+        this.playGame.PointsGetSize[0], this.playGame.PointsGetSize[1]);
 
     CTX.fillStyle = 'gold';
     CTX.font = 'bold 27px PIXI';
-    CTX.fillText(gamer.stat.points,this.playGame.PointsTextCoords[0],
-                this.playGame.PointsTextCoords[1]);
+    CTX.fillText(gamer.stat.points, this.playGame.PointsTextCoords[0],
+        this.playGame.PointsTextCoords[1]);
 
-    CTX.drawImage(load.SpriteStorage[2],this.playGame.pauseButton[0],
-                this.playGame.pauseButton[1],20,20);
+    CTX.drawImage(load.SpriteStorage[2], this.playGame.pauseButton[0],
+        this.playGame.pauseButton[1], 20, 20);
 
-    if ((game.about.state === 'play') && (this.settings.countModal === 0)){
+    if ((game.about.state === 'play') && (this.settings.countModal === 0)) {
 
         CTX.fillStyle = 'black';
         CTX.globalAlpha = '0.8';
-        CTX.fillRect(0,0,this.settings.width, 100);
+        CTX.fillRect(0, 0, this.settings.width, 100);
         CTX.textAlign = 'center';
         CTX.fillStyle = 'white';
         CTX.font = 'PIXI 30px bold';
-        CTX.fillText('Move with the WASD keys',this.playGame.ModalTextWASD[0],
-                    this.playGame.ModalTextWASD[1]);
+        CTX.fillText('Move with the WASD keys', this.playGame.ModalTextWASD[0],
+            this.playGame.ModalTextWASD[1]);
         CTX.textAlign = 'center';
         CTX.fillStyle = 'lightblue';
         CTX.font = 'PIXI 20px bold';
-        CTX.fillText('Press any keys',this.playGame.ModalPress[0],
+        CTX.fillText('Press any keys', this.playGame.ModalPress[0],
                     this.playGame.ModalPress[1]);
 
     }
@@ -2033,27 +2051,27 @@ Draw.prototype.building = function(load,gamer,game){
     CTX.restore();
 }
 
-Draw.prototype.loadingRender = function(load){
+Draw.prototype.loadingRender = function (load) {
 
-    this.getCtx.ctx.fillRect(this.settings.drawInX,this.settings.drawInY,
-                            this.settings.width,this.settings.height);
+    this.getCtx.ctx.fillRect(this.settings.drawInX, this.settings.drawInY,
+        this.settings.width, this.settings.height);
     this.getCtx.ctx.fillStyle = 'grey';
     this.getCtx.ctx.textAlign = "center";
-    (this.view != 'mobile') ?  this.getCtx.ctx.font = '100px Aria bold' :
-                                this.getCtx.ctx.font = '45px Aria bold';
+    (this.view != 'mobile') ? this.getCtx.ctx.font = '100px Aria bold':
+        this.getCtx.ctx.font = '45px Aria bold';
 
-    this.getCtx.ctx.fillText('My project',this.settings.width/2,
-    this.settings.height/2);
+    this.getCtx.ctx.fillText('My project', this.settings.width / 2,
+                            this.settings.height / 2);
 
 };
 
-Draw.prototype.renderMouse = function(load,ul){
+Draw.prototype.renderMouse = function (load, ul) {
 
-    this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[0],255,192,
-                                        65,65,ul.coordsMouseX-32.5,ul.coordsMouseY-32.5,65,65);
-    }
+    this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[0], 255, 192,
+        65, 65, ul.coordsMouseX - 32.5, ul.coordsMouseY - 32.5, 65, 65);
+}
 
-Draw.prototype.buildingGetNameView = function(type,canvas){
+Draw.prototype.buildingGetNameView = function (type, canvas) {
 
     const inputName = type.createElement('input');
     const buttonCancel = type.createElement('input');
@@ -2070,12 +2088,12 @@ Draw.prototype.buildingGetNameView = function(type,canvas){
     buttonCancel.classList.add('cancelName');
 
     div.classList.add('center');
-    inputName.setAttribute('type','text');
-    inputName.setAttribute('maxlength','11');
+    inputName.setAttribute('type', 'text');
+    inputName.setAttribute('maxlength', '11');
     inputName.placeholder = 'NAME';
-    buttonSave.setAttribute('type','button');
+    buttonSave.setAttribute('type', 'button');
     buttonSave.value = 'SAVE';
-    buttonCancel.setAttribute('type','button');
+    buttonCancel.setAttribute('type', 'button');
     buttonCancel.value = 'NO';
 
     div.appendChild(inputName);
@@ -2084,43 +2102,43 @@ Draw.prototype.buildingGetNameView = function(type,canvas){
     modal.appendChild(div);
     bgModal.appendChild(modal);
 
-    type.body.insertBefore(bgModal,canvas);
+    type.body.insertBefore(bgModal, canvas);
 
 }
 
-Draw.prototype.deleteGetNameView = function(type){
+Draw.prototype.deleteGetNameView = function (type) {
 
     const modal = type.querySelector('.background-modal');
     modal.remove();
 }
 
 
-Draw.prototype.height = function(){
+Draw.prototype.height = function () {
 
-    if (window.screen.availHeight < 620){
+    if (window.screen.availHeight < 620) {
 
         this.view = 'mobile';
 
-    return (window.screen.availHeight);
-    } else{
+        return (window.screen.availHeight);
+    } else {
 
         return 620;
 
     }
 }
 
-Draw.prototype.width = function(){
+Draw.prototype.width = function () {
 
-    if (window.screen.availWidth < 800){
+    if (window.screen.availWidth < 800) {
 
         ((760 < window.screen.availWidth) && (window.screen.availWidth < 800)) &&
-                                                (this.viewDesktop ='half-half');
+        (this.viewDesktop = 'half-half');
         (window.screen.availWidth < 760) && (this.viewMode = 'demo');
         this.view = 'mobile';
 
-    return window.screen.availWidth-10;
+        return window.screen.availWidth - 10;
 
-    } else{
+    } else {
 
         return 800;
 
