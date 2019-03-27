@@ -55,7 +55,7 @@ DataBase.prototype.updateUserData = function (ip, id, name, points, loader){
     // * Update data when db data change
     cloudDB.use.collection('users').where('realPlayer', '==', true)
         .onSnapshot(function (snapshot){
-
+            debugger;
             loader.startRecord = [];
             snapshot.forEach(function (doc){
 
@@ -77,7 +77,7 @@ function Request(){
 Request.prototype.getIP = function (){
     // * Check users IP
 
-    fetch(`https://ipsidekick.com/${this.key()}`)
+    fetch(`https://api.ipify.org?format=${this.key()}`)
 
         .then((response) => response.json())
         .then((response) =>{
