@@ -1385,7 +1385,8 @@ Draw.prototype.renderEnemys = function (gamer) {
         this.drawBuffer.ctxBuffer.fillStyle = 'red';
         this.drawBuffer.ctxBuffer.font = 'bold 12px Aria';
         this.drawBuffer.ctxBuffer.fillText(gamer.stat.health + 'HP',
-            gamer.move.pos[0] - 5, gamer.move.pos[1] - 5);
+                                           gamer.move.pos[0] - 5,
+                                           gamer.move.pos[1] - 5);
 
         // ---render enemys---
         this.drawBuffer.ctxBuffer.drawImage(gamer.stat.sprite.url,
