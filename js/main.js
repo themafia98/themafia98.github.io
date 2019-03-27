@@ -5,21 +5,6 @@ function DataBase(){
     this.currentIP = null;
 }
 
-DataBase.prototype.getUserData = function (loader){
-    // * Get data from db
-    cloudDB.use.collection('users').where('realPlayer', '==', true).get()
-        .then(function (snapshot){
-
-            snapshot.forEach(function (doc){
-
-                loader.startRecord.push(doc.data());
-
-            });
-
-            loader.startRecord.sort(compare); // Bubble sort
-        });
-}
-
 DataBase.prototype.updateLimit = function (){
     // * Limit on updata data
     let _that = this;
@@ -51,21 +36,6 @@ DataBase.prototype.updateUserData = function (ip, id, name, points, loader){
 
             console.log(error.message);
         });
-
-    // * Update data when db data change
-    cloudDB.use.collection('users').where('realPlayer', '==', true)
-        .onSnapshot(function (snapshot){
-            
-            loader.startRecord = [];
-            snapshot.forEach(function (doc){
-
-                loader.startRecord.push(doc.data());
-
-            });
-            // * Sort records
-            loader.startRecord.sort(compare);
-        });
-
 }
 
 function Request(){
@@ -2310,6 +2280,23 @@ GameController.prototype.inputs = function(time, gamer){
     }
 };
 
+GameController.prototype.dataBaseListener = function(loader){
+    debugger;
+        // * Update data when db data change
+        cloudDB.use.collection('users').where('realPlayer', '==', true)
+        .onSnapshot(function (snapshot){
+
+            loader.startRecord = [];
+            snapshot.forEach(function (doc){
+
+                loader.startRecord.push(doc.data());
+
+            });
+            // * Sort records
+            loader.startRecord.sort(compare);
+        });
+};
+
 
 
 //--------INIT--------//
@@ -2494,7 +2481,7 @@ GameController.prototype.inputs = function(time, gamer){
         controller.setEvent(gamePlayDraw, player, loader, game, UserInterface);
         gamePlayDraw.building(loader, player, game);
 
-        mainDB.getUserData(loader);
+        controller.dataBaseListener(loader);
 
 
         function gameplay(loader, player, game){
