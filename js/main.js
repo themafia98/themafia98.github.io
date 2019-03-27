@@ -1283,7 +1283,9 @@ function Draw() {
         RectPauseSize: [this.settings.width / 1.5, this.settings.height / 1.4],
         TextStageName: [this.settings.width / 2.1, 100],
         Notification: [this.settings.width / 2 - 5, 135],
-        Menu: [this.settings.width / 2.1, 450]
+        Menu: [this.settings.width / 2.1, 450],
+        pauseLink: [350,420],
+        sizeLinkPause: [100, 30]
     }
 
     _that.menu = {
@@ -1292,7 +1294,10 @@ function Draw() {
         play: [this.settings.width / 2, this.settings.height / 2.5],
         rating: [this.settings.width / 2, this.settings.height / 1.8],
         myName: [40, this.settings.height - 20],
-        version: [this.settings.width - 40, this.settings.height - 20]
+        version: [this.settings.width - 40, this.settings.height - 20],
+        sizeLinkPlay: [200,80],
+        coordsLinkRating: [ (this.settings.width / 2) - 120, (this.settings.height / 1.8) - 40],
+        sizeLinkRating: [250, 80]
     }
 
     _that.rating = {
@@ -1305,7 +1310,9 @@ function Draw() {
         TitleName: [this.settings.width / 8, 235],
         TitlePoints: [this.settings.width / 1.45, 235],
         ratingListX: [this.settings.width / 8, this.settings.height - 50],
-        ratingListPointsX: [this.settings.width / 8, this.settings.height - 50]
+        ratingListPointsX: [this.settings.width / 8, this.settings.height - 50],
+        returnLinkCoords: [(this.settings.width / 2) - 60, 110],
+        returnLinkSize: [ 110, 70]
     }
 
     _that.gameOver = {
@@ -1314,7 +1321,9 @@ function Draw() {
         Points: [this.settings.width / 2, 150],
         Throw: [this.settings.width / 2, 200],
         killCount: [this.settings.width / 2, 250],
-        menu: [this.settings.width / 2.02, 450]
+        menu: [this.settings.width / 2.02, 450],
+        menuLinkCoords: [350,430],
+        menuLinkSize: [110, 30]
     }
 
     _that.playGame = {
@@ -1335,6 +1344,7 @@ function Draw() {
         ModalPress: [this.settings.width / 2, 65],
         Audio: [this.settings.width, 460],
         pauseButton: [this.settings.width - 40, this.settings.height - 48],
+        pauseLinkSize: [50, 50]
     }
 
     _that.loading = {
@@ -1359,8 +1369,9 @@ Draw.prototype.render = function () {
     // -----All render-----
 
     this.getCtx.ctx.drawImage(this.drawBuffer.canvasBuffer,
-        this.settings.drawInX, this.settings.drawInY,
-        this.settings.width, this.settings.height);
+                              this.settings.drawInX, this.settings.drawInY,
+                              this.settings.width, this.settings.height);
+
     this.drawBuffer.ctxBuffer.restore();
 };
 
@@ -1375,12 +1386,16 @@ Draw.prototype.renderEnemys = function (gamer) {
         this.drawBuffer.ctxBuffer.font = 'bold 12px Aria';
         this.drawBuffer.ctxBuffer.fillText(gamer.stat.health + 'HP',
             gamer.move.pos[0] - 5, gamer.move.pos[1] - 5);
-        // render enemys
+
+        // ---render enemys---
         this.drawBuffer.ctxBuffer.drawImage(gamer.stat.sprite.url,
-            gamer.stat.sprite.x, gamer.stat.sprite.pos[1],
-            gamer.stat.sprite.size[0], gamer.stat.sprite.size[1],
-            gamer.move.pos[0], gamer.move.pos[1],
-            gamer.stat.sprite.size[1], gamer.stat.sprite.size[1]);
+                                            gamer.stat.sprite.x,
+                                            gamer.stat.sprite.pos[1],
+                                            gamer.stat.sprite.size[0],
+                                            gamer.stat.sprite.size[1],
+                                            gamer.move.pos[0], gamer.move.pos[1],
+                                            gamer.stat.sprite.size[1],
+                                            gamer.stat.sprite.size[1]);
 
     }
 }
@@ -1394,11 +1409,11 @@ Draw.prototype.renderItems = function (load) {
             item.sprite.x = item.sprite.render(); // render sprite coins
             // render coins
             this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
-                item.sprite.x, item.sprite.pos[1],
-                item.sprite.size[0], item.sprite.size[1],
-                item.pos[0], item.pos[1],
-                this.items.spriteItemSize[0],
-                this.items.spriteItemSize[1]);
+                                                item.sprite.x, item.sprite.pos[1],
+                                                item.sprite.size[0], item.sprite.size[1],
+                                                item.pos[0], item.pos[1],
+                                                this.items.spriteItemSize[0],
+                                                this.items.spriteItemSize[1]);
         }
     });
 
@@ -1408,11 +1423,11 @@ Draw.prototype.renderItems = function (load) {
 
             item.sprite.x = item.sprite.render(); // render sprite eat
             this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
-                item.sprite.x, item.sprite.pos[1],
-                item.sprite.size[0], item.sprite.size[1],
-                item.pos[0], item.pos[1],
-                this.items.spriteItemSize[0],
-                this.items.spriteItemSize[1]);
+                                                item.sprite.x, item.sprite.pos[1],
+                                                item.sprite.size[0], item.sprite.size[1],
+                                                item.pos[0], item.pos[1],
+                                                this.items.spriteItemSize[0],
+                                                this.items.spriteItemSize[1]);
         }
     });
 
@@ -1421,12 +1436,13 @@ Draw.prototype.renderItems = function (load) {
         if (item.lucky) {
 
             item.sprite.x = item.sprite.render(); // render sprite eat
+
             this.drawBuffer.ctxBuffer.drawImage(item.settingsItems.sprite.url,
-                item.sprite.x, item.sprite.pos[1],
-                item.sprite.size[0], item.sprite.size[1],
-                item.pos[0], item.pos[1],
-                this.items.spriteItemSize[0],
-                this.items.spriteItemSize[1]);
+                                                item.sprite.x, item.sprite.pos[1],
+                                                item.sprite.size[0], item.sprite.size[1],
+                                                item.pos[0], item.pos[1],
+                                                this.items.spriteItemSize[0],
+                                                this.items.spriteItemSize[1]);
         }
     });
 }
@@ -1436,11 +1452,15 @@ Draw.prototype.renderPlayer = function (gamer, game) {
     if (game.fade <= 0) {
 
         gamer.stat.sprite.x = gamer.stat.sprite.render(); // update sprite player
+
         this.drawBuffer.ctxBuffer.drawImage(gamer.stat.sprite.url,
-            gamer.stat.sprite.x, gamer.stat.sprite.pos[1],
-            gamer.stat.sprite.size[0], gamer.stat.sprite.size[1],
-            gamer.move.pos[0], gamer.move.pos[1],
-            gamer.stat.sprite.size[1], gamer.stat.sprite.size[1]);
+                                            gamer.stat.sprite.x,
+                                            gamer.stat.sprite.pos[1],
+                                            gamer.stat.sprite.size[0],
+                                            gamer.stat.sprite.size[1],
+                                            gamer.move.pos[0], gamer.move.pos[1],
+                                            gamer.stat.sprite.size[1],
+                                            gamer.stat.sprite.size[1]);
     }
 }
 
@@ -1453,23 +1473,34 @@ Draw.prototype.fadeIn = function (game, load) {
     let perc = 100 / cof;
 
     this.drawBuffer.ctxBuffer.globalAlpha = game.fade;
+
     this.drawBuffer.ctxBuffer.drawImage(load.SpriteStorage[1],
-        this.settings.drawInX, this.settings.drawInX,
-        this.settings.width, this.settings.height);
+                                        this.settings.drawInX,
+                                        this.settings.drawInX,
+                                        this.settings.width,
+                                        this.settings.height);
 
     this.drawBuffer.ctxBuffer.strokeStyle = 'gold';
     this.drawBuffer.ctxBuffer.lineWidth = 2;
     this.drawBuffer.ctxBuffer.strokeRect(this.settings.width / 4, this.settings.height / 2.5,
-        this.settings.width / 2, this.settings.height / 6);
+                                         this.settings.width / 2,
+                                         this.settings.height / 6);
+
     this.drawBuffer.ctxBuffer.fillStyle = 'brown';
     this.drawBuffer.ctxBuffer.fillRect(this.settings.width / 4, this.settings.height / 2.5,
-        game.loadingPercent, this.settings.height / 6);
+                                       game.loadingPercent, this.settings.height / 6);
+
     this.drawBuffer.ctxBuffer.font = '30px PIXI';
     this.drawBuffer.ctxBuffer.textAlign = 'center';
     this.drawBuffer.ctxBuffer.fillStyle = 'white';
-    this.drawBuffer.ctxBuffer.fillText(`Rendering... ${perc.toFixed(1)} %`, this.settings.width / 2, this.settings.height / 2);
+
+    this.drawBuffer.ctxBuffer.fillText(`Rendering... ${perc.toFixed(1)} %`,
+                                        this.settings.width / 2,
+                                        this.settings.height / 2);
+
     (game.loadingPercent < this.settings.width / 2) && (game.loadingPercent += 2.5);
     (game.loadingPercent >= this.settings.width / 2) && (game.fade -= 0.05);
+
     this.drawBuffer.ctxBuffer.restore();
 }
 
@@ -1481,13 +1512,13 @@ Draw.prototype.renderEnemyBulls = function (bull) {
     this.drawBuffer.ctxBuffer.restore(); // restove ctx
 
     this.drawBuffer.ctxBuffer.drawImage(bull.bull.bullStorage[0].url,
-        bull.bull.bullStorage[0].pos[0],
-        bull.bull.bullStorage[0].pos[1],
-        bull.bull.bullStorage[0].size[0],
-        bull.bull.bullStorage[0].size[1],
-        bulls.pos[0], bulls.pos[1],
-        this.items.spriteItemSize[0],
-        this.items.spriteItemSize[1]);
+                                        bull.bull.bullStorage[0].pos[0],
+                                        bull.bull.bullStorage[0].pos[1],
+                                        bull.bull.bullStorage[0].size[0],
+                                        bull.bull.bullStorage[0].size[1],
+                                        bulls.pos[0], bulls.pos[1],
+                                        this.items.spriteItemSize[0],
+                                        this.items.spriteItemSize[1]);
 
     this.render(); // render bullets
     this.drawBuffer.ctxBuffer.restore(); // restove ctx
@@ -1590,8 +1621,9 @@ Draw.prototype.pauseMenuView = function (game, gamer, UserInterface, load) {
 
         CTX.strokeStyle = 'gold';
         CTX.globalAlpha = 0.9;
+
         CTX.strokeRect(this.pause.RectPause[0] + 10, this.pause.RectPause[1] + 10,
-            this.pause.RectPauseSize[0] - 20, this.pause.RectPauseSize[1] - 20);
+                       this.pause.RectPauseSize[0] - 20, this.pause.RectPauseSize[1] - 20);
 
         CTX.fillStyle = 'yellow';
         CTX.textAlign = 'center';
@@ -1608,17 +1640,20 @@ Draw.prototype.pauseMenuView = function (game, gamer, UserInterface, load) {
         CTX.shadowOffsetY = 3;
         CTX.font = '25px PIXI';
         CTX.fillText('If you leave the game, all saves will be lost.', this.pause.Notification[0],
-            this.pause.Notification[1]);
+                     this.pause.Notification[1]);
+
         CTX.restore();
         CTX.save();
+
         CTX.fillStyle = 'yellow';
         CTX.shadowColor = 'brown';
         CTX.textAlign = 'center';
         CTX.font = '35px PIXI';
+
         CTX.fillText('Throws: ' + gamer.countThrow, this.gameOver.Throw[0] - 20,
-            this.gameOver.Throw[1]);
+                     this.gameOver.Throw[1]);
         CTX.fillText('Kills: ' + gamer.killCount, this.gameOver.killCount[0] - 20,
-            this.gameOver.killCount[1] + 10);
+                     this.gameOver.killCount[1] + 10);
 
         if (UserInterface.checkFrame(UserInterface.linki[0])) { // menu link
 
@@ -1646,12 +1681,12 @@ Draw.prototype.DrawMenu = function (load, game, UserInterface, gamer) {
 
     this.menu.background = CTX.createPattern(load.SpriteStorage[3], 'repeat');
     CTX.fillRect(this.settings.drawInX, this.settings.drawInY,
-        this.settings.width, this.settings.height);
+                 this.settings.width, this.settings.height);
 
     CTX.fillStyle = this.menu.background;
 
     CTX.fillRect(this.settings.drawInX, this.settings.drawInY,
-        this.settings.width, this.settings.height);
+                 this.settings.width, this.settings.height);
 
     CTX.fillStyle = 'rgb(255,215,0)';
     CTX.shadowColor = 'brown';
@@ -1750,11 +1785,11 @@ Draw.prototype.drawRatingList = function (load, game, UserInterface) {
 
     CTX.fillStyle = this.menu.background;
     CTX.fillRect(this.settings.drawInX, this.settings.drawInY,
-        this.settings.width, this.settings.height);
+                 this.settings.width, this.settings.height);
 
     CTX.fillStyle = this.menu.background;
     CTX.fillRect(this.settings.drawInX, this.settings.drawInY,
-        this.settings.width, this.settings.height);
+                 this.settings.width, this.settings.height);
 
     CTX.fillStyle = 'rgb(255,215,0)';
     CTX.shadowColor = 'brown';
@@ -2033,7 +2068,7 @@ Draw.prototype.loadingRender = function (load) {
     this.getCtx.ctx.font = '45px Aria bold';
 
     this.getCtx.ctx.fillText('My project', this.settings.width / 2,
-        this.settings.height / 2);
+                             this.settings.height / 2);
 };
 
 Draw.prototype.renderMouse = function (load, ul) {
@@ -2139,38 +2174,32 @@ GameController.prototype.setEvent =  function(location, gamer, load, game, UserI
 
         if (e.target.className === 'name') return 0;
 
-        if ((location.settings.countModal === 0) && (game.about.state === 'play')){
+       ((location.settings.countModal === 0) && (game.about.state === 'play')) &&
+        (location.settings.countModal++);
 
-            location.settings.countModal++;
-
-        } else if (!(game.about.state === 'play' || game.about.state === 'pause')){
-
+        if (!(game.about.state === 'play' || game.about.state === 'pause')){
             e.preventDefault();
-        } else{
 
-            if (_that.inputState.ESCAPE){
+        } else if (_that.inputState.ESCAPE){
 
-                game.about.state = 'play';
+            game.about.state = 'play';
 
-                return _that.setKeyState(e.which, false);
-            } else{
+            return _that.setKeyState(e.which, false);
 
-                return _that.setKeyState(e.which, true);
-            }
-        }
-    };
+        } else return _that.setKeyState(e.which, true);
+    }
 
     function moveFalse(e){
-
+        debugger;
         if (!(game.about.state === 'play' || game.about.state === 'pause')){
 
             e.preventDefault();
         } else{
 
             if (_that.inputState.ESCAPE) return;
-            else{
+            else {
 
-                return _that.setKeyState(e.which, false);
+            return _that.setKeyState(e.which, false);
             }
         }
     };
@@ -2194,8 +2223,9 @@ GameController.prototype.setEvent =  function(location, gamer, load, game, UserI
     function clickOnCanvas(e){
 
         if (game.about.state === 'loading' || game.about.state === 'play-animation'){
+
             e.preventDefault();
-            return 0;
+            return;
         }
 
 
@@ -2205,6 +2235,7 @@ GameController.prototype.setEvent =  function(location, gamer, load, game, UserI
 
             if ((UserInterface.checkFrame(command[i])) &&
                 (command[i].Name === game.about.state)){
+
                 command[i].selectName = true;
 
             } else command[i].selectName = false;
@@ -2220,11 +2251,12 @@ GameController.prototype.setEvent =  function(location, gamer, load, game, UserI
 
                 _that.inputState[elem] = false;
             }
+
         } else{
 
             if ((_that.inputState.ESCAPE) || (UserInterface.linki[5].selectName)){
 
-                return 0;
+                return;
             } else{
 
                 gamer.stat.bullets.useSkill(load, gamer, UserInterface);
@@ -2240,12 +2272,10 @@ GameController.prototype.setEvent =  function(location, gamer, load, game, UserI
 
             getName(inputName.value, gamer);
             location.deleteGetNameView(document, e.target);
-        } else if (e.target.className === 'cancelName'){
-            location.deleteGetNameView(document, e.target);
-        }
 
-        if (e.target.className === 'ZoomUP'){
-            location.transformCanvasViewUp(canvas);
+        } else if (e.target.className === 'cancelName'){
+
+            location.deleteGetNameView(document, e.target);
         }
 
     };
@@ -2338,7 +2368,7 @@ GameController.prototype.inputs = function(time, gamer){
 
         // Object init
         const game = new Game();
-        const gamePlayDraw = new Draw(); 
+        const gamePlayDraw = new Draw();
         const controller = new GameController();
         const UserInterface = new UI();
         const loader = new Loader();
@@ -2353,46 +2383,70 @@ GameController.prototype.inputs = function(time, gamer){
         gamePlayDraw.getCanvas.canvas.setAttribute('height', gamePlayDraw.settings.height);
 
         (gamePlayDraw.view === 'mobile') && (gamePlayDraw.getCanvas.canvas.classList.add('scale'));
-        // (gamePlayDraw.view != 'mobile') && (gamePlayDraw.buildScale(document,gamePlayDraw.getCanvas.canvas));
 
         // links
 
         if (gamePlayDraw.view != 'mobile'){
 
-            UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
-            UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0] - 85,
-                gamePlayDraw.menu.play[1] - 45, 200, 80));
+            UserInterface.linki.push(new Links('PAUSE', 'pause',
+                                                gamePlayDraw.pause.pauseLink[0],
+                                                gamePlayDraw.pause.pauseLink[1],
+                                                gamePlayDraw.pause.sizeLinkPause[0],
+                                                gamePlayDraw.pause.sizeLinkPause[1]));
 
-            UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0] - 120,
-                gamePlayDraw.menu.rating[1] - 40, 250, 80));
+            UserInterface.linki.push(new Links('PLAY', 'menu',
+                                                gamePlayDraw.menu.play[0] - 85,
+                                                gamePlayDraw.menu.play[1] - 45,
+                                                gamePlayDraw.menu.sizeLinkPlay[0],
+                                                gamePlayDraw.menu.sizeLinkPlay[1]));
 
-            UserInterface.linki.push(new Links('RETURN', 'rating', (gamePlayDraw.settings.width / 2) - 60,
-                110, 110, 70));
+            UserInterface.linki.push(new Links('RATING', 'menu',
+                                                gamePlayDraw.menu.coordsLinkRating[0],
+                                                gamePlayDraw.menu.coordsLinkRating[1],
+                                                gamePlayDraw.menu.sizeLinkRating[0],
+                                                gamePlayDraw.menu.sizeLinkRating[1]));
 
-            UserInterface.linki.push(new Links('MENU', 'wait', 350,
-                430, 110, 30));
+            UserInterface.linki.push(new Links('RETURN', 'rating',
+                                                gamePlayDraw.rating.returnLinkCoords[0],
+                                                gamePlayDraw.rating.returnLinkCoords[1],
+                                                gamePlayDraw.rating.returnLinkSize[0],
+                                                gamePlayDraw.rating.returnLinkSize[1]));
 
-            UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760,
-                570, 50, 50));
+            UserInterface.linki.push(new Links('MENU', 'wait',
+                                                gamePlayDraw.gameOver.menuLinkCoords[0],
+                                                gamePlayDraw.gameOver.menuLinkCoords[1],
+                                                gamePlayDraw.gameOver.menuLinkSize[0],
+                                                gamePlayDraw.gameOver.menuLinkSize[1]));
+
+            UserInterface.linki.push(new Links('PAUSE-MENU', 'play',
+                                                gamePlayDraw.playGame.pauseButton[0],
+                                                gamePlayDraw.playGame.pauseButton[1],
+                                                gamePlayDraw.playGame.pauseLinkSize[0],
+                                                gamePlayDraw.playGame.pauseLinkSize[1]));
+
         } else{
-            UserInterface.linki.push(new Links('PAUSE', 'pause', 350, 420, 100, 30));
 
-            UserInterface.linki.push(new Links('PLAY', 'menu', gamePlayDraw.menu.play[0] - 85,
-                gamePlayDraw.menu.play[1] - 45, 200, 80));
+            UserInterface.linki.push(new Links('PAUSE', 'pause',
+                                                gamePlayDraw.pause.pauseLink[0],
+                                                gamePlayDraw.pause.pauseLink[1],
+                                                100, 30));
 
-            UserInterface.linki.push(new Links('RATING', 'menu', gamePlayDraw.menu.rating[0] - 120,
-                gamePlayDraw.menu.rating[1] - 40, 250, 80));
+            UserInterface.linki.push(new Links('PLAY', 'menu',
+                                                gamePlayDraw.menu.play[0] - 85,
+                                                gamePlayDraw.menu.play[1] - 45,
+                                                200, 80));
 
-            UserInterface.linki.push(new Links('RETURN', 'rating', gamePlayDraw.rating.return[0] - 40,
-                100, 110, 70));
+            UserInterface.linki.push(new Links('RATING', 'menu',
+                                                gamePlayDraw.menu.coordsLinkRating[0],
+                                                gamePlayDraw.menu.coordsLinkRating[1],
+                                                250, 80));
 
-            UserInterface.linki.push(new Links('MENU', 'wait', 350,
-                430, 110, 30));
-
-            UserInterface.linki.push(new Links('PAUSE-MENU', 'play', 760,
-                570, 50, 50));
+            UserInterface.linki.push(new Links('RETURN', 'rating',
+                                                gamePlayDraw.rating.return[0] - 40,
+                                                gamePlayDraw.rating.returnLinkCoords[1]-10,
+                                                gamePlayDraw.rating.returnLinkSize[0],
+                                                gamePlayDraw.rating.returnLinkSize[1]));
         }
-
 
         loader.loading('Image', 'img/texture.png', 'texture');
         loader.loading('Image', 'img/sheet_objects_heroes.png', 'sprite');
@@ -2436,64 +2490,64 @@ GameController.prototype.inputs = function(time, gamer){
 
         function linkers(loader, player){
 
+            (UserInterface.linki.slice(1,UserInterface.linki.length)
+            .some ((link) => link.selectName)) && (loader.SoundsStorage[13].play());
 
+            (UserInterface.linki[1].selectName) &&
+            (game.startGameAnimation(loader, player, UserInterface.linki[1]));
 
-            if (UserInterface.linki[1].selectName){
+            (UserInterface.linki[2].selectName) &&
+            (game.ratingGame(UserInterface.linki[2]));
 
-                loader.SoundsStorage[13].play();
-                game.startGameAnimation(loader, player, UserInterface.linki[1]);
-            }
-            if (UserInterface.linki[2].selectName){
+            (UserInterface.linki[3].selectName) &&
+            game.mainMenu(UserInterface.linki[3]);
 
-                loader.SoundsStorage[13].play();
-                game.ratingGame(UserInterface.linki[2]);
-            }
+            ((gamePlayDraw.viewMode != 'demo') && (UserInterface.linki[4].selectName)) &&
+            game.mainMenu(UserInterface.linki[4]);
 
-            if (UserInterface.linki[3].selectName){
-
-                loader.SoundsStorage[13].play();
-                game.mainMenu(UserInterface.linki[3]);
-            }
-
-            if (UserInterface.linki[4].selectName){
-
-                loader.SoundsStorage[13].play();
-                game.mainMenu(UserInterface.linki[4]);
-            }
-
-            if ((gamePlayDraw.viewMode != 'demo') && UserInterface.linki[5].selectName){
-
-                loader.SoundsStorage[13].play();
-                game.pause(UserInterface.linki[5]);
-            }
+            ((gamePlayDraw.viewMode != 'demo') && (UserInterface.linki[5].selectName)) &&
+            (game.pause(UserInterface.linki[5],controller.inputState.ESCAPE));
 
         }
 
 
         function menu(loader, player){
 
-            if (game.about.state === 'menu'){
+            if (!(game.about.state === 'menu')) return;
 
                 player.setHealth(200);
                 game.setRequstCount(0);
                 loader.SoundsStorage[2].pause();
                 loader.SoundsStorage[2].currentTime = 0;
-            }
         }
+
+        (!localStorage.name) &&
+            (gamePlayDraw.buildingGetNameView(document, gamePlayDraw.getCanvas.canvas));
+
+
+        let timer = setTimeout(() =>{
+
+            game.about.state = 'menu';
+            gameLoop = requestAnimationFrame(loop);
+        }, 3000);
+
+        controller.setEvent(gamePlayDraw, player, loader, game, UserInterface);
+        gamePlayDraw.building(loader, player, game);
+
+        mainDB.getUserData(loader);
+
 
         function gameplay(loader, player, game){
 
-            if (game.about.state === 'play-animation'){
+            (game.about.state === 'play-animation') &&
+            (gamePlayDraw.building(loader, player, game));
 
-                gamePlayDraw.building(loader, player, game);
-            }
             if ((game.about.state === 'play') && !(loader.enemy.length)){
 
                 loader.SoundsStorage[10].currentTime = 0;
                 loader.SoundsStorage[10].play();
 
                 (game.about.stageNumber >= 20) && (player.setHealth(0));
-
 
                 if (game.about.stageNumber >= 10){
 
@@ -2515,31 +2569,26 @@ GameController.prototype.inputs = function(time, gamer){
 
         function buildTexture(game, loader, player){
 
-            if ((game.about.state === 'play') ||
-                (game.about.state === 'wait')){
-
                 (game.about.state === 'play') && (calculate(player));
-                gamePlayDraw.building(loader, player, game);
-            }
+
+                ((game.about.state === 'play') || (game.about.state === 'wait')) &&
+                (gamePlayDraw.building(loader, player, game))
         }
 
         function pauseCheck(game, controller){
-            if ((game.about.state === 'pause') && !(controller.inputState.ESCAPE)){
 
-                controller.inputState.ESCAPE = true;
-            }
+            ((game.about.state === 'pause') && !(controller.inputState.ESCAPE)) &&
+            (controller.inputState.ESCAPE = true);
         }
 
         function death(game, player, loader){
 
-            if ((game.about.state === 'wait') &&
-                (game.about.requstCount === 0) &&
+            if ((game.about.state === 'wait') &&(game.about.requstCount === 0) &&
                 (player.stat.health <= 0)){
 
                 (localStorage.name) && (player.stat.gamerName = localStorage.name);
-
                 !(localStorage.name) && (player.stat.gamerName = 'player' +
-                    (Math.random().toFixed(3)).toString());
+                                        (Math.random().toFixed(3)).toString());
 
                 let id = '_id' + loader.startRecord.length;
 
@@ -2561,20 +2610,6 @@ GameController.prototype.inputs = function(time, gamer){
                 game.about.requstCount++;
             }
         }
-
-        if (!localStorage.name)
-            gamePlayDraw.buildingGetNameView(document, gamePlayDraw.getCanvas.canvas);
-
-
-        let timer = setTimeout(() =>{
-            game.about.state = 'menu';
-            gameLoop = requestAnimationFrame(loop);
-        }, 3000);
-
-        controller.setEvent(gamePlayDraw, player, loader, game, UserInterface);
-        gamePlayDraw.building(loader, player, game);
-
-        mainDB.getUserData(loader);
 
         function loop(){
 
@@ -2600,10 +2635,8 @@ GameController.prototype.inputs = function(time, gamer){
             lastTime = now;
             requestAnimationFrame(loop);
         }
-    } // main()
-    return application ={
-        init: main,
     }
+    return application ={ init: main }
 })();
 
 application.init();
