@@ -897,12 +897,12 @@ function updateCreeps(time, gamer, load, game){
 
                 load.SoundsStorage[5].currentTime = 0;
                 load.SoundsStorage[5].play();
+                gamer.stat.sprite.pos[0] = 956;
                 gamer.stat.health--;
                 gamer.move.pos[0, 1]++;
 
                 // set start sprite frame
                 resetSprite = setTimeout(() =>{
-
                     gamer.stat.sprite.pos[0] = 700;
 
                 }, 0);
