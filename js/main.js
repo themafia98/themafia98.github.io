@@ -55,7 +55,7 @@ DataBase.prototype.updateUserData = function (ip, id, name, points, loader){
     // * Update data when db data change
     cloudDB.use.collection('users').where('realPlayer', '==', true)
         .onSnapshot(function (snapshot){
-            debugger;
+            
             loader.startRecord = [];
             snapshot.forEach(function (doc){
 
@@ -270,8 +270,7 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
                     game.essence.essenceSettings.birds.frameCount,
                     game.essence.essenceSettings.birds.frameArray,
                     game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
-                    load.SoundsStorage[7]
-                    );
+                    load.SoundsStorage[7]);
             }
 
         } else if (game.about.stageNumber >= 10){
@@ -291,8 +290,7 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
                     game.essence.essenceSettings.bossExtra.frameCount,
                     game.essence.essenceSettings.bossExtra.frameArray,
                     game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
-                    load.SoundsStorage[8]
-                );
+                    load.SoundsStorage[8]);
 
             }
         }
@@ -314,8 +312,7 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
                     game.essence.essenceSettings.birds.frameCount,
                     game.essence.essenceSettings.birds.frameArray,
                     game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
-                    load.SoundsStorage[7]
-                );
+                    load.SoundsStorage[7]);
 
             }
 
@@ -334,8 +331,7 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
                     game.essence.essenceSettings.boss.frameCount,
                     game.essence.essenceSettings.boss.frameArray,
                     game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
-                    load.SoundsStorage[6]
-                );
+                    load.SoundsStorage[6]);
 
             }
         } else if (game.about.stageNumber > 15){
@@ -355,8 +351,7 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
                     game.essence.essenceSettings.bossExtra.frameCount,
                     game.essence.essenceSettings.bossExtra.frameArray,
                     game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
-                    load.SoundsStorage[8]
-                );
+                    load.SoundsStorage[8]);
 
             }
         }
@@ -629,8 +624,10 @@ Enemy.prototype.createEnemy = function (load, hp, damage, name, type,
                                         frameCount, frameGo, posX, posY, music){
 
     let spriteEnemy = new Enemy(load, this, hp, damage, name,
-        type, spriteX, spriteY, spriteW, spriteH,
-        frameCount, frameGo, music);
+                                type, spriteX, spriteY,
+                                spriteW, spriteH,
+                                frameCount, frameGo,
+                                music);
 
     // * Set settings enemy
     spriteEnemy.stat.name = name;
@@ -2191,7 +2188,7 @@ GameController.prototype.setEvent =  function(location, gamer, load, game, UserI
     }
 
     function moveFalse(e){
-        debugger;
+        
         if (!(game.about.state === 'play' || game.about.state === 'pause')){
 
             e.preventDefault();
