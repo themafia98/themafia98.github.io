@@ -2281,7 +2281,7 @@ GameController.prototype.inputs = function(time, gamer){
 };
 
 GameController.prototype.dataBaseListener = function(loader){
-    debugger;
+    
         // * Update data when db data change
         cloudDB.use.collection('users').where('realPlayer', '==', true)
         .onSnapshot(function (snapshot){
