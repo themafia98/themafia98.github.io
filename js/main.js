@@ -74,7 +74,7 @@ function Request(){
 
 }
 
-Request.prototype.getIP = function (){
+Request.prototype.getIP = function (load){
     // * Check users IP
 
     fetch(`https://api.ipify.org?format=${this.key()}`)
@@ -89,6 +89,19 @@ Request.prototype.getIP = function (){
 
             console.log(error.message);
         });
+}
+
+Request.prototype.getSpriteData = function (load){
+
+    fetch(`js/data.json`)
+
+    .then((response) => response.json())
+    .then((response) => load.jsonData = response)
+
+    .catch(function (error){
+
+        console.log(error.message);
+    });
 }
 
 
@@ -149,53 +162,6 @@ function Game(){
         requstCount: 0,
     };
 
-    this.essence ={
-
-        enemyStartPosition:{
-            x: 330,
-            y: 300
-        },
-
-        essenceSettings:{
-            birds:{
-                type: 'common',
-                name: 'bird_0',
-                dmg: 15,
-                health: 75,
-                x: 446,
-                y: 100,
-                sizeX: 32,
-                sizeY: 20,
-                frameCount: 5,
-                frameArray: [0,1,2,3,4,5]
-            },
-            boss:{
-                type: 'boss',
-                name: 'boss_0',
-                dmg: 35,
-                health: 175,
-                x: 964,
-                y: 226,
-                sizeX: 60,
-                sizeY: 60,
-                frameCount: 2,
-                frameArray: [0, 1]
-            },
-            bossExtra:{
-                type: 'bossExtra',
-                name: 'bossExtra_0',
-                dmg: 50,
-                health: 225,
-                x: 964,
-                y: 288,
-                sizeX: 60,
-                sizeY: 60,
-                frameCount: 2,
-                frameArray: [0, 1]
-            }
-
-        }
-    }
 }
 
 
@@ -254,22 +220,22 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
         (game.about.stageNumber === game.about.stageNumber)){
 
         if (game.about.stageNumber < 7){
-            
+
             for (let i = 0; i < game.about.stageNumber; i++){
 
                 CreateEnemy(
                     load,
-                    game.essence.essenceSettings.birds.health,
-                    game.essence.essenceSettings.birds.dmg,
-                    game.essence.essenceSettings.birds.name + i,
-                    game.essence.essenceSettings.birds.type,
-                    game.essence.essenceSettings.birds.x,
-                    game.essence.essenceSettings.birds.y,
-                    game.essence.essenceSettings.birds.sizeX,
-                    game.essence.essenceSettings.birds.sizeY,
-                    game.essence.essenceSettings.birds.frameCount,
-                    game.essence.essenceSettings.birds.frameArray,
-                    game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
+                    load.jsonData.essenceSettings.birds.health,
+                    load.jsonData.essenceSettings.birds.dmg,
+                    load.jsonData.essenceSettings.birds.name + i,
+                    load.jsonData.essenceSettings.birds.type,
+                    load.jsonData.essenceSettings.birds.x,
+                    load.jsonData.essenceSettings.birds.y,
+                    load.jsonData.essenceSettings.birds.sizeX,
+                    load.jsonData.essenceSettings.birds.sizeY,
+                    load.jsonData.essenceSettings.birds.frameCount,
+                    load.jsonData.essenceSettings.birds.frameArray,
+                    load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
                     load.SoundsStorage[7]);
             }
 
@@ -279,17 +245,17 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
 
                 CreateEnemy(
                     load,
-                    game.essence.essenceSettings.bossExtra.health,
-                    game.essence.essenceSettings.bossExtra.dmg,
-                    game.essence.essenceSettings.bossExtra.name + j,
-                    game.essence.essenceSettings.bossExtra.type,
-                    game.essence.essenceSettings.bossExtra.x,
-                    game.essence.essenceSettings.bossExtra.y,
-                    game.essence.essenceSettings.bossExtra.sizeX,
-                    game.essence.essenceSettings.bossExtra.sizeY,
-                    game.essence.essenceSettings.bossExtra.frameCount,
-                    game.essence.essenceSettings.bossExtra.frameArray,
-                    game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
+                    load.jsonData.essenceSettings.bossExtra.health,
+                    load.jsonData.essenceSettings.bossExtra.dmg,
+                    load.jsonData.essenceSettings.bossExtra.name + j,
+                    load.jsonData.essenceSettings.bossExtra.type,
+                    load.jsonData.essenceSettings.bossExtra.x,
+                    load.jsonData.essenceSettings.bossExtra.y,
+                    load.jsonData.essenceSettings.bossExtra.sizeX,
+                    load.jsonData.essenceSettings.bossExtra.sizeY,
+                    load.jsonData.essenceSettings.bossExtra.frameCount,
+                    load.jsonData.essenceSettings.bossExtra.frameArray,
+                    load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
                     load.SoundsStorage[8]);
 
             }
@@ -301,17 +267,17 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
 
                 CreateEnemy(
                     load,
-                    game.essence.essenceSettings.birds.health,
-                    game.essence.essenceSettings.birds.dmg,
-                    game.essence.essenceSettings.birds.name + i,
-                    game.essence.essenceSettings.birds.type,
-                    game.essence.essenceSettings.birds.x,
-                    game.essence.essenceSettings.birds.y,
-                    game.essence.essenceSettings.birds.sizeX,
-                    game.essence.essenceSettings.birds.sizeY,
-                    game.essence.essenceSettings.birds.frameCount,
-                    game.essence.essenceSettings.birds.frameArray,
-                    game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
+                    load.jsonData.essenceSettings.birds.health,
+                    load.jsonData.essenceSettings.birds.dmg,
+                    load.jsonData.essenceSettings.birds.name + i,
+                    load.jsonData.essenceSettings.birds.type,
+                    load.jsonData.essenceSettings.birds.x,
+                    load.jsonData.essenceSettings.birds.y,
+                    load.jsonData.essenceSettings.birds.sizeX,
+                    load.jsonData.essenceSettings.birds.sizeY,
+                    load.jsonData.essenceSettings.birds.frameCount,
+                    load.jsonData.essenceSettings.birds.frameArray,
+                    load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
                     load.SoundsStorage[7]);
 
             }
@@ -320,17 +286,17 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
 
                 CreateEnemy(
                     load,
-                    game.essence.essenceSettings.boss.health,
-                    game.essence.essenceSettings.boss.dmg,
-                    game.essence.essenceSettings.boss.name + j,
-                    game.essence.essenceSettings.boss.type,
-                    game.essence.essenceSettings.boss.x,
-                    game.essence.essenceSettings.boss.y,
-                    game.essence.essenceSettings.boss.sizeX,
-                    game.essence.essenceSettings.boss.sizeY,
-                    game.essence.essenceSettings.boss.frameCount,
-                    game.essence.essenceSettings.boss.frameArray,
-                    game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
+                    load.jsonData.essenceSettings.boss.health,
+                    load.jsonData.essenceSettings.boss.dmg,
+                    load.jsonData.essenceSettings.boss.name + j,
+                    load.jsonData.essenceSettings.boss.type,
+                    load.jsonData.essenceSettings.boss.x,
+                    load.jsonData.essenceSettings.boss.y,
+                    load.jsonData.essenceSettings.boss.sizeX,
+                    load.jsonData.essenceSettings.boss.sizeY,
+                    load.jsonData.essenceSettings.boss.frameCount,
+                    load.jsonData.essenceSettings.boss.frameArray,
+                    load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
                     load.SoundsStorage[6]);
 
             }
@@ -340,17 +306,17 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
 
                 CreateEnemy(
                     load,
-                    game.essence.essenceSettings.bossExtra.health,
-                    game.essence.essenceSettings.bossExtra.dmg,
-                    game.essence.essenceSettings.bossExtra.name + j,
-                    game.essence.essenceSettings.bossExtra.type,
-                    game.essence.essenceSettings.bossExtra.x,
-                    game.essence.essenceSettings.bossExtra.y,
-                    game.essence.essenceSettings.bossExtra.sizeX,
-                    game.essence.essenceSettings.bossExtra.sizeY,
-                    game.essence.essenceSettings.bossExtra.frameCount,
-                    game.essence.essenceSettings.bossExtra.frameArray,
-                    game.essence.enemyStartPosition.x,game.essence.enemyStartPosition.y,
+                    load.jsonData.essenceSettings.bossExtra.health,
+                    load.jsonData.essenceSettings.bossExtra.dmg,
+                    load.jsonData.essenceSettings.bossExtra.name + j,
+                    load.jsonData.essenceSettings.bossExtra.type,
+                    load.jsonData.essenceSettings.bossExtra.x,
+                    load.jsonData.essenceSettings.bossExtra.y,
+                    load.jsonData.essenceSettings.bossExtra.sizeX,
+                    load.jsonData.essenceSettings.bossExtra.sizeY,
+                    load.jsonData.essenceSettings.bossExtra.frameCount,
+                    load.jsonData.essenceSettings.bossExtra.frameArray,
+                    load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
                     load.SoundsStorage[8]);
 
             }
@@ -404,6 +370,8 @@ function Loader(){ // for storage and loading files and datas
 
     this.loadCount = 1; // load counter
 
+    this.jsonData = [];
+
     // sprite storage for game filds
     this.TextureStorage = [];
     this.SpriteStorage = [];
@@ -443,15 +411,11 @@ Loader.prototype.loading = function (fileType, src, imageType){
         const file = new Image();
         file.src = src;
         this.textureCache(file);
-        console.log('loading file №' + this.loadCount + '(' + file.src + ')');
-        this.loadCount++;
     } else if ((fileType === 'Image') && (imageType === 'sprite')){
 
         const file = new Image();
         file.src = src;
         this.SpriteCache(file);
-        console.log('loading file №' + this.loadCount + '(' + file.src + ')');
-        this.loadCount++;
     }
 
     if (fileType === 'Audio'){
@@ -459,8 +423,6 @@ Loader.prototype.loading = function (fileType, src, imageType){
         const file = new Audio(); // main game music 1
         file.src = src;
         this.SoundCache(file);
-        this.loadCount++;
-        console.log('loading file №' + this.loadCount + '(' + file.src + ')');
     }
 
 };
@@ -2372,10 +2334,11 @@ GameController.prototype.inputs = function(time, gamer){
         const loader = new Loader();
         const request = new Request();
 
-        !(localStorage.IP) && (request.getIP());
+        !(localStorage.IP) && (request.getIP(loader));
 
         mainDB = new DataBase();
         mainDB.updateLimit();
+        request.getSpriteData(loader);
 
         gamePlayDraw.getCanvas.canvas.setAttribute('width', gamePlayDraw.settings.width);
         gamePlayDraw.getCanvas.canvas.setAttribute('height', gamePlayDraw.settings.height);
