@@ -905,7 +905,7 @@ function updateCreeps(time, gamer, load, game){
                 resetSprite = setTimeout(() =>{
                     gamer.stat.sprite.pos[0] = 700;
 
-                }, 0);
+                }, 200);
             }
 
             // ------pushing and set sprite frames away from the walls------
