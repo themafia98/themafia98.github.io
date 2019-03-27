@@ -477,7 +477,7 @@ function Bullets(){
 Bullets.prototype.useSkill = function (load, gamer, ui){
 
     // * Bull
-    if (Date.now() - this.lastFire > 200){ // delay
+    if (Date.now() - this.lastFire > 300){ // delay
 
         gamer.countThrow++; // counter
 
@@ -491,8 +491,8 @@ Bullets.prototype.useSkill = function (load, gamer, ui){
             sprite: this.createBullets(load), // bullets sprite
             siz: [15, 32], // sprite size
         });
-
-        load.SoundsStorage[1].currentTime = 0;
+        (load.SoundsStorage[1].currentTime > 0.5) &&
+        (load.SoundsStorage[1].currentTime = 0);
         load.SoundsStorage[1].play();
 
         this.lastFire = Date.now();
@@ -786,7 +786,8 @@ function damageCheck(load, gamer){
                 // -----------collision-----------
 
                 gamer.killCount++;
-                itemEnemy.sound.currentTime = 0;
+                (itemEnemy.sound.currentTime > 0.5) &&
+                (itemEnemy.sound.currentTime = 0);
                 itemEnemy.sound.play();
             }
 
@@ -895,7 +896,8 @@ function updateCreeps(time, gamer, load, game){
             if ((boxCollides([bulPosX, bulPosY], [30, 30],
                     [gamerPosX, gamerPosY], [32, 32]))){
 
-                load.SoundsStorage[5].currentTime = 0;
+                (load.SoundsStorage[5].currentTime > 0.5) &&
+                (load.SoundsStorage[5].currentTime = 0);
                 load.SoundsStorage[5].play();
                 gamer.stat.sprite.pos[0] = 956;
                 gamer.stat.health--;
@@ -1070,7 +1072,8 @@ function checkItem(load, gamer){ // player came on items or no
 
         if (boxCollides(posGamer, [26, 26], posItem, [26, 26])){
 
-            load.SoundsStorage[3].currentTime = 0;
+            (load.SoundsStorage[3].currentTime > 0.5) &&
+            (load.SoundsStorage[3].currentTime = 0);
             load.SoundsStorage[3].play();
             gamer.stat.points += 10;
             array.splice(i, 1);
@@ -1090,7 +1093,8 @@ function checkItem(load, gamer){ // player came on items or no
             if ((gamer.stat.health < 200) &&
                 ((gamer.stat.health + (gamer.stat.health * 0.20) < 200))){
 
-                load.SoundsStorage[4].currentTime = 0;
+                (load.SoundsStorage[4].currentTime > 0.5) &&
+                (load.SoundsStorage[4].currentTime = 0);
                 load.SoundsStorage[4].play();
                 gamer.stat.health += Math.floor(200 * 0.16);
                 array.splice(i, 1);
@@ -1111,7 +1115,8 @@ function checkItem(load, gamer){ // player came on items or no
 
         if (boxCollides(posGamer, [30, 30], posItem, [30, 30])){
 
-            load.SoundsStorage[11].currentTime = 0;
+            (load.SoundsStorage[11].currentTime > 0.5) &&
+            (load.SoundsStorage[11].currentTime = 0);
             load.SoundsStorage[11].play();
             gamer.stat.damage += 5;
             array.splice(i, 1);
@@ -2491,8 +2496,6 @@ GameController.prototype.dataBaseListener = function(loader){
 
             if ((game.about.state === 'play') && !(loader.enemy.length)){
 
-                loader.SoundsStorage[10].currentTime = 0;
-                loader.SoundsStorage[10].play();
 
                 (game.about.stageNumber >= 20) && (player.setHealth(0));
 
