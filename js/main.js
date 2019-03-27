@@ -2452,7 +2452,6 @@ GameController.prototype.inputs = function(time, gamer){
         loader.loading('Image', 'img/pause.png', 'sprite');
         loader.loading('Image', 'img/box_background.png', 'sprite');
         loader.loading('Image', 'img/box.png', 'sprite');
-        loader.loading('Image', 'img/globe.png', 'sprite');
 
         loader.loading('Audio', 'audio/main.mp3');
         loader.loading('Audio', 'audio/shot.mp3');
