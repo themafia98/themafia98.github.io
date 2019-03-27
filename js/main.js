@@ -2470,7 +2470,8 @@ GameController.prototype.dataBaseListener = function(loader){
                 player.setHealth(200);
                 game.setRequstCount(0);
                 loader.SoundsStorage[2].pause();
-                loader.SoundsStorage[2].currentTime = 0;
+                (loader.SoundsStorage[2].currentTime > 0.5) &&
+                (loader.SoundsStorage[2].currentTime = 0);
         }
 
         (!localStorage.name) &&
@@ -2564,7 +2565,7 @@ GameController.prototype.dataBaseListener = function(loader){
         function loop(){
 
             now = Date.now();
-            time = Math.min(0.05, (now - lastTime) / 1000.0);
+            time = (now - lastTime) / 1000.0;
 
             linkers(loader, player, time);
             menu(loader, player);
