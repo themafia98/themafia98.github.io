@@ -74,6 +74,68 @@ Request.prototype.getSpriteData = function (load){
     });
 }
 
+function WebAudio(){
+
+    this.effects = {};
+    this.ctx = null;  // создание контекста звука
+    this.gainNode = null;
+    this.loaded = false;
+}
+
+WebAudio.prototype.init = function(){
+
+    this.ctx = new AudioContext();
+    this.gainNode = this.ctx.createGain ? this.ctx.createGain() : this.ctx.createGainNode();
+    this.gainNode.connect(this.ctx.destination);  // подключение к динамикам
+}
+
+WebAudio.prototype.playSound = function(path = null,volume,loop){
+
+    let sound = this.ctx.createBufferSource(); // Создается источник звука
+
+    sound.buffer = null; // настраивается буфер
+    sound.connect(this.gainNode);  // подключение источника к "колонкам"
+    sound.loop = true;
+    this.gainNode.gain.value = 0.2;
+    sound.start(0); // start
+}
+
+WebAudio.prototype.load = function (path,callback){
+    debugger;
+
+    let _that = this;
+
+    let effect = { path: path, buffer: null, loaded: false };
+
+    effect.play = function(volume,loop){
+
+     _that.playSound(this.path,{looping: loop?loop:false, volume:volume?volume:1});
+    }
+
+    this.effects[path] = effect;
+
+    let request = new XMLHttpRequest();
+    request.open('GET', path, true);
+
+    request.responseType = 'arraybuffer';
+
+    request.onload = function () {
+        debugger;
+        _that.ctx.decodeAudioData(request.response,
+    function (buffer) {
+        debugger;
+        effect.buffer = buffer;
+        effect.loaded = true;
+    debugger;
+    effect.play(0.2,true);
+    });
+    };
+    request.send();
+
+}
+
+
+
 
 
 function UI(){
@@ -2317,6 +2379,12 @@ GameController.prototype.dataBaseListener = function(loader){
         let lastTime = null;
         let now = null;
         let time = null;
+
+        debugger;
+        debugger;
+        let sound = new WebAudio();
+        sound.init();
+        sound.load('audio/damage.wav',sound.playSound);
 
         // Object init
         const game = new Game();
