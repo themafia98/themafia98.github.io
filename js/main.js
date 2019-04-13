@@ -80,6 +80,8 @@ function WebAudio(){
     this.ctx = null;  // создание контекста звука
     this.gainNode = null;
     this.loaded = false;
+    this.time = null;
+    this.lastTime = null;
 }
 
 WebAudio.prototype.init = function(){
@@ -87,6 +89,7 @@ WebAudio.prototype.init = function(){
     this.ctx = new AudioContext();
     this.gainNode = this.ctx.createGain ? this.ctx.createGain() : this.ctx.createGainNode();
     this.gainNode.connect(this.ctx.destination);  // подключение к динамикам
+    this.time = this.ctx.currentTime;
 }
 
 WebAudio.prototype.load = function(path,name){
@@ -108,20 +111,35 @@ WebAudio.prototype.load = function(path,name){
             })
 
         .then (()=>{
-            
             effect.play = function(loop,volume) {
-            
+            if (!effect.loaded) return;
+
+
             let sound = _that.ctx.createBufferSource(); // Создается источник звука
             sound.buffer = this.buffer; // настраивается буфер
+
+
             sound.connect(_that.gainNode);  // подключение источника к "колонкам"
             sound.loop = loop;
             _that.gainNode.gain.value = volume;
-            sound.start(0); // start
-            effect.sound = sound;
-            }
+            sound.start(_that.ctx.currentTime); // start
+            // sound.stop(_that.ctx.currentTime + sound.buffer.duration);
 
+            // _that.lastTime = _that.ctx.currentTime - sound.buffer.duration;
+            _that.time = _that.ctx.currentTime;
+            }
         });
     });
+}
+
+WebAudio.prototype.stopAll = function() {
+
+     // отключение всех звуков
+     
+    this.gainNode.disconnect();
+    this.gainNode = this.ctx.createGain ? this.ctx.createGain(0) : this.ctx.createGainNode(0);
+    this.gainNode.connect(this.ctx.destination);
+
 }
 
 
@@ -179,6 +197,7 @@ function Game(){
         stageNumber: 0,
         lastTimeBull: 0, // time bullets
         requstCount: 0,
+        lastTime: 0,
     };
 
 }
@@ -212,8 +231,9 @@ Game.prototype.ratingGame = function (activeLink){
     return this.about.state = this.rating;
 };
 
-Game.prototype.mainMenu = function (activeLink){
+Game.prototype.mainMenu = function (activeLink,sound){
 
+    if (sound){  sound.stopAll();}
     activeLink.selectName = false;
     return this.about.state = this.menu;
 };
@@ -942,7 +962,14 @@ function updateCreeps(time, gamer, load, game,sound){
             if ((boxCollides([bulPosX, bulPosY], [30, 30],
                     [gamerPosX, gamerPosY], [32, 32]))){
 
-                sound.effects.find(item => item.name === 'damage').play(false,0.8);
+                let timers = new Date().getTime();
+                let dmgSound = sound.effects.find(item => item.name === 'damage');
+
+                if ( timers > game.about.lastTime + dmgSound.buffer.duration){
+                   
+                dmgSound.play(false,0.8);
+                game.about.lastTime = timers;
+                } else {debugger;}
                 gamer.stat.sprite.pos[0] = 956;
                 gamer.stat.health--;
                 gamer.move.pos[0, 1]++;
@@ -2205,7 +2232,6 @@ GameController.prototype.setEvent =  function(location, gamer, load, game, UserI
         command = UserInterface.linki; // short write
 
         for (let i = 0; i < command.length; i++){
-
             if ((UserInterface.checkFrame(command[i])) &&
                 (command[i].Name === game.about.state)){
 
@@ -2501,8 +2527,8 @@ GameController.prototype.dataBaseListener = function(loader){
             (UserInterface.linki[3].selectName) &&
             game.mainMenu(UserInterface.linki[3]);
 
-            ((gamePlayDraw.viewMode != 'demo') && (UserInterface.linki[4].selectName)) &&
-            game.mainMenu(UserInterface.linki[4]);
+            ((gamePlayDraw.viewMode != 'demo') && (UserInterface.linki[4].selectName || UserInterface.linki[0].selectName)) &&
+            game.mainMenu(UserInterface.linki[4],sound);
 
             ((gamePlayDraw.viewMode != 'demo') && (UserInterface.linki[5].selectName)) &&
             (game.pause(UserInterface.linki[5],controller.inputState.ESCAPE));
