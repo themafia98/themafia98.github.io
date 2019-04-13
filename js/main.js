@@ -76,7 +76,7 @@ Request.prototype.getSpriteData = function (load){
 
 function WebAudio(){
 
-    this.effects = {};
+    this.effects = [];
     this.ctx = null;  // создание контекста звука
     this.gainNode = null;
     this.loaded = false;
@@ -89,53 +89,40 @@ WebAudio.prototype.init = function(){
     this.gainNode.connect(this.ctx.destination);  // подключение к динамикам
 }
 
-WebAudio.prototype.playSound = function(path = null,volume,loop){
+WebAudio.prototype.load = function(path,name){
 
-    let sound = this.ctx.createBufferSource(); // Создается источник звука
-
-    sound.buffer = null; // настраивается буфер
-    sound.connect(this.gainNode);  // подключение источника к "колонкам"
-    sound.loop = true;
-    this.gainNode.gain.value = 0.2;
-    sound.start(0); // start
-}
-
-WebAudio.prototype.load = function (path,callback){
-    debugger;
-
+    let effect = {};
     let _that = this;
 
-    let effect = { path: path, buffer: null, loaded: false };
+    fetch(path)
+    .then((response) => response.arrayBuffer())
+    .then ((response) => {
+        
+        this.ctx.decodeAudioData(response)
+        .then ((buffer) => {
+            effect.name = name;
+                effect.path = path;
+                effect.buffer = buffer;
+                effect.loaded = true;
+                _that.effects.push(effect);
+            })
 
-    effect.play = function(volume,loop){
+        .then (()=>{
+            
+            effect.play = function(loop,volume) {
+            
+            let sound = _that.ctx.createBufferSource(); // Создается источник звука
+            sound.buffer = this.buffer; // настраивается буфер
+            sound.connect(_that.gainNode);  // подключение источника к "колонкам"
+            sound.loop = loop;
+            _that.gainNode.gain.value = volume;
+            sound.start(0); // start
+            effect.sound = sound;
+            }
 
-     _that.playSound(this.path,{looping: loop?loop:false, volume:volume?volume:1});
-    }
-
-    this.effects[path] = effect;
-
-    let request = new XMLHttpRequest();
-    request.open('GET', path, true);
-
-    request.responseType = 'arraybuffer';
-
-    request.onload = function () {
-        debugger;
-        _that.ctx.decodeAudioData(request.response,
-    function (buffer) {
-        debugger;
-        effect.buffer = buffer;
-        effect.loaded = true;
-    debugger;
-    effect.play(0.2,true);
+        });
     });
-    };
-    request.send();
-
 }
-
-
-
 
 
 function UI(){
@@ -204,10 +191,10 @@ Game.prototype.startGame = function (){
     return this.about.state = this.play;
 };
 
-Game.prototype.startGameAnimation = function (load, gamer, activeLink){
+Game.prototype.startGameAnimation = function (load, gamer, activeLink,sound){
 
     activeLink.selectName = false;
-    this.music(load); // music
+    this.music(sound); // music
     this.updateGameStatus(gamer, load); // game state
     gamer.setHealth(200); // update health
 
@@ -243,10 +230,14 @@ Game.prototype.pause = function (activeLink,escape){
     } else return false;
 };
 
-Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
+Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber,sound){
 
     let CreateEnemy = enemy.createEnemy; // short
     game.about.stageNumber = stageNumber; // get stageNumber
+
+    let bossExtraSound = sound.effects.find(item => item.name === 'bossExtra');
+    let bathSound = sound.effects.find(item => item.name === 'deathBat');
+    let bossSound = sound.effects.find(item => item.name === 'deathBoss');
 
     if ((game.about.stageNumber) &&
         (game.about.stageNumber === game.about.stageNumber)){
@@ -268,7 +259,7 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
                     load.jsonData.essenceSettings.birds.frameCount,
                     load.jsonData.essenceSettings.birds.frameArray,
                     load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
-                    load.SoundsStorage[7]);
+                    bathSound);
             }
 
         } else if (game.about.stageNumber >= 10){
@@ -288,7 +279,7 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
                     load.jsonData.essenceSettings.bossExtra.frameCount,
                     load.jsonData.essenceSettings.bossExtra.frameArray,
                     load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
-                    load.SoundsStorage[8]);
+                    bossExtraSound);
 
             }
         }
@@ -310,7 +301,7 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
                     load.jsonData.essenceSettings.birds.frameCount,
                     load.jsonData.essenceSettings.birds.frameArray,
                     load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
-                    load.SoundsStorage[7]);
+                    bathSound);
 
             }
 
@@ -329,7 +320,7 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
                     load.jsonData.essenceSettings.boss.frameCount,
                     load.jsonData.essenceSettings.boss.frameArray,
                     load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
-                    load.SoundsStorage[6]);
+                    bossSound);
 
             }
         } else if (game.about.stageNumber > 15){
@@ -349,7 +340,7 @@ Game.prototype.spawnAndLvling = function (game, load, enemy, stageNumber){
                     load.jsonData.essenceSettings.bossExtra.frameCount,
                     load.jsonData.essenceSettings.bossExtra.frameArray,
                     load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
-                    load.SoundsStorage[8]);
+                    bossExtraSound);
 
             }
         }
@@ -388,12 +379,10 @@ Game.prototype.updateGameStatus = function (gamer, load){ // new game
 
 };
 
-Game.prototype.music = function (load){
+Game.prototype.music = function (sound){
 
     let delayForLoading = setTimeout( () => {
-    load.SoundsStorage[2].currentTime = 0;
-    load.SoundsStorage[2].loop = true;
-    load.SoundsStorage[2].play();
+        sound.effects.find(item => item.name === 'main').play(true,1);
     },2500);
 };
 
@@ -497,15 +486,15 @@ function Player(type, location){
 }
 
 
-Player.prototype.GameOver = function (gamer, game, load){
+Player.prototype.GameOver = function (gamer, game, load,sound){
 
     if (gamer.stat.health <= 0){
-
+        
         load.enemy = []; // cleaer enemy
 
         if (!(gamer.SoundCount) && (game.about.stageNumber < 20)){
-
-            load.SoundsStorage[9].play();
+            
+            sound.effects.find(item => item.name === 'gameOver').play(false,0.5);
             gamer.SoundCount++;
         }
         game.stopGame();
@@ -536,7 +525,7 @@ function Bullets(){
     };
 };
 
-Bullets.prototype.useSkill = function (load, gamer, ui){
+Bullets.prototype.useSkill = function (load, gamer, ui,sound){
 
     // * Bull
     if (Date.now() - this.lastFire > 300){ // delay
@@ -553,9 +542,7 @@ Bullets.prototype.useSkill = function (load, gamer, ui){
             sprite: this.createBullets(load), // bullets sprite
             siz: [15, 32], // sprite size
         });
-        (load.SoundsStorage[1].currentTime > 0.5) &&
-        (load.SoundsStorage[1].currentTime = 0);
-        load.SoundsStorage[1].play();
+        sound.effects.find(item => item.name === 'shot').play(false,0.8);
 
         this.lastFire = Date.now();
 
@@ -741,7 +728,7 @@ Items.prototype.setSprite = function (load, cordSpriteX, cordsSpriteY,
 }
 
 
-function update(time, gamer, load, game, link){
+function update(time, gamer, load, game, link,sound){
 
     gamer.gameTime += time; // game time
 
@@ -752,8 +739,7 @@ function update(time, gamer, load, game, link){
     /* check win and gameOver */
     if ((game.about.state === 'play') ||
         (game.about.state === 'wait')){
-
-        gamer.GameOver(gamer, game, load);
+        gamer.GameOver(gamer, game, load,sound);
         gamer.Win(gamer, game, load);
 
     }
@@ -761,17 +747,17 @@ function update(time, gamer, load, game, link){
     // * If game state play
     if ((!(game.pause(link[5]))) && (game.about.state !== 'pause') &&
         ((game.about.state !== 'menu') && (game.about.state !== 'rating'))){
-        updateCreeps(time, gamer, load, game); // check enemys and update player/enemy sprite
+        updateCreeps(time, gamer, load, game,sound); // check enemys and update player/enemy sprite
         updateBulls(time, gamer, load); // check bullets
         checkShot(load, gamer); // check shot
-        checkItem(load, gamer); // drop items
-        damageCheck(load, gamer); // get damage check
+        checkItem(load, gamer,sound); // drop items
+        damageCheck(load, gamer,sound); // get damage check
 
     }
 
 }
 
-function damageCheck(load, gamer){
+function damageCheck(load, gamer,sound){
 
     let resetSprite; // timer for splice items
 
@@ -848,9 +834,7 @@ function damageCheck(load, gamer){
                 // -----------collision-----------
 
                 gamer.killCount++;
-                (itemEnemy.sound.currentTime > 0.5) &&
-                (itemEnemy.sound.currentTime = 0);
-                itemEnemy.sound.play();
+                itemEnemy.sound.play(false,1);
             }
 
             if (itemEnemy.stat.sprite.index >= itemEnemy.stat.sprite.frames.length){
@@ -861,12 +845,12 @@ function damageCheck(load, gamer){
             }
         }
 
-        checkPlayerDmg(itemEnemy, gamer, load);
+        checkPlayerDmg(itemEnemy, gamer, load,sound);
 
     });
 }
 
-function checkPlayerDmg(itemEnemy, gamer, load){
+function checkPlayerDmg(itemEnemy, gamer, load,sound){
 
     // * Get player dmg or no
     if ((itemEnemy) && (boxCollides([itemEnemy.move.pos[0], itemEnemy.move.pos[1]],
@@ -875,7 +859,7 @@ function checkPlayerDmg(itemEnemy, gamer, load){
         if (gamer.stat.health > -1){
 
             gamer.stat.sprite.pos[0] = 956; // damage player sprite
-            load.SoundsStorage[5].play();
+            sound.effects.find(item => item.name === 'damage').play(false,0.8);
             gamer.stat.health--; // get damage
             gamer.move.pos[0, 1]++; // repulsion
 
@@ -899,7 +883,7 @@ function deathEnemyUpdate(itemEnemy){
     itemEnemy.bull.bullStorage = [];
 }
 
-function updateCreeps(time, gamer, load, game){
+function updateCreeps(time, gamer, load, game,sound){
 
     gamer.stat.sprite.update(time); // update player sprite
 
@@ -958,9 +942,7 @@ function updateCreeps(time, gamer, load, game){
             if ((boxCollides([bulPosX, bulPosY], [30, 30],
                     [gamerPosX, gamerPosY], [32, 32]))){
 
-                (load.SoundsStorage[5].currentTime > 0.5) &&
-                (load.SoundsStorage[5].currentTime = 0);
-                load.SoundsStorage[5].play();
+                sound.effects.find(item => item.name === 'damage').play(false,0.8);
                 gamer.stat.sprite.pos[0] = 956;
                 gamer.stat.health--;
                 gamer.move.pos[0, 1]++;
@@ -1116,7 +1098,7 @@ function checkShot(load, gamer){ // get plater damage or no
     });
 }
 
-function checkItem(load, gamer){ // player came on items or no
+function checkItem(load, gamer,sound){ // player came on items or no
 
     //---auxiliary variables---
     let posItem = [];
@@ -1134,9 +1116,7 @@ function checkItem(load, gamer){ // player came on items or no
 
         if (boxCollides(posGamer, [26, 26], posItem, [26, 26])){
 
-            (load.SoundsStorage[3].currentTime > 0.5) &&
-            (load.SoundsStorage[3].currentTime = 0);
-            load.SoundsStorage[3].play();
+            sound.effects.find(item => item.name === 'money').play(false,0.8);
             gamer.stat.points += 10;
             array.splice(i, 1);
         }
@@ -1155,9 +1135,7 @@ function checkItem(load, gamer){ // player came on items or no
             if ((gamer.stat.health < 200) &&
                 ((gamer.stat.health + (gamer.stat.health * 0.20) < 200))){
 
-                (load.SoundsStorage[4].currentTime > 0.5) &&
-                (load.SoundsStorage[4].currentTime = 0);
-                load.SoundsStorage[4].play();
+                sound.effects.find(item => item.name === 'eat').play(false,0.8);
                 gamer.stat.health += Math.floor(200 * 0.16);
                 array.splice(i, 1);
 
@@ -1177,9 +1155,7 @@ function checkItem(load, gamer){ // player came on items or no
 
         if (boxCollides(posGamer, [30, 30], posItem, [30, 30])){
 
-            (load.SoundsStorage[11].currentTime > 0.5) &&
-            (load.SoundsStorage[11].currentTime = 0);
-            load.SoundsStorage[11].play();
+            sound.effects.find(item => item.name === 'lvlUP').play(false,0.8);
             gamer.stat.damage += 5;
             array.splice(i, 1);
 
@@ -1543,11 +1519,11 @@ Draw.prototype.renderBulls = function (bull, load, gamer) {
     this.drawBuffer.ctxBuffer.restore();
 }
 
-Draw.prototype.renders = function (gamer, load, game, UserInterface) {
+Draw.prototype.renders = function (gamer, load, game, UserInterface,sound) {
 
     // ---render gameOver---
     ((game.about.state === 'play') && (gamer.stat.health <= 0)) &&
-                                (gamer.GameOver(gamer, game, load));
+                                (gamer.GameOver(gamer, game, load,sound));
 
     (game.about.state === 'play' || game.about.state === 'play-animation') &&
                                         this.renderMouse(load, UserInterface);
@@ -2155,7 +2131,7 @@ function GameController(){
 
 };
 
-GameController.prototype.setEvent =  function(location, gamer, load, game, UserInterface){
+GameController.prototype.setEvent =  function(location, gamer, load, game, UserInterface,sound){
 
     let _that = this;
     let canvas = document.getElementById('arena');
@@ -2256,7 +2232,7 @@ GameController.prototype.setEvent =  function(location, gamer, load, game, UserI
                 return;
             } else{
 
-                gamer.stat.bullets.useSkill(load, gamer, UserInterface);
+                gamer.stat.bullets.useSkill(load, gamer, UserInterface,sound);
             }
 
         }
@@ -2366,6 +2342,8 @@ GameController.prototype.dataBaseListener = function(loader){
 
 
 
+
+
 //--------INIT--------//
 
 (function (){
@@ -2380,11 +2358,24 @@ GameController.prototype.dataBaseListener = function(loader){
         let now = null;
         let time = null;
 
-        debugger;
-        debugger;
+
         let sound = new WebAudio();
         sound.init();
-        sound.load('audio/damage.wav',sound.playSound);
+        sound.load('audio/main.mp3','additional');
+        sound.load('audio/shot.mp3','shot');
+        sound.load('audio/Fly_A_Kite.mp3','main');
+        sound.load('audio/money.wav','money');
+        sound.load('audio/eat.wav','eat');
+        sound.load('audio/damage.wav','damage');
+        sound.load('audio/death_boss.wav','deathBoss');
+        sound.load('audio/death-bat.mp3','deathBat');
+        sound.load('audio/death-bossExtra.wav','bossExtra');
+        sound.load('audio/gameOver.wav','gameOver');
+        sound.load('audio/lvl.mp3','lvl');
+        sound.load('audio/lvlUP.wav','lvlUp');
+        sound.load('audio/lvlUP.wav','lvlUp2');
+        sound.load('audio/select.wav','select');
+        console.log(sound);
 
         // Object init
         const game = new Game();
@@ -2393,6 +2384,9 @@ GameController.prototype.dataBaseListener = function(loader){
         const UserInterface = new UI();
         const loader = new Loader();
         const request = new Request();
+
+
+
 
         !(localStorage.IP) && (request.getIP(loader));
 
@@ -2476,21 +2470,6 @@ GameController.prototype.dataBaseListener = function(loader){
         loader.loading('Image', 'img/box_background.png', 'sprite');
         loader.loading('Image', 'img/box.png', 'sprite');
 
-        loader.loading('Audio', 'audio/main.mp3');
-        loader.loading('Audio', 'audio/shot.mp3');
-        loader.loading('Audio', 'audio/Fly_A_Kite.mp3');
-        loader.loading('Audio', 'audio/money.wav');
-        loader.loading('Audio', 'audio/eat.wav');
-        loader.loading('Audio', 'audio/damage.wav');
-        loader.loading('Audio', 'audio/death_boss.wav');
-        loader.loading('Audio', 'audio/death-bat.mp3');
-        loader.loading('Audio', 'audio/death-bossExtra.wav');
-        loader.loading('Audio', 'audio/gameOver.wav');
-        loader.loading('Audio', 'audio/lvl.mp3');
-        loader.loading('Audio', 'audio/lvlUP.wav');
-        loader.loading('Audio', 'audio/lvlUP.wav');
-        loader.loading('Audio', 'audio/select.wav');
-
         // loading
         gamePlayDraw.loadingRender(loader);
 
@@ -2508,13 +2487,13 @@ GameController.prototype.dataBaseListener = function(loader){
         });
 
 
-        function linkers(loader, player){
+        function linkers(loader, player,sound){
 
             (UserInterface.linki.slice(1,UserInterface.linki.length)
-            .some ((link) => link.selectName)) && (loader.SoundsStorage[13].play());
+            .some ((link) => link.selectName)) && (sound.effects.find(item => item.name === 'select').play(false,1));
 
             (UserInterface.linki[1].selectName) &&
-            (game.startGameAnimation(loader, player, UserInterface.linki[1]));
+            (game.startGameAnimation(loader, player, UserInterface.linki[1],sound));
 
             (UserInterface.linki[2].selectName) &&
             (game.ratingGame(UserInterface.linki[2]));
@@ -2537,9 +2516,7 @@ GameController.prototype.dataBaseListener = function(loader){
 
                 player.setHealth(200);
                 game.setRequstCount(0);
-                loader.SoundsStorage[2].pause();
-                (loader.SoundsStorage[2].currentTime > 0.5) &&
-                (loader.SoundsStorage[2].currentTime = 0);
+                
         }
 
         (!localStorage.name) &&
@@ -2552,13 +2529,13 @@ GameController.prototype.dataBaseListener = function(loader){
             gameLoop = requestAnimationFrame(loop);
         }, 3000);
 
-        controller.setEvent(gamePlayDraw, player, loader, game, UserInterface);
+        controller.setEvent(gamePlayDraw, player, loader, game, UserInterface,sound);
         gamePlayDraw.building(loader, player, game);
 
         controller.dataBaseListener(loader);
 
 
-        function gameplay(loader, player, game){
+        function gameplay(loader, player, game,sound){
 
             (game.about.state === 'play-animation') &&
             (gamePlayDraw.building(loader, player, game));
@@ -2582,7 +2559,7 @@ GameController.prototype.dataBaseListener = function(loader){
 
                 (game.about.stageNumber < 7) && (game.about.stageNumber++);
 
-                game.spawnAndLvling(game, loader, enemy, game.about.stageNumber);
+                game.spawnAndLvling(game, loader, enemy, game.about.stageNumber,sound);
             };
         }
 
@@ -2600,7 +2577,7 @@ GameController.prototype.dataBaseListener = function(loader){
             (controller.inputState.ESCAPE = true);
         }
 
-        function death(game, player, loader){
+        function death(game, player, loader,sound){
 
             if ((game.about.state === 'wait') &&(game.about.requstCount === 0) &&
                 (player.stat.health <= 0)){
@@ -2635,9 +2612,9 @@ GameController.prototype.dataBaseListener = function(loader){
             now = Date.now();
             time = (now - lastTime) / 1000.0;
 
-            linkers(loader, player, time);
+            linkers(loader, player, sound);
             menu(loader, player);
-            gameplay(loader, player, game);
+            gameplay(loader, player, game,sound);
 
             if ((!(game.pause(UserInterface.linki[5],
                 controller.inputState.ESCAPE))) &&
@@ -2645,11 +2622,11 @@ GameController.prototype.dataBaseListener = function(loader){
 
             controller.inputs(time, player); // check inputs
             }
-            update(time, player, loader, game, UserInterface.linki);
+            update(time, player, loader, game, UserInterface.linki,sound);
             pauseCheck(game, controller);
-            buildTexture(game, loader, player);
-            gamePlayDraw.renders(player, loader, game, UserInterface);
-            death(game, player, loader); //, request
+            buildTexture(game, loader, player,sound);
+            gamePlayDraw.renders(player, loader, game, UserInterface,sound);
+            death(game, player, loader,sound); //, request
 
             lastTime = now;
             requestAnimationFrame(loop);
