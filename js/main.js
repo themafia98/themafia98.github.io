@@ -1193,7 +1193,7 @@ function checkItem(load, gamer,sound){ // player came on items or no
 
         if (boxCollides(posGamer, [30, 30], posItem, [30, 30])){
 
-            sound.effects.find(item => item.name === 'lvlUP').play(false,0.8);
+            sound.effects.find(item => item.name === 'lvlUp').play(false,0.8);
             gamer.stat.damage += 5;
             array.splice(i, 1);
 
