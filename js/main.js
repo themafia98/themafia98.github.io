@@ -122,11 +122,11 @@ WebAudio.prototype.load = function(path,name){
             sound.connect(_that.gainNode);  // подключение источника к "колонкам"
             sound.loop = loop;
             _that.gainNode.gain.value = volume;
-            sound.start(_that.ctx.currentTime); // start
-            // sound.stop(_that.ctx.currentTime + sound.buffer.duration);
+            sound.start(0); // start
+            // sound.stop(5);
 
             // _that.lastTime = _that.ctx.currentTime - sound.buffer.duration;
-            _that.time = _that.ctx.currentTime;
+            // _that.time = _that.ctx.currentTime;
             }
         });
     });
@@ -198,6 +198,7 @@ function Game(){
         lastTimeBull: 0, // time bullets
         requstCount: 0,
         lastTime: 0,
+        lastTimeColl: 0,
     };
 
 }
@@ -771,13 +772,13 @@ function update(time, gamer, load, game, link,sound){
         updateBulls(time, gamer, load); // check bullets
         checkShot(load, gamer); // check shot
         checkItem(load, gamer,sound); // drop items
-        damageCheck(load, gamer,sound); // get damage check
+        damageCheck(load, gamer,sound,game); // get damage check
 
     }
 
 }
 
-function damageCheck(load, gamer,sound){
+function damageCheck(load, gamer,sound,game){
 
     let resetSprite; // timer for splice items
 
@@ -865,12 +866,14 @@ function damageCheck(load, gamer,sound){
             }
         }
 
-        checkPlayerDmg(itemEnemy, gamer, load,sound);
+        checkPlayerDmg(itemEnemy,gamer,sound,game);
 
     });
 }
 
-function checkPlayerDmg(itemEnemy, gamer, load,sound){
+function checkPlayerDmg(itemEnemy,gamer,sound,game){
+
+    
 
     // * Get player dmg or no
     if ((itemEnemy) && (boxCollides([itemEnemy.move.pos[0], itemEnemy.move.pos[1]],
@@ -879,7 +882,14 @@ function checkPlayerDmg(itemEnemy, gamer, load,sound){
         if (gamer.stat.health > -1){
 
             gamer.stat.sprite.pos[0] = 956; // damage player sprite
-            sound.effects.find(item => item.name === 'damage').play(false,0.8);
+            let timers = new Date().getTime();
+            let dmgSound = sound.effects.find(item => item.name === 'damage');
+
+            if ( timers > game.about.lastTimeColl + (dmgSound.buffer.duration*1000)){
+
+            dmgSound.play(false,0.8);
+            game.about.lastTimeColl = timers;
+            }
             gamer.stat.health--; // get damage
             gamer.move.pos[0, 1]++; // repulsion
 
@@ -965,11 +975,12 @@ function updateCreeps(time, gamer, load, game,sound){
                 let timers = new Date().getTime();
                 let dmgSound = sound.effects.find(item => item.name === 'damage');
 
-                if ( timers > game.about.lastTime + dmgSound.buffer.duration){
-                   
+                if ( timers > game.about.lastTime + (dmgSound.buffer.duration*1000)){
+
                 dmgSound.play(false,0.8);
                 game.about.lastTime = timers;
-                } else {debugger;}
+                }
+
                 gamer.stat.sprite.pos[0] = 956;
                 gamer.stat.health--;
                 gamer.move.pos[0, 1]++;
