@@ -838,7 +838,7 @@ function damageCheck(load, gamer,sound,game){
                     } else delete eat;
 
                 }
-
+                gamer.stat.upgradeRate = true;
                 if (gamer.stat.upgradeRate){
 
                     upgrade = new Items();
