@@ -10,4 +10,4 @@
 ***
 [looking here](https://themafia98.github.io/).
 ***
-I am planning on improving this project.
+New version is developed in the branch ES6 now
