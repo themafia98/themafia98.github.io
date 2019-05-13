@@ -1,5 +1,4 @@
 # My graduation project from IT courses.
-***
 #### What i use?
 * Firebase
 * IP detected API
