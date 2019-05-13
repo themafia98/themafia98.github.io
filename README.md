@@ -11,3 +11,5 @@
 [looking here](https://themafia98.github.io/).
 ***
 New version is developed in the branch ES6 now
+
+will include: ES6, webpack 4, better optimization
