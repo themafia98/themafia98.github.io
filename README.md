@@ -12,4 +12,8 @@
 ***
 New version is developed in the branch ES6 now
 
+<<<<<<< HEAD
 new Code in branch ES6
+=======
+will include: ES6, webpack 4, better optimization
+>>>>>>> update
