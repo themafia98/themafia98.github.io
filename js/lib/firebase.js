@@ -1,11 +1,11 @@
     (() =>{
         firebase.initializeApp({
-            apiKey: "AIzaSyDbccidJ1gkbHlOarCaPQxLZB663DuEkoM",
-            authDomain: "game-e444e.firebaseapp.com",
-            databaseURL: "https://game-e444e.firebaseio.com",
-            projectId: "game-e444e",
-            storageBucket: "game-e444e.appspot.com",
-            messagingSenderId: "1087306837571"
+            apiKey: process.env.FIREBASE_API,
+            authDomain: process.env.FIREBASE_DOMAIN,
+            databaseURL: process.env.FIREBASE_DB,
+            projectId: process.env.IREBASE_ID,
+            storageBucket: process.env.FIREBASE_STORAGE,
+            messagingSenderId: process.env.FIREBASE_IDSEND
         });
 
         return cloudDB ={
