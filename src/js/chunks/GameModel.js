@@ -70,8 +70,6 @@ export class Request{
     }
 
     getSpriteData(load){
-        let prod = process.env.PUBLIC_URL;
-        console.log(prod);
         fetch(`./js/data.json`)
     
         .then((response) => response.json())

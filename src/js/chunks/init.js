@@ -45,7 +45,6 @@ export default function main(){
         sound.load('audio/lvlUP.wav','lvlUp');
         sound.load('audio/lvlUP.wav','lvlUp2');
         sound.load('audio/select.wav','select');
-        console.log(sound);
 
         // Object init
         const game = new Game();
