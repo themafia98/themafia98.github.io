@@ -510,7 +510,7 @@ export default class Draw {
     
         CTX.fillStyle = 'white';
         CTX.font = 'bold 14px Arial';
-        CTX.fillText('v0.0.5', this.menu.version[0], this.menu.version[1]);
+        CTX.fillText('v1.0.0', this.menu.version[0], this.menu.version[1]);
     }
 
     drawRatingList(load, game, UserInterface) {
@@ -639,7 +639,7 @@ export default class Draw {
     
         CTX.fillStyle = 'white';
         CTX.font = 'bold 14px Arial';
-        CTX.fillText('v0.0.5', this.menu.version[0], this.menu.version[1]);
+        CTX.fillText('v1.0.0', this.menu.version[0], this.menu.version[1]);
     }
 
     gameOverView(gamer, UserInterface, game) {
