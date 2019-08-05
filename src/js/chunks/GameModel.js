@@ -215,7 +215,7 @@ export class Game{
 
     startGameAnimation(load, gamer, activeLink,sound){
 
-        activeLink.selectName = false; // link
+        activeLink.selectName = false;
         this.music(sound); // music
         this.updateGameStatus(gamer, load); // game state
         gamer.setHealth(200); // update health
