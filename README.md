@@ -8,7 +8,7 @@
 * GULP
 * ES5 (some ES6)
 ***
-[looking here](https://themafia98.github.io/).
+[looking here](https://themafia98.github.io/actionGame-js/).
 ***
 Build in gh-pages
 
