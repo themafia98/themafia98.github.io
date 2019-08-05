@@ -1,4 +1,5 @@
 import { AudioContext } from 'standardized-audio-context';
+import {db} from '../lib/firebase';
 import fetch from  'isomorphic-fetch';
 require('es6-promise');
 export  class DataBase{
