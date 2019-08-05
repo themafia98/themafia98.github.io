@@ -1,3 +1,6 @@
+import { AudioContext } from 'standardized-audio-context';
+import fetch from  'isomorphic-fetch';
+require('es6-promise');
 export  class DataBase{
     // * firebase
 
@@ -24,7 +27,7 @@ export  class DataBase{
         this.MAX_WRITE++;
         this.currentIP = (ip) ? ip : 'no ip detected';
     
-        cloudDB.use.collection('users').doc(`user_${(name+id).replace(/\s/g,'').toLowerCase()}`)
+        db.collection('users').doc(`user_${(name+id).replace(/\s/g,'').toLowerCase()}`)
             .set({
                 name: name,
                 points: points,
@@ -35,7 +38,7 @@ export  class DataBase{
     
             .catch(function (error){
     
-                console.log(error.message);
+                console.error(error.message);
             });
     }
 
@@ -62,20 +65,21 @@ export class Request{
     
             .catch(function (error){
     
-                console.log(error.message);
+                console.error(error.message);
             });
     }
 
     getSpriteData(load){
-
-        fetch(`../storage/data.json`)
+        let prod = process.env.PUBLIC_URL;
+        console.log(prod);
+        fetch(`./js/data.json`)
     
         .then((response) => response.json())
         .then((response) => load.jsonData = response)
     
         .catch(function (error){
     
-            console.log(error.message);
+            console.error(error.message);
         });
     }
 

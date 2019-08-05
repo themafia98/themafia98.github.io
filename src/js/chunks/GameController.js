@@ -1,3 +1,4 @@
+import {db} from '../lib/firebase';
 export default class GameController{
 
     constructor(){
@@ -206,7 +207,7 @@ export default class GameController{
     dataBaseListener(loader){
     
         // * Update data when db data change
-        cloudDB.use.collection('users').where('realPlayer', '==', true)
+        db.collection('users').where('realPlayer', '==', true)
         .onSnapshot(function (snapshot){
 
             loader.startRecord = [];

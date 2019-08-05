@@ -150,8 +150,8 @@ if (!prod) {
         }]),
 
         new CopyWebpackPlugin([{
-            from: './src/storage/data.json',
-            to: './storage'
+            from: './src/js/data.json',
+            to: './js'
         }]),
 
         // new webpack.HotModuleReplacementPlugin(),

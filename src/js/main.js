@@ -1,5 +1,4 @@
-
-
+require('./lib/firebase');
 import '../img/box_background.png';
 import '../img/box.png';
 import '../img/coins.jpg';
