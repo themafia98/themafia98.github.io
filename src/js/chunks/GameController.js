@@ -1,4 +1,5 @@
 import {db} from '../lib/firebase';
+import {getName} from './headlerModal';
 export default class GameController{
 
     constructor(){

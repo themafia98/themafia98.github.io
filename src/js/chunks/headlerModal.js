@@ -259,7 +259,7 @@ function animationMoving(gamer, game, time){
     } else game.about.state = 'play'; // set state
 }
 
-function getName(buttonName, gamer){
+export function getName(buttonName, gamer){
 
     // get gamer name from localStorage and set
     localStorage.name = buttonName;
