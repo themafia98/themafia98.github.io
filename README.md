@@ -5,7 +5,7 @@
 * Web audio API
 * Canvas (2D)
 * MVC / OOP
-* GULP
+* WEBPACK
 * ES5 (some ES6)
 ***
 [looking here](https://themafia98.github.io/actionGame-js/).
