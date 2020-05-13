@@ -26,6 +26,7 @@ try {
 main();
 
 } catch(error){
+    
     console.error('Critical error, restarting app...');
     setTimeout(function(){
     window.location.reload(true);
