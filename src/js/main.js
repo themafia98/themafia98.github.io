@@ -22,9 +22,13 @@ import main from './chunks/init.js';
 if (module.hot && process.env === 'development') module.hot.accept();
 
 try {
+
 main();
+
 } catch(error){
     console.error('Critical error, restarting app...');
+    setTimeout(function(){
     window.location.reload(true);
+    }, 3000);
 }
 
