@@ -1,5 +1,6 @@
-# My graduation project from IT courses. (Legacy project start 2019 year, my first work)
-#### What i use?
+# My graduation project from IT courses.
+## Legacy project start 2019 year, my first work
+#### What i use
 * Firebase
 * IP detected API
 * Web audio API
