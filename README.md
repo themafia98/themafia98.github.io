@@ -1,4 +1,4 @@
-# My graduation project from IT courses.
+# My graduation project from IT courses. (Legacy project start 2019 year, my first work)
 #### What i use?
 * Firebase
 * IP detected API
