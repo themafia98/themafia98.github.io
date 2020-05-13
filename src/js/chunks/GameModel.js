@@ -135,12 +135,12 @@ export class WebAudio{
     
                 sound.connect(_that.gainNode);  // подключение источника к "колонкам"
                 sound.loop = loop;
+
+                if (_that.gainNode && _that.gainNode.gain) {
                 _that.gainNode.gain.value = volume;
+                }
+
                 sound.start(0); // start
-                // sound.stop(5);
-    
-                // _that.lastTime = _that.ctx.currentTime - sound.buffer.duration;
-                // _that.time = _that.ctx.currentTime;
                 }
             });
         });
@@ -193,7 +193,7 @@ export class Game{
 
         this.about ={
             state: 'loading',
-            count: 0, // game count for win state
+            count: 15, // game count for win state
             stageBossCount: 0,
             stageExtraBossCount: 0,
             stageNumber: 0,
@@ -313,6 +313,7 @@ export class Game{
             if ((game.about.stageNumber >= 7) && (game.about.stageNumber <= 15)){
     
                 for (let i = 0; i < 5; i++){
+                    try {
     
                     CreateEnemy(
                         load,
@@ -328,11 +329,15 @@ export class Game{
                         load.jsonData.essenceSettings.birds.frameArray,
                         load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
                         bathSound);
+                    } catch(error){
+                        console.error(error);
+                        console.error("Error render enemy");
+                    }
     
                 }
     
                 for (let j = 0; j < game.about.stageBossCount; j++){
-    
+                    try {
                     CreateEnemy(
                         load,
                         load.jsonData.essenceSettings.boss.health,
@@ -347,11 +352,17 @@ export class Game{
                         load.jsonData.essenceSettings.boss.frameArray,
                         load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
                         bossSound);
+                    } catch(error){
+                        console.error(error);
+                        console.error("Error render enemy");
+                    }
     
                 }
             } else if (game.about.stageNumber > 15){
     
                 for (let i = 0; i < game.about.stageNumber - 5; i++){
+
+                    try {
     
                     CreateEnemy(
                         load,
@@ -367,6 +378,10 @@ export class Game{
                         load.jsonData.essenceSettings.bossExtra.frameArray,
                         load.jsonData.enemyStartPosition.x,load.jsonData.enemyStartPosition.y,
                         bossExtraSound);
+                    } catch(error) {
+                        console.error(error);
+                        console.error("Error render enemy");
+                    }
     
                 }
             }
@@ -535,7 +550,7 @@ export class Player{
     }
 
     Win(gamer, game, load){
-
+        debugger;
         if (!(gamer.stat.health < 0)){
     
             if (!(load.enemy.length) && !(game.about.count)){

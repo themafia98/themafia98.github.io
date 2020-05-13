@@ -21,5 +21,10 @@ import main from './chunks/init.js';
 
 if (module.hot && process.env === 'development') module.hot.accept();
 
+try {
 main();
+} catch(error){
+    console.error('Critical error, restarting app...');
+    window.location.reload(true);
+}
 

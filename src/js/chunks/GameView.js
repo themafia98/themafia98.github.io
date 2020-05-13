@@ -852,10 +852,16 @@ export default class Draw {
         inputName.setAttribute('type', 'text');
         inputName.setAttribute('maxlength', '11');
         inputName.placeholder = 'NAME';
-        buttonSave.setAttribute('type', 'button');
-        buttonSave.value = 'SAVE';
-        buttonCancel.setAttribute('type', 'button');
-        buttonCancel.value = 'NO';
+
+        if (buttonSave) {
+            buttonSave.setAttribute('type', 'button');
+            buttonSave.value = 'SAVE';
+        }
+
+        if (buttonCancel) {
+            buttonCancel.setAttribute('type', 'button');
+            buttonCancel.value = 'NO';
+        }
     
         div.appendChild(inputName);
         div.appendChild(buttonSave);

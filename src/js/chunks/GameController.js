@@ -125,9 +125,9 @@ export default class GameController{
     
         function clickOnDOM(e){
     
-            if (e.target.className === 'btnName' && inputName.value !== ''){
+            if (e.target.className === 'btnName' && inputName.value){
     
-                getName(inputName.value, gamer);
+                getName(inputName && inputName.value ? inputName.value : '', gamer);
                 location.deleteGetNameView(document, e.target);
     
             } else if (e.target.className === 'cancelName'){
