@@ -368,7 +368,7 @@ export class Game{
                         load,
                         load.jsonData.essenceSettings.bossExtra.health,
                         load.jsonData.essenceSettings.bossExtra.dmg,
-                        load.jsonData.essenceSettings.bossExtra.name + j,
+                        load.jsonData.essenceSettings.bossExtra.name + i,
                         load.jsonData.essenceSettings.bossExtra.type,
                         load.jsonData.essenceSettings.bossExtra.x,
                         load.jsonData.essenceSettings.bossExtra.y,
